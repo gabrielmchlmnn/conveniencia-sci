@@ -1,0 +1,52 @@
+<style>
+.topnav {
+    width: 100%;
+    overflow: hidden;
+    background-color: #00000041;
+    position:static;
+  }
+  
+  .topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    height: 48px;
+  }
+  
+  .topnav a:hover {
+    background-color: rgb(239, 239, 255);
+    color: rgb(2, 2, 2);
+    border-radius: 10px;
+  }
+  
+  .topnav a.active {
+    background-color: blue;
+    color: white;
+    height: 45px;
+  }
+  .topnav a.logout:hover {
+    background-color: red;
+    color: white;
+  }
+  .topnav img{
+    height: 35px;
+    margin-right: 30px;
+  }
+
+  </style>
+    <nav class="topnav">
+      <a href="{% url 'Home' %}"><img src="https://www.scivale.com.br/wp-content/uploads/2017/12/logo-sci.png" alt="logo-sci"></a>
+      <a href="{%url 'ComecarCompra'%}">Adicionar compra</a>
+      <a href="{% url 'MostrarColab' %}">Listar colaboradores</a>
+      <a href="{% url 'ListarProdu' %}">Listar produtos</a>
+      <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+      {% if user.is_superuser %}
+              <a href="{% url 'ListarUser'%}">Usuários</a>
+      {% endif %}
+      <a class="logout" href="{%url 'Logout' %}">Logout -></a>
+  
+  </nav>
+

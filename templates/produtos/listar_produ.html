@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar produtos</title>
+    <style>
+    *{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+    .container{
+        background-color: rgba(0, 0, 0, 0.8);
+        padding:50px;
+        border-radius:15px;
+        width: 60%;
+        margin:auto;
+        margin-top:5%;
+        text-align: center;
+    }
+    body {
+      background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  table,th,td{
+      border: 1px solid black;
+      border-collapse: collapse;
+      margin: 0 auto;
+      width: 90%;
+  }
+  td,th{
+      padding: 10px;
+      background-color: aliceblue;
+      text-align: center;
+      width: 30px;
+  }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+      cursor:pointer;
+  }
+  th{
+      background-color: darkblue;
+      color:aliceblue
+  }
+  h1{
+      color:white;
+      text-align: center;
+  }
+
+.search-form {
+    align-items: center; /* Alinhar verticalmente os elementos filhos */
+  }
+
+  .search-form input[type="text"] {
+    padding: 8px; /* Espaçamento interno do campo de entrada */
+    font-size: 14px; /* Tamanho da fonte do campo de entrada */
+    border: 1px solid #ccc; /* Borda do campo de entrada */
+    border-radius: 4px; /* Borda arredondada do campo de entrada */
+  }
+
+  .search-form input[type="submit"] {
+    background-color: dodgerblue; /* Cor de fundo do botão de envio */
+    color: white; /* Cor do texto do botão de envio */
+    padding: 8px 16px; /* Espaçamento interno do botão de envio */
+    border: none; /* Remover borda do botão de envio */
+    border-radius: 4px; /* Borda arredondada do botão de envio */
+    cursor: pointer; /* Cursor do mouse em formato de mão */
+  }
+  .tabela-scroll{
+    overflow: auto;
+    height: 500px;
+  }
+  div.modal {
+  display: none;
+  z-index: 1;
+  left: 50%;
+  top: 55%;
+  width: 60%;
+  transform: translate(-50%,-50%);
+  height: 85%;
+  text-align: center;
+  background-color: rgba(30, 27, 53, 0.952); 
+  position: absolute;
+  border-radius: 30px;
+  color:azure
+}
+
+div.modal-content {
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+.fechar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+input{
+        padding:15px;
+        border:none;
+        padding:13px;
+        width: 90%;
+        border-radius: 10px;
+    }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+    }
+    button:hover{
+        background-color: deepskyblue;
+    }
+    #barra_de_pesquisa{
+      width: 50%;
+      right:9%;
+      position: relative;
+    }
+    #botao_pesquisa{
+      position: relative;
+      right:8%;
+      width: 20%;
+      height: 15%;
+    }
+    .error-message {
+    color: #ff0000; 
+    font-weight: bold; 
+    font-size: 16px; 
+    background-color: #ffbdbd;
+    border-radius: 10px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border:solid 1.5px rgb(255, 1, 1);
+    }
+      </style>
+
+</head>
+<body>
+
+  {% include 'navbar.html' %}
+
+    <div class="container">
+        <h1>Produtos</h1><br><br><br>
+
+
+        <div class="search-form">
+          <form action="{% url 'FiltrarProdu' %}" method="get">
+              <div class="search-container">
+                  <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input">
+                  <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
+              </div>
+          </form>
+      </div>
+      <br><br>
+      <div class="tabela-scroll">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Código de barras</th>
+              <th scope="col">Preço</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">-</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for produto in produto %}
+            <tr>
+              <td>{{produto.nome}}</td>
+              <td>{{produto.cod_barras}}</td>
+              <td>{{produto.preco}}</td>
+              <td>{{produto.tipo}}</td>
+              <td><a href="{% url 'EditarProdu' id=produto.id%}"><button type="button">Editar</button></a></td>
+            </tr>
+            {%endfor%}
+
+          </tbody>
+        </table>
+      </div>
+        <br><br>
+          <button type="button" onclick="exibirModal()">Adicionar Produto +</button>
+    </div>
+    <div id="meuModal" class="modal">
+      <div class="modal-content">
+        <span class="fechar" onclick="fecharModal()">&times;</span>
+        
+        <form method="post" action="{% url 'AdicionarProdu' %}">
+          {% csrf_token %}
+          <h1>-Adicionar- <br>  Produto</h1>
+          <br><br>
+
+          <label for="nome">Nome do produto:</label><br><br>
+          <input type="text" placeholder="Nome:" name="nome" id="nome" value="{{nome}}" required><br><br><br>
+
+          <label for="cpf">Código de barras:</label><br><br>
+          <input type="number" placeholder="cod_barras:" name="cod_barras" id="cod_barras" value ="{{cod_barras}}" required><br><br><br>
+          {% if messages %}
+                <script>
+                  window.onload = function() {
+                  exibirModal();
+                  };
+              </script>
+              {% for message in messages %}
+              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+              {% endfor %}
+          {%endif%}
+
+          <label for="preco">Preço:</label><br><br>
+          <input type="number"  step="0.01" placeholder="Preço:" name="preco" id="preco" onkeypress="validarEntrada(event)" value="{{preco}}" required><br><br><br>
+
+          <label for="tipo">Tipo:</label><br><br>
+          <select id="tipo" name="tipo" required oninvalid="this.setCustomValidity('Selecione uma opção válida.')">
+            <option value="" disabled selected>--Selecione um tipo--</option>
+                      <option value="Alimento">Alimento</option>
+                      <option value="Ingresso">Ingresso</option>
+          </select>
+          <br><br><br><br>
+
+
+          <button type="submit">Adicionar produto</button>   
+      </form>
+
+
+
+      </div>
+    </div>
+
+    <script>
+        function exibirModal() {
+        var modal = document.getElementById("meuModal");
+        modal.style.display = "block";
+
+        }
+
+        function fecharModal() {
+        var modal = document.getElementById("meuModal");
+        modal.style.display = "none";
+        window.location.href = "{% url 'ListarProdu'%}"
+        }
+        function validarEntrada(event) {
+          var tecla = event.which || event.keyCode;
+          if ((tecla < 48 || tecla > 57) && tecla != 46){
+              event.preventDefault();
+          }
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
+    </script>
+</body>
+</html>

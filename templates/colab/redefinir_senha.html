@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir senha</title>
+    <style>
+    *{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  div.container{
+      background-color: rgba(0, 0, 0, 0.8);
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%,-50%);
+      padding:80px;
+      border-radius:15px;
+      color:#fff;
+      width: 60%;
+      align-items:  center;
+  }
+  input{
+      padding:15px;
+      border:none;
+      padding:13px;
+      width: 80%;
+      border-radius: 10px;
+  }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 80%;
+      border-radius: 10px;
+
+  }
+  button:hover{
+      background-color: deepskyblue;
+  }
+  h1{
+      top:50%;
+      text-align: center;
+  }
+  
+    .error-message {
+  color: #ff0000; 
+  font-weight: bold; 
+  font-size: 16px; 
+  background-color: #ffbdbd;
+  border-radius: 10px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border:solid 1.5px rgb(255, 1, 1);
+  width: 80%;
+}
+
+
+    </style>
+</head>
+<body>
+
+  {% include 'navbar.html' %}
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <a href="{% url 'EditarColab' id=id%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 22%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+    <div class="container">
+
+        <form method="POST" action="{% url 'RedefinirSenha' id=id %}">
+            {% csrf_token %}
+            <h1>-Redefinir- <br>  Senha</h1><br><br>
+
+            <label for="senha_antiga">Senha antiga:</label><br>
+            <input type="password" placeholder="Digite a senha:" name="senha_antiga" required><br><br>
+            <label for="senha_nova">Senha nova:</label><br>
+            <input type="password" name="senha_nova" placeholder="Digite a nova senha:" required><br><br>
+            <label for="senha_nova">Confirme a senha nova:</label><br>
+            <input type="password" name="confirmacao" placeholder="Confirme a nova senha:" required><br><br><br>
+            {% if messages %}
+                {% for message in messages %}
+                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+                {% endfor %}
+            {%endif%}
+            <button type="submit" placeholder='Enviar'> Salvar</button>
+        </form>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
+        </script>
+</body>
+</html>

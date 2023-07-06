@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <style>
+    *{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  div{
+      background-color: rgba(0, 0, 0, 0.8);
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%,-50%);
+      padding:80px;
+      border-radius:15px;
+      color:#fff;
+      width: 500px;
+  }
+  input{
+      padding:15px;
+      border:none;
+      padding:13px;
+      width: 90%;
+      border-radius: 10px;
+  }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+  }
+  button:hover{
+      background-color: deepskyblue;
+  }
+  h1{
+      top:50%;
+      text-align: center;
+  }
+  
+    .error-message {
+  color: #ff0000; 
+  font-weight: bold; 
+  font-size: 16px; 
+  background-color: #ffbdbd;
+  border-radius: 10px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border:solid 1.5px rgb(255, 1, 1);
+}
+
+
+    </style>
+</head>
+<body>
+
+  {% include 'navbar.html' %}
+
+
+    <div class="container">
+
+        <form method="POST" action="{% url 'GerarRelatorio' %}">
+            {% csrf_token %}
+            <h1>-Gerar- <br>  Relatório</h1><br><br>
+
+            <label for="data_inicio">Data de início:</label><br>
+            <input type="date" placeholder="Digite uma data:" name="data_inicio"><br><br>
+            <label for="data_final">Data final:</label><br>
+            <input type="date" name="data_final"><br><br>
+            <br><br>
+            <label for="colab">Selecione um colaborador:</label>
+            <select id="colab" name="colab">
+            <option value="">--Selecione um colaborador--
+            </option>
+            {% for i in colaboradores%}
+                    <option value="{{i.id}}">{{i.nome}}</option>
+            {% endfor %}
+            </select>
+            <br><br>
+            <button type="submit" placeholder='Enviar'> Gerar</button>
+        </form>
+
+    </div>
+
+
+</body>
+</html>
+

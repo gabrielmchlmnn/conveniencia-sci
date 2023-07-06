@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar usuários</title>
+    <style>
+    *{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .container{
+      background-color: rgba(0, 0, 0, 0.8);
+      padding:50px;
+      border-radius:15px;
+      width: 60%;
+      margin:auto;
+      margin-top:2%;
+      text-align: center;
+  }
+    body {
+      background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  table,th,td{
+      border: 1px solid black;
+      border-collapse: collapse;
+      margin: 0 auto;
+  }
+  td,th{
+      padding: 10px;
+      background-color: aliceblue;
+      text-align: center;
+      width:30%;
+  }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+    }
+    th{
+        background-color: darkblue;
+        color:aliceblue
+    }
+    h1{
+        color:white;
+        text-align: center;
+    }
+
+.search-form {
+    align-items: center; /* Alinhar verticalmente os elementos filhos */
+  }
+
+  .search-form input[type="text"] {
+    padding: 8px; /* Espaçamento interno do campo de entrada */
+    font-size: 14px; /* Tamanho da fonte do campo de entrada */
+    border: 1px solid #ccc; /* Borda do campo de entrada */
+    border-radius: 4px; /* Borda arredondada do campo de entrada */
+  }
+
+  .search-form input[type="submit"] {
+    background-color: dodgerblue; /* Cor de fundo do botão de envio */
+    color: white; /* Cor do texto do botão de envio */
+    padding: 8px 16px; /* Espaçamento interno do botão de envio */
+    border: none; /* Remover borda do botão de envio */
+    border-radius: 4px; /* Borda arredondada do botão de envio */
+    cursor: pointer; /* Cursor do mouse em formato de mão */
+  }
+  .error-message {
+    color: #ff0000; 
+    font-weight: bold; 
+    font-size: 16px; 
+    background-color: #ffbdbd;
+    border-radius: 10px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border:solid 1.5px rgb(255, 1, 1);
+    }
+
+    div.modal {
+  display: none;
+  z-index: 1;
+  left: 50%;
+  top: 55%;
+  width: 60%;
+  transform: translate(-50%,-50%);
+  height: 85%;
+  text-align: center;
+  background-color: rgba(30, 27, 53, 0.952); 
+  position: absolute;
+  border-radius: 30px;
+  color:azure
+}
+
+div.modal-content {
+  margin: 20% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+.fechar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tabela-scroll{
+    overflow: auto;
+    height: 500px;
+  }
+  input{
+        padding:15px;
+        border:none;
+        padding:13px;
+        width: 90%;
+        border-radius: 10px;
+    }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+    }
+    button:hover{
+        background-color: deepskyblue;
+    }
+    #barra_de_pesquisa{
+      width: 50%;
+      right:14%;
+      position: relative;
+      height: 30%;
+
+    }
+    #botao_pesquisa{
+      position: relative;
+      right:12%;
+      width: 20%;
+      height: 18%;
+    }
+      </style>
+</head>
+<body>
+  {% include 'navbar.html' %}
+
+    <div class="container">
+        <h1>Usuários</h1><br>
+
+      <div class="search-form">
+          <form action="{% url 'FiltrarUser' %}" method="get">
+              <div class="search-container">
+                  <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input">
+                  <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
+              </div>
+          </form>
+      </div>
+      <br><br>
+      <div class="tabela-scroll">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Username</th>
+              <th scope="col">-</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for i in usuarios %}
+            <tr>
+              <td>{{i.id}}</td>
+              <td>{{i.username}}</td>
+              <td><a href="{% url 'EditarUser' id=i.id%}"><button type="button"> Editar</button></a></td>
+            </tr>
+            {%endfor%}
+
+          </tbody>
+        </table>
+      </div>
+        
+        <br><br>
+        <button onclick="exibirModal()">Adicionar usuário +</button>
+    </div>
+
+    <div id="meuModal" class="modal">
+      <div class="modal-content">
+        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <form method="post" action="{% url 'CadastrarUser'%}">
+          {% csrf_token %}
+          <h1>-CADASTRAR- <br>  
+              USUÁRIO </h1>
+          <label for="username">Nome de usuário:</label><br>
+          <input type="text" name="username" placeholder="Digite o nome de usuário:" id="username" valeu="{{username}}" required><br><br>
+
+          <label for="senha">Senha:</label><br>
+          <input type="password" name="senha" placeholder="Digite a senha usuário:" id="senha" valeu="{{senha}}" required><br><br>
+
+          {% if messages %}
+            <script>
+              window.onload = function() {
+              exibirModal();
+              };
+          </script>
+            {% for message in messages %}
+                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+            {% endfor %}
+          {%endif%}
+          <button type="submit">Cadastrar usuário</button><br><br>
+        </form>
+      </div>
+    </div>
+
+
+
+    <script>
+        function exibirModal() {
+        var modal = document.getElementById("meuModal");
+        modal.style.display = "block";
+
+        }
+
+        function fecharModal() {
+        var modal = document.getElementById("meuModal");
+        modal.style.display = "none";
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #b0bfff;
+            position: static;
+        }
+        div{
+            background-color: rgba(0, 0, 0, 0.8);
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            padding:80px;
+            border-radius:15px;
+            color:#fff
+        }
+        input{
+            padding:15px;
+            border:none;
+            padding:13px;
+            width: 90%;
+            border-radius: 10px;
+        }
+        button{
+            background-color: dodgerblue;
+            border:none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+        }
+        button:hover{
+            background-color: deepskyblue;
+        }
+        h1{
+            top:50%;
+            text-align: center;
+        }
+        .error-message {
+        color: #ff0000; 
+        font-weight: bold; 
+        font-size: 16px; 
+        background-color: #ffbdbd;
+        border-radius: 10px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        border:solid 1.5px rgb(255, 1, 1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="post" action="{% url 'Login' %}">
+            {% csrf_token %}
+            <h1>-Login-<br>Conveniência</h1>
+            <label for="username">Nome de usuário:</label><br>
+            <input type="text" placeholder="Digite seu usuario" id="username" name="username" value="{{username}}" required><br><br>
+    
+            <label for="password">Senha:</label><br>
+            <input type="password" placeholder="Senha" id="senha" name="senha" value="{{senha}}" required><br><br>
+
+            {% if messages %}
+                {% for message in messages %}
+                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+                {% endfor %}
+            {%endif%}
+    
+            <button type="submit">Entrar</button>
+        </form>
+
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
+        </script>
+</body>
+</html>

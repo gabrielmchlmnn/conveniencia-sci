@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar produto</title>
+    <style>
+
+  *{margin: 0;
+  padding: 0;
+  box-sizing: border-box;}
+  
+  body {
+    background-color: #b0bfff;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh; 
+}
+  div{
+      background-color: rgba(0, 0, 0, 0.8);
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%,-50%);
+      padding:80px;
+      border-radius:15px;
+      color:#fff;
+      width: 60%;
+      height: 60%;
+  }
+  input{
+      padding:15px;
+      border:none;
+      padding:13px;
+      width: 90%;
+      border-radius: 10px;
+  }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 15%;
+      border-radius: 10px;
+      cursor:pointer;
+      position:absolute;
+      top:89%;
+      left:80%
+  }
+  button:hover{
+      background-color: deepskyblue;
+  }
+  h1{
+      top:50%;
+      text-align: center;
+  }
+
+   
+    input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  background-color: #ccc;
+}
+.error-message {
+  color: #ff0000; 
+  font-weight: bold; 
+  font-size: 16px; 
+  background-color: #ffbdbd;
+  border-radius: 10px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border:solid 1.5px rgb(255, 1, 1);
+}
+</style>
+
+</head>
+<body>
+    
+  {% include 'navbar.html' %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <a href="{% url 'ListarProdu'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 22%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+
+    <div class="container">
+        <form method="post" action="{% url 'EditarProdu' id=id %}">
+            {% csrf_token %}
+            <h1>-Editar- <br>  Produto</h1>
+            <br><br>
+
+            <label for="nome">Nome do produto:</label><br>
+            <input type="text" placeholder="Nome:" name="nome" id="nome" value="{{nome}}" required><br><br>
+
+            <label for="cpf">Código de barras:</label><br>
+            <input type="number" placeholder="cod_barras:" name="cod_barras" id="cod_barras" value ="{{cod_barras}}" required><br><br>
+            {% if erroCod %}
+            <h4 class="error-message">{{erroCod}}</h4><br><br>
+            {%endif%}
+
+            <label for="preco">Preço:</label><br>
+            <input type="number"  step="0.01" placeholder="Preço:" name="preco" id="preco" onkeypress="validarEntrada(event)" value="{{preco}}" required><br><br>
+
+            <label for="tipo">Tipo:</label><br>
+            <select id="tipo" name="tipo" required value="{{tipo}}">
+                        <option disabled selected >--Selecione um tipo--</option>
+                        <option value="Alimento"{% if tipo == 'Alimento' %} selected{% endif %}>Alimento</option>
+                        <option value="Ingresso"{% if tipo == 'Ingresso' %} selected{% endif %}>Ingresso</option>
+            </select>
+            {% if messages %}
+              {% for message in messages %}
+              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+              {% endfor %}
+            {%endif%}
+            <button type="submit">Atualizar</button>   
+        </form>
+
+
+    </div>
+    <script>
+      function validarEntrada(event) {
+          var tecla = event.which || event.keyCode;
+          if ((tecla < 48 || tecla > 57) && tecla != 46){
+              event.preventDefault();
+          }
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
+  </script>
+</body>
+</html>

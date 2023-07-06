@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar usuário</title>
+    <style>
+  *{margin: 0;
+  padding: 0;
+  box-sizing: border-box;}
+
+  body {
+    background-color: #b0bfff;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh; 
+}
+  div{
+      background-color: rgba(0, 0, 0, 0.8);
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%,-50%);
+      padding:80px;
+      border-radius:15px;
+      color:#fff
+  }
+  input{
+      padding:15px;
+      border:none;
+      padding:13px;
+      width: 90%;
+      border-radius: 10px;
+  }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+  }
+  button:hover{
+      background-color: deepskyblue;
+  }
+  h1{
+      top:50%;
+      text-align: center;
+  }
+
+.error-message {
+  color: #ff0000; 
+  font-weight: bold; 
+  font-size: 16px; 
+  background-color: #ffbdbd;
+  border-radius: 10px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border:solid 1.5px rgb(255, 1, 1);
+}
+    </style>
+
+</head>
+<body>
+  {% include 'navbar.html' %}
+
+    <div class="container">
+        <form method="post" action="{% url 'CadastrarUser'%}">
+            {% csrf_token %}
+            <h1>-CADASTRAR- <br>  
+                USUÁRIO </h1>
+            <label for="username">Nome de usuário:</label><br>
+            <input type="text" name="username" placeholder="Digite o nome de usuário:" id="username" valeu="{{username}}" required><br><br>
+
+            <label for="senha">Senha:</label><br>
+            <input type="password" name="senha" placeholder="Digite a senha usuário:" id="senha" valeu="{{senha}}" required><br><br>
+            <button type="submit">Cadastrar usuário</button><br><br>
+          </form>
+          {% if erro%}
+          {{erro}}<br><br>
+          {%endif%}
+    </div>
+</body>
+</html>
