@@ -36,11 +36,11 @@
   }
   td,th{
       padding: 10px;
-      background-color: aliceblue;
+      background-color: white;
       text-align: center;
       width:30%;
-      border-radius: 5px;
-  }
+      font-size: larger;
+    }
   button{
       background-color: dodgerblue;
       border:none;
@@ -50,7 +50,7 @@
   }
   th{
       background-color: darkblue;
-      color:aliceblue;
+      color:white;
       border-radius: 5px;
   }
   h1{
@@ -163,6 +163,26 @@ input{
     line-height: 30px;
     border:solid 1.5px rgb(255, 1, 1);
     }
+    img{
+      height: 40px;
+      width: 40px;
+      cursor:pointer
+    }
+    td .situation-dot.active {
+  background-color: green;
+  border-color: green;
+}
+
+td .situation-dot.inactive {
+  background-color: red;
+  border-color: red;
+}
+.situation-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
       </style>
 </head>
 <body>
@@ -200,10 +220,13 @@ input{
               <td>{{pessoa.nome}}</td>
               <td>{{pessoa.login}}</td>
               <td>{{pessoa.email}}</td>
-              <td>{{pessoa.situacao}}</td>
+              <td><span
+                class="situation-dot {% if pessoa.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
+              </span>
+                {{pessoa.situacao}}</td>
 
-              <td><a href="{% url 'EditarColab' id=pessoa.id%}"><button type="button">Editar</button></a></td>
-              <td><img src="{% static 'img/olho.png' %}" alt="Imagem" onclick="exibirModalVisu('{{ pessoa.nome }}', '{{ pessoa.login }}', '{{ pessoa.email }}', '{{ pessoa.situacao }}', '{{pessoa.cpf}}')"/></td>
+              <td><a href="{% url 'EditarColab' id=pessoa.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
+              <td><img class="img" src="https://thumbs2.imgbox.com/30/fa/C6pC8uQH_t.png" alt="Imagem" onclick="exibirModalVisu('{{ pessoa.nome }}', '{{ pessoa.login }}', '{{ pessoa.email }}', '{{ pessoa.situacao }}', '{{pessoa.cpf}}')"/></td>
             </tr>
             {%endfor%}
 

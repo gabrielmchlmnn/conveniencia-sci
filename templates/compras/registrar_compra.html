@@ -77,22 +77,35 @@
         color:aliceblue
     }
     .aviso {
-        background-color: yellow;
-        padding: 10px;
+        background-color: rgba(202, 202, 202, 0.363);
         display: none;
         color:black;
-        height: 130px;
-        width: 300px;
+        height: 100%;
+        width: 100%;
         z-index: 1;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%,-50%);
-        text-align: center;
-        font-size: 20px;
-        position: absolute;
-        top:50%;
         border-radius: 10px;
+        top:0;
+        right:0;
+        position: absolute;
     }
+    .aviso-content{
+        display: flex;
+        padding: 10;
+        justify-content: center;
+      align-items: center;
+      text-align: center;
+        border: solid 3px rgb(0, 0, 0);
+        background-color: #b1efff;
+        color:rgb(255, 255, 255);
+        width: 50%;
+        height: 25%;
+        margin:50% auto;
+        border-radius: 4px;
+        font-weight: 900;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        font-size: x-large;
+            }
+
     .esvaziar {
         background-color: red;
         color:black
@@ -169,7 +182,12 @@ div.modal-content {
         align-items: flex-start;
         border-collapse: collapse;
 }
+.logo-sci{
+        height: 100px;
+        width: 100px;
+        top:0;
 
+}
 
     </style>
 </head>
@@ -179,20 +197,26 @@ div.modal-content {
         <form method="post" action="{% url 'AdicionarItem' %}">
             {% csrf_token %}
             {%if aviso%}
-                <div id="aviso" class="aviso">Compra feita com sucesso!<br>
+                <div id="aviso" class="aviso">
+                    <div class="aviso-content">
+                    Compra feita com sucesso!<br>
                     Colaborador:{{colaborador}}<br>
                     Total da compra:{{total}}<br>
                     Gastos da última referência:{{ultima_ref}}<br>
                     Gastos nesse mês:{{mensal}}
                 </div>
+                </div>
             {%endif%}
 
 
             {%if aviso2%}
-            <div id="aviso" class="aviso">Confira seus gastos!<br>
+            <div id="aviso" class="aviso">
+                <div class="aviso-content">
+                Confira seus gastos!<br>
                 Colaborador:{{colaborador}}<br>
                 Gastos da última referência:{{ultima_ref}}<br>
                 Gastos nesse mês:{{mensal}}
+                </div>
             </div>
             {%endif%}
             
@@ -312,6 +336,12 @@ div.modal-content {
 
 
     <script>
+     document.addEventListener('keydown', function(event) {
+        if ((event.key === 'F5' || event.keyCode === 116) && (event.ctrlKey || event.metaKey)) {        // Redirecionar para a URL desejada
+        window.location.href = "{% url 'ComecarCompra' %}";
+        event.preventDefault(); // Impede o comportamento padrão (recarregar a página)
+      }
+    });
 
         document.addEventListener('DOMContentLoaded', function() {
         var mensagem = document.getElementById('error-mensagem');
