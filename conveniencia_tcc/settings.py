@@ -153,7 +153,7 @@ if not DEBUG:
     ]
 
 
-STATIC_URL = '/templates/static/'
+STATIC_URL = 'templates/static/'
 
 STATICFILES_DIR = [ 
      os.path.join(BASE_DIR, 'static')

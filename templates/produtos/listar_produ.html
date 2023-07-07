@@ -16,7 +16,7 @@
         border-radius:15px;
         width: 60%;
         margin:auto;
-        margin-top:5%;
+        margin-top:2%;
         text-align: center;
     }
     body {
@@ -29,28 +29,44 @@
     height: 100vh; 
   }
   table,th,td{
-      border: 1px solid black;
+      border: 0.5px solid black;
       border-collapse: collapse;
       margin: 0 auto;
-      width: 90%;
   }
   td,th{
       padding: 10px;
-      background-color: aliceblue;
+      background-color: white;
       text-align: center;
-      width: 30px;
+      font-size: larger;
+      width: 300px;
+    }
+    td .situation-dot.active {
+    background-color: green;
+    border-color: green;
   }
+
+  td .situation-dot.inactive {
+    background-color: red;
+    border-color: red;
+  }
+  .situation-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
   button{
       background-color: dodgerblue;
       border:none;
       padding: 15px;
       width: 100%;
       border-radius: 10px;
-      cursor:pointer;
   }
   th{
       background-color: darkblue;
-      color:aliceblue
+      color:white;
+      border-radius: 5px;
+      width: 300px;
   }
   h1{
       color:white;
@@ -76,10 +92,10 @@
     border-radius: 4px; /* Borda arredondada do botão de envio */
     cursor: pointer; /* Cursor do mouse em formato de mão */
   }
-  .tabela-scroll{
-    overflow: auto;
-    height: 500px;
-  }
+  .tabela-scroll {
+  height: 500px; /* Defina a altura desejada para o scroll */
+  overflow: auto;
+}
   div.modal {
   display: none;
   z-index: 1;
@@ -133,12 +149,12 @@ input{
     }
     #barra_de_pesquisa{
       width: 50%;
-      right:9%;
+      right:14%;
       position: relative;
     }
     #botao_pesquisa{
       position: relative;
-      right:8%;
+      right:12%;
       width: 20%;
       height: 15%;
     }
@@ -153,6 +169,17 @@ input{
     line-height: 30px;
     border:solid 1.5px rgb(255, 1, 1);
     }
+    img{
+      height: 40px;
+      width: 40px;
+      cursor:pointer
+    }
+    .tabela-corpo {
+  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
+  overflow-y: scroll;
+}
+
+
       </style>
 
 </head>
@@ -175,15 +202,35 @@ input{
       <br><br>
       <div class="tabela-scroll">
         <table class="table table-hover">
+          <colgroup>
+            <col style="width: 20%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 26%">
+          </colgroup>
           <thead class="thead-light">
             <tr>
               <th scope="col">Nome</th>
               <th scope="col">Código de barras</th>
               <th scope="col">Preço</th>
               <th scope="col">Tipo</th>
-              <th scope="col">-</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Editar</th>
             </tr>
           </thead>
+        </table>
+        <div class="tabela-corpo">
+          <table class="table table-hover">
+            <colgroup>
+              <col style="width: 20%">
+              <col style="width: 18%">
+              <col style="width: 18%">
+              <col style="width: 18%">
+              <col style="width: 18%">
+              <col style="width: 26%">
+            </colgroup>
           <tbody>
               {% for produto in produto %}
             <tr>
@@ -191,12 +238,16 @@ input{
               <td>{{produto.cod_barras}}</td>
               <td>{{produto.preco}}</td>
               <td>{{produto.tipo}}</td>
-              <td><a href="{% url 'EditarProdu' id=produto.id%}"><button type="button">Editar</button></a></td>
+              <td><span
+                class="situation-dot {% if produto.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
+              </span>{{produto.situacao}}</td>
+              <td><a href="{% url 'EditarProdu' id=produto.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
             </tr>
             {%endfor%}
 
           </tbody>
         </table>
+        </div>
       </div>
         <br><br>
           <button type="button" onclick="exibirModal()">Adicionar Produto +</button>

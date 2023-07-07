@@ -3,6 +3,7 @@ from .models import Produtos
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
+from django.db.models import Q
 
 # Create your views here.
 
@@ -34,9 +35,15 @@ def EditarProdu(request,id):
         cod_barras = request.POST.get('cod_barras')
         preco = request.POST.get('preco')
         tipo = request.POST.get('tipo')
+        situacao =  request.POST.get('ativo')
+        print(situacao)
         lista_cods = Produtos.objects.exclude(id=id).values_list('cod_barras',flat=True)
         if int(cod_barras) not in lista_cods:
-            Produtos.objects.filter(id=id).update(nome=nome,cod_barras=int(cod_barras),preco=preco,tipo=tipo)
+            if situacao == 'on':
+                situacao = True
+            else:
+                situacao = False
+            Produtos.objects.filter(id=id).update(nome=nome,cod_barras=int(cod_barras),preco=preco,tipo=tipo,situacao=situacao)
             return redirect('ListarProdu')
         else:
             messages.error(request,'Código de barras já cadastrado!')
@@ -52,14 +59,22 @@ def EditarProdu(request,id):
 
 @login_required(login_url='Login')
 def ListarProdu(request):
-    context = {
-        'produto':Produtos.objects.all()
-    }
-    return render(request,'produtos/listar_produ.html',context=context)
+    produtos = Produtos.objects.all()
+    for i in produtos:
+        if i.situacao == True:
+            i.situacao = 'Ativo'
+        else:
+            i.situacao = "Inativo"
+    return render(request,'produtos/listar_produ.html',{'produto':produtos})
 
 @login_required(login_url='Login')
 def FiltrarProdu(request):
     if request.method == 'GET':
         search_term = request.GET.get('search')
-        produtos_filtrados = Produtos.objects.filter(nome__icontains=search_term)
+        produtos_filtrados = Produtos.objects.filter(Q(nome__icontains=search_term) | Q(cod_barras__icontains=search_term))
+        for i in produtos_filtrados:
+            if i.situacao == True:
+                i.situacao = 'Ativo'
+            else: 
+                i.situacao = 'Inativo'
         return render(request, 'produtos/listar_produ.html', {'produto': produtos_filtrados})

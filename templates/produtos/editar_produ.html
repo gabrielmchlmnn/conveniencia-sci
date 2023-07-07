@@ -108,12 +108,18 @@
                         <option disabled selected >--Selecione um tipo--</option>
                         <option value="Alimento"{% if tipo == 'Alimento' %} selected{% endif %}>Alimento</option>
                         <option value="Ingresso"{% if tipo == 'Ingresso' %} selected{% endif %}>Ingresso</option>
-            </select>
+            </select><br><br>
+
+            <label for="ativo">Ativo:</label>
+            <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo"checked><br><br>
+
+
             {% if messages %}
               {% for message in messages %}
               <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
               {% endfor %}
             {%endif%}
+
             <button type="submit">Atualizar</button>   
         </form>
 

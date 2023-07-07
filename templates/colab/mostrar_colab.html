@@ -38,8 +38,22 @@
       padding: 10px;
       background-color: white;
       text-align: center;
-      width:30%;
       font-size: larger;
+    }
+    td .situation-dot.active {
+    background-color: green;
+    border-color: green;
+  }
+
+  td .situation-dot.inactive {
+    background-color: red;
+    border-color: red;
+  }
+  .situation-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
     }
   button{
       background-color: dodgerblue;
@@ -126,13 +140,7 @@ input{
         width: 90%;
         border-radius: 10px;
     }
-    button{
-        background-color: dodgerblue;
-        border:none;
-        padding: 15px;
-        width: 100%;
-        border-radius: 10px;
-    }
+
     button:hover{
         background-color: deepskyblue;
     }
@@ -168,21 +176,10 @@ input{
       width: 40px;
       cursor:pointer
     }
-    td .situation-dot.active {
-  background-color: green;
-  border-color: green;
+    .tabela-corpo {
+  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
+  overflow-y: scroll;
 }
-
-td .situation-dot.inactive {
-  background-color: red;
-  border-color: red;
-}
-.situation-dot {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
       </style>
 </head>
 <body>
@@ -204,6 +201,14 @@ td .situation-dot.inactive {
       <br><br>
       <div class="tabela-scroll">
         <table class="table table-hover">
+          <colgroup>
+            <col style="width: 20.9%">
+            <col style="width: 19.5%">
+            <col style="width: 20.7%">
+            <col style="width: 20.5%">
+            <col style="width: 20%">
+            <col style="width: 19%">
+          </colgroup>
           <thead class="thead-light">
             <tr>
               <th scope="col">Nome</th>
@@ -211,15 +216,26 @@ td .situation-dot.inactive {
               <th scope="col">Email</th>
               <th scope="col">Situação</th>
               <th scope="col">Editar</th>
-              <th scope="col">Visualizar</th>
+              <th scope="col">Dados</th>
             </tr>
           </thead>
+        </table>
+        <div class="tabela-corpo">
+          <table class="table table-hover">
+            <colgroup>
+              <col style="width: 19.1%">
+              <col style="width: 18%">
+              <col style="width: 19%">
+              <col style="width: 19%">
+              <col style="width: 17.1%">
+              <col style="width: 19%">
+            </colgroup>
           <tbody>
               {% for pessoa in colaboradores %}
             <tr>
               <td>{{pessoa.nome}}</td>
               <td>{{pessoa.login}}</td>
-              <td>{{pessoa.email}}</td>
+              <td>{{pessoa.email|slice:":11" }}...</td>
               <td><span
                 class="situation-dot {% if pessoa.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
               </span>
@@ -232,6 +248,7 @@ td .situation-dot.inactive {
 
           </tbody>
         </table>
+        </div>
       </div>  
       <br><br>
       <button onclick="exibirModal()">Adicionar Colaborador +</button>

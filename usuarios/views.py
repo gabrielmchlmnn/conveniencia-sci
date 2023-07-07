@@ -88,4 +88,12 @@ def RedefinirSenhaUser(request,id):
 
     else:
         return render(request, 'usuarios/redefinir_senha.html',{'id':usuario.id})
+    
+
+def DeletarUser(request,id):
+    usuario = User.objects.get(id=id)
+    print(usuario)
+    usuario.delete()
+    return redirect('ListarUser')
+
             

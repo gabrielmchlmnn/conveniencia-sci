@@ -16,9 +16,11 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib import colors
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMessage
 from django.template.loader import render_to_string
-
+import subprocess
+from reportlab.pdfgen import canvas
+from weasyprint import HTML
 
 
 lista_carrinho = []
@@ -41,8 +43,12 @@ def AdicionarItem(request):
         lista_cods = Produtos.objects.values_list('cod_barras',flat=True)
         if int(input_codbarras) in lista_cods:
             produto = Produtos.objects.get(cod_barras=int(input_codbarras))
-            lista_carrinho.append({'produto':produto.nome, 'preco':produto.preco,'id':produto.id})
-            return redirect('Carrinho')
+            if produto.situacao == True:
+                lista_carrinho.append({'produto':produto.nome, 'preco':produto.preco,'id':produto.id})
+                return redirect('Carrinho')
+            else:
+                messages.error(request,'Produto inativado!')
+                return redirect('Carrinho')
         
         else:
             messages.error(request,'Código de barras inválido!')
@@ -65,6 +71,7 @@ def RegistrarCompra(request):
         user = Colaboradore.objects.get(login=usuario)
         mensal = 0
         data = datetime.now()
+        print(data)
         user = Colaboradore.objects.get(login=usuario)
         ultimo_26 = datetime(data.year, data.month, 26)
         hoje = datetime.now().date()
@@ -109,16 +116,22 @@ def RegistrarCompra(request):
                 context = {
                     'aviso':'aviso','colaborador':user.nome,'total':soma,'ultima_ref':ultima_referencia,'mensal':mensal
                 }
-                html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':user.nome,'total':soma})
-                send_mail(
-                        'Compra realizada na conveniência!',
-                        'Segue abaixo as suas compras!',
-                        'testeacademia@sci.com.br',
-                        ['michelmanngabriel@gmail.com'],
-                        fail_silently=False,
-                        html_message=html_content
-                    )
-                print('sucesso')
+                html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':user.nome,'total':soma,'data':data})
+                pdf = 'relatorio_de_compra.pdf'
+                HTML(string=html_content).write_pdf(pdf)
+
+
+
+                email = EmailMessage('Compra realizada na conveniência!',
+                                    'Segue em anexo os detalhes da sua compra!',
+                                    'testeacademia@sci.com.br',
+                                    ['michelmanngabriel@gmail.com']
+                                )
+                with open(pdf, 'rb') as f:
+                    email.attach('relatorio_de_compra.pdf', f.read(), 'application/pdf')
+
+                # Envia o email
+                email.send()
                 return render(request,'compras/registrar_compra.html',context=context)
         else:
             messages.error(request,'Colaborador desligado!Consulte o RH.')

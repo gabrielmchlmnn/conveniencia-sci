@@ -29,16 +29,17 @@
     height: 100vh; 
   }
   table,th,td{
-      border: 1px solid black;
+      border: 0.5px solid black;
       border-collapse: collapse;
       margin: 0 auto;
   }
   td,th{
       padding: 10px;
-      background-color: aliceblue;
+      background-color: white;
       text-align: center;
       width:30%;
-  }
+      font-size: larger;
+    }
     button{
         background-color: dodgerblue;
         border:none;
@@ -203,7 +204,7 @@ div.modal-content {
         <form method="post" action="{% url 'CadastrarUser'%}">
           {% csrf_token %}
           <h1>-CADASTRAR- <br>  
-              USUÁRIO </h1>
+              USUÁRIO </h1><br>
           <label for="username">Nome de usuário:</label><br>
           <input type="text" name="username" placeholder="Digite o nome de usuário:" id="username" valeu="{{username}}" required><br><br>
 
