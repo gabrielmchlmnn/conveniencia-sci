@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
-from produtos.models import Produtos
+from produtos.models import Produtos,Estoque
 from .models import Compra,ItemCompra
 from colaboradores.models import Colaboradore
 from datetime import datetime
@@ -10,15 +10,9 @@ from fpdf import FPDF
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from django.contrib import messages
-from django.contrib.auth.hashers import check_password
 from hashlib import md5
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib import colors
-from django.shortcuts import get_object_or_404
-from django.template.loader import get_template
 from django.core.mail import send_mail,EmailMessage
 from django.template.loader import render_to_string
-import subprocess
 from reportlab.pdfgen import canvas
 from weasyprint import HTML
 
@@ -57,9 +51,16 @@ def AdicionarItem(request):
        return render(request,'compras/registrar_compra.html')
     
 
-    
+def DescontarEstoque(nmr_produto:int,quantidade_descontada):
+    produto = Estoque.objects.get(produto=int(nmr_produto))
+    Estoque.objects.filter(id=int(nmr_produto)).update(quantidade=produto.quantidade-quantidade_descontada)
+
+
+
 def RegistrarCompra(request):
     soma = 0
+    ingresso = False
+    lista_ingressos = []
     usuario = request.POST.get('login')
     senha = request.POST.get('senha')
     senha = str(senha).encode('utf8')
@@ -102,6 +103,11 @@ def RegistrarCompra(request):
 
                 for produto_id, quantidade in carrinho_quantidades.items():
                     produto = Produtos.objects.get(id=int(produto_id))
+                    if produto.tipo == 'Ingresso':
+                        ingresso = True
+                        lista_ingressos.append({'nome':produto.nome,'preco':produto.preco,'quantidade':quantidade,'total':quantidade*produto.preco})
+
+                    DescontarEstoque(int(produto_id),quantidade)
                     item_compra = ItemCompra(compra=nova_compra, produto_id=produto_id, quantidade=quantidade,preco_unitario=produto.preco,total=quantidade*produto.preco)
                     item_compra.save()
                     cont +=1
@@ -116,21 +122,29 @@ def RegistrarCompra(request):
                 context = {
                     'aviso':'aviso','colaborador':user.nome,'total':soma,'ultima_ref':ultima_referencia,'mensal':mensal
                 }
+
+
+                if ingresso == True:
+                    html_content = render_to_string('compras/template_email_ingressos.html', {'produtos': lista_ingressos,'colaborador':user.nome,'total':sum(dicionario['total'] for dicionario in lista_ingressos),'data':data})
+                    send_mail('Compra de ingresso realizada na conveniência!',
+                                    f"""O colaborador {user.nome} comprou {len(lista_ingressos)} ingressos!
+                                    \n\nAtt, Conveniência SCI""",
+                                    'testeacademia@sci.com.br',
+                                    ['gabriel_michelmann@estudante.sc.senai.br'],
+                                    html_message=str(html_content))
+
+                
                 html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':user.nome,'total':soma,'data':data})
                 pdf = 'relatorio_de_compra.pdf'
                 HTML(string=html_content).write_pdf(pdf)
-
-
-
                 email = EmailMessage('Compra realizada na conveniência!',
-                                    'Segue em anexo os detalhes da sua compra!',
+                                    'Segue em anexo os detalhes da sua compra!\n\nAtt, Conveniência SCI!',
                                     'testeacademia@sci.com.br',
                                     ['michelmanngabriel@gmail.com']
                                 )
                 with open(pdf, 'rb') as f:
                     email.attach('relatorio_de_compra.pdf', f.read(), 'application/pdf')
 
-                # Envia o email
                 email.send()
                 return render(request,'compras/registrar_compra.html',context=context)
         else:

@@ -111,7 +111,7 @@
 }
 
 div.modal-content {
-  margin: 7% auto;
+  margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 50%;
@@ -237,9 +237,14 @@ input{
               <td>{{pessoa.login}}</td>
               <td>{{pessoa.email|slice:":11" }}...</td>
               <td><span
-                class="situation-dot {% if pessoa.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
+                class="situation-dot {% if pessoa.situacao %}active{% else %}inactive{% endif %}">
               </span>
-                {{pessoa.situacao}}</td>
+              {% if pessoa.situacao%}
+                Ativo
+              {%else%}
+              Inativo
+              {%endif%}
+              </td>
 
               <td><a href="{% url 'EditarColab' id=pessoa.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
               <td><img class="img" src="https://thumbs2.imgbox.com/30/fa/C6pC8uQH_t.png" alt="Imagem" onclick="exibirModalVisu('{{ pessoa.nome }}', '{{ pessoa.login }}', '{{ pessoa.email }}', '{{ pessoa.situacao }}', '{{pessoa.cpf}}')"/></td>

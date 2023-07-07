@@ -14,6 +14,9 @@ from hashlib import md5
 from django.urls import reverse
 from validate_docbr import CPF
 from django.views.decorators.cache import never_cache
+from django.db.models import Q
+from produtos.models import Estoque
+
 
 
 # Create your views here.
@@ -52,8 +55,9 @@ def Home(request):
         dia_25_mes_passado = hoje.replace(day=25)
         
     quantidade_compras_ultima_ref = Compra.objects.filter(data__gte=dois_meses_atras,data__lte = dia_25_mes_passado).count()
+    estoque = Estoque.objects.all()
     context = {
-       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref
+       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':estoque
     }
     return render(request,'home/home.html',context=context)
 
@@ -123,11 +127,6 @@ def AdicionarColab(request):
 @login_required(login_url='Login')
 def MostrarColab(request):
     colaboradores = Colaboradore.objects.all()
-    for i in colaboradores:
-        if i.situacao:
-            i.situacao = 'Ativo'
-        else:
-            i.situacao = 'Inativo'
     return render(request,'colab/mostrar_colab.html',{'colaboradores':colaboradores})
 
 @login_required(login_url='Login')
@@ -185,7 +184,7 @@ def EditarColab(request,id):
 def FiltrarColab(request):
     if request.method == 'GET':
         search_term = request.GET.get('search')
-        colaboradores_filtrados = Colaboradore.objects.filter(nome__icontains=search_term)
+        colaboradores_filtrados = Colaboradore.objects.filter(Q(nome__icontains=search_term) | Q(cpf__icontains=search_term))
         return render(request, 'colab/mostrar_colab.html', {'colaboradores': colaboradores_filtrados})
     
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Produtos
+from .models import Produtos,Estoque
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
@@ -19,6 +19,8 @@ def AdicionarProdu(request):
         if int(cod_barras) not in lista_cods:
             novo_produto = Produtos(nome=nome,cod_barras=int(cod_barras),preco=preco,tipo=tipo)
             novo_produto.save()
+            estoque_novo = Estoque(produto=novo_produto,quantidade=0)
+            estoque_novo.save()
             return redirect('ListarProdu')
         else:
             messages.error(request,'Código de barras já cadastrado!')

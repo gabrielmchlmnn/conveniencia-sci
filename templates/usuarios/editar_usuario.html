@@ -106,7 +106,7 @@ div{
             <button type="submit">Atualizar usuário</button>
             <br><br>
           </form>
-          <button class="excluir" data-user-id="{{ id }}"onclick="confirmarExclusao('{{id}}')">Excluir</button>
+          <a href="{% url 'DeletarUser' id=id%}"><button class="excluir" data-user-id="{{ id }}"onclick="return confirm('Você deseja excluir esse usuário?')">Excluir</button></a>
 
           {% if messages %}
           {% for message in messages %}
@@ -127,12 +127,6 @@ div{
         }, 3000);
         });
 
-    function confirmarExclusao(id) {
-      if (confirm("Tem certeza de que deseja excluir o usuário de ID " + id + "?")) {
-        var url = "/deletar-usuario/" + id + "/";
-        window.location.href = url;
-      }
-    }
     </script>
 
 </body>

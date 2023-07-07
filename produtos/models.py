@@ -21,4 +21,4 @@ class Estoque(models.Model):
     quantidade = models.IntegerField()
 
     def __str__(self) -> str:
-        return self.produto
+        return self.produto.nome

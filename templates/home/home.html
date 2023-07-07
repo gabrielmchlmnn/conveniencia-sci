@@ -19,7 +19,7 @@
   }
   td,th{
       padding: 10px;
-      background-color: rgba(240, 248, 255, 0.849);
+      background-color: rgba(240, 248, 255, 0.842);
       text-align: center;
       color:black;
       border-radius: 5px;
@@ -35,16 +35,36 @@
   .linha{
     display: flex;
     justify-content: space-around;
+    right: -10%;
+    top:50%;
+    transform: translate(-50%,-50%);
+    position: absolute;
 
   }
   .tabela{
     position: relative;
     top: 10px; /* Ajuste a posição verticalmente */
-    right: 500px; 
+    right: 280px; 
     border-radius: 5px;
     overflow: auto;
     height: 20px;
   }
+  .estoque{
+    position: relative;
+    right:10%;
+    top:80%;
+    width: 30%;
+    height: 40%;
+    border:30px;
+  }
+ .cor-de-fundo{
+      background-color: rgba(49, 185, 185, 0.377);
+      align-items: center;
+      position: relative;
+      right: 20%;
+      top:30%;
+      max-width: 450px;
+ }
 </style>
 </head>
 <body>
@@ -69,12 +89,40 @@
 
     </tbody>
   </table>
-  <div id="chartContainer" style="width: 400px; height: 400px;justify-content: center;">
+
+  <div class="estoque">
+      <div class="cor-de-fundo">
+        <div class="estoque-content">
+          <table class="tabela-estoque">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Quantidade</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for item in estoque %}
+              <tr>
+                <td>{{item.produto.nome}}</td>
+                <td>{{item.quantidade}}</td>
+              {%endfor%}
+        
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+  </div>
+
+
+
+
+  <div id="chartContainer" style="width: 400px; height: 400px;justify-content: center;position:relative;left: 0%;">
     <canvas id="myChart" ></canvas>
   </div>
+
 </div>
 <br><br> 
-
 
 
 
@@ -84,8 +132,8 @@
 
 <script>
   // Obtém os valores do contexto passados pela view
-  var valor1 = {{ compras_mensal }};
-  var valor2 = {{ compras_ultima_ref }};
+  var valor1 = "{{ compras_mensal }}";
+  var valor2 = '{{ compras_ultima_ref }}';
 
   // Dados do gráfico
   var data = {
