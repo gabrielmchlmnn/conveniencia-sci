@@ -19,7 +19,7 @@
   }
   td,th{
       padding: 10px;
-      background-color: rgba(240, 248, 255, 0.842);
+      background-color: rgb(240, 248, 255);
       text-align: center;
       color:black;
       border-radius: 5px;
@@ -53,18 +53,45 @@
     position: relative;
     right:10%;
     top:80%;
-    width: 30%;
+    width: 40%;
     height: 40%;
     border:30px;
-  }
- .cor-de-fundo{
-      background-color: rgba(49, 185, 185, 0.377);
+    z-index: 1;
+  
+ }
+.estoque-content{
+      background-color: rgba(182, 182, 255, 0.74);
       align-items: center;
       position: relative;
       right: 20%;
       top:30%;
       max-width: 450px;
- }
+      z-index: -1;
+      border-radius: 10px;
+      overflow: auto;
+    height: 400px;
+    transform: translate(10%,-15%);
+    border:1px solid rgba(0, 0, 0, 0.514);
+
+}
+.graf-pizza{
+  transform: translate(40%,-45%);
+  color:black
+}
+.tabela-compradores{
+  transform: translate(-160%,-45%);
+}
+
+.situacao-amarelo{
+  background-color: yellow;
+
+}
+.situacao-vermelho{
+  background-color: red;
+}
+.situacao-laranja{
+  background-color: orange;
+}
 </style>
 </head>
 <body>
@@ -73,7 +100,7 @@
 
 
 <div class="linha">
-    <table class="tabela">
+    <table class="tabela-compradores">
     <thead class="thead-light">
       <tr>
         <th scope="col">Colaborador</th>
@@ -91,8 +118,9 @@
   </table>
 
   <div class="estoque">
-      <div class="cor-de-fundo">
-        <div class="estoque-content">
+        <div class="estoque-content" style="text-align: center;">
+          <h1>Estoque</h1>
+          <a href="{% url 'ListarEstoque' %}">
           <table class="tabela-estoque">
             <thead class="thead-light">
               <tr>
@@ -103,22 +131,28 @@
             <tbody>
                 {% for item in estoque %}
               <tr>
-                <td>{{item.produto.nome}}</td>
-                <td>{{item.quantidade}}</td>
+                  <td>{{item.produto.nome}}</td>
+                  {% if item.cor == 'amarelo'%}
+                  <td class="situacao-amarelo">{{item.quantidade}}</td>
+                  {%elif item.cor == 'laranja'%}
+                  <td class="situacao-laranja">{{item.quantidade}}</td>
+                  {%elif item.cor == 'vermelho'%}
+                  <td class="situacao-vermelho">{{item.quantidade}}</td>
+                  {%endif%}
+              </tr>
               {%endfor%}
         
             </tbody>
           </table>
-
+          </a>
         </div>
-      </div>
   </div>
 
 
 
 
   <div id="chartContainer" style="width: 400px; height: 400px;justify-content: center;position:relative;left: 0%;">
-    <canvas id="myChart" ></canvas>
+    <canvas id="myChart" class="graf-pizza" ></canvas>
   </div>
 
 </div>

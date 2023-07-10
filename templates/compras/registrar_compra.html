@@ -108,7 +108,12 @@
 
     .esvaziar {
         background-color: red;
-        color:black
+        color:black;
+        width: 30%;
+        position: relative;
+        top:50%;
+        left:0;
+        transform: translate(-0%,-135%)
     }
     .esvaziar:hover{
         background: rgb(170, 26, 26);
@@ -188,6 +193,16 @@ div.modal-content {
         top:0;
 
 }
+.adicionar{
+    width: 70%;
+}
+
+.botao-adicionar{
+    width: 20%;
+    height: 20%;
+    transform: translate(20%,0%);
+
+}
 
     </style>
 </head>
@@ -252,16 +267,16 @@ div.modal-content {
                 {%endif%}
 
             <label for="valores[]">Código de barras:</label><br><br>
-            <input type="number" name="valores[]" placeholder="Digite o código de barras" id="item" type="text" required>
+            <input class="adicionar" type="number" name="valores[]" placeholder="Digite o código de barras" id="item" type="text" required>
+  
+            <button class="botao-adicionar" type="submit">Adicionar</button><br>
             {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags != 'success'%}
-                            <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
-                    {%endif%}
-                {% endfor %}
-            {%endif%}   
-            <br><br>
-            <button class="enviar-dados" type="submit">Adicionar</button><br>
+            {% for message in messages %}
+                {% if message.tags != 'success'%}
+                        <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+                {%endif%}
+            {% endfor %}
+        {%endif%} 
           </form>
 
           <br>

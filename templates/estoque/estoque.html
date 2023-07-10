@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque</title>
+    <style>
+    *{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+    .container{
+        background-color: rgba(0, 0, 0, 0.8);
+        padding:50px;
+        border-radius:15px;
+        width: 60%;
+        margin:auto;
+        margin-top:2%;
+        text-align: center;
+    }
+    body {
+      background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  table,th,td{
+      border: 0.5px solid black;
+      border-collapse: collapse;
+      margin: 0 auto;
+  }
+  td,th{
+      padding: 10px;
+      background-color: white;
+      text-align: center;
+      font-size: larger;
+      width: 300px;
+    }
+    td .situation-dot.active {
+    background-color: green;
+    border-color: green;
+  }
+
+  td .situation-dot.inactive {
+    background-color: red;
+    border-color: red;
+  }
+  .situation-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+  }
+  th{
+      background-color: darkblue;
+      color:white;
+      border-radius: 5px;
+      width: 300px;
+  }
+  h1{
+      color:white;
+      text-align: center;
+  }
+
+.search-form {
+    align-items: center; /* Alinhar verticalmente os elementos filhos */
+  }
+
+  .search-form input[type="text"] {
+    padding: 8px; /* Espaçamento interno do campo de entrada */
+    font-size: 14px; /* Tamanho da fonte do campo de entrada */
+    border: 1px solid #ccc; /* Borda do campo de entrada */
+    border-radius: 4px; /* Borda arredondada do campo de entrada */
+  }
+
+  .search-form input[type="submit"] {
+    background-color: dodgerblue; /* Cor de fundo do botão de envio */
+    color: white; /* Cor do texto do botão de envio */
+    padding: 8px 16px; /* Espaçamento interno do botão de envio */
+    border: none; /* Remover borda do botão de envio */
+    border-radius: 4px; /* Borda arredondada do botão de envio */
+    cursor: pointer; /* Cursor do mouse em formato de mão */
+  }
+  .tabela-scroll {
+  height: 500px; /* Defina a altura desejada para o scroll */
+  overflow: auto;
+}
+  div.modal {
+  display: none;
+  z-index: 1;
+  left: 50%;
+  top: 55%;
+  width: 60%;
+  transform: translate(-50%,-50%);
+  height: 85%;
+  text-align: center;
+  background-color: rgba(30, 27, 53, 0.952); 
+  position: absolute;
+  border-radius: 30px;
+  color:azure
+}
+
+div.modal-content {
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+.fechar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+input{
+        padding:15px;
+        border:none;
+        padding:13px;
+        width: 90%;
+        border-radius: 10px;
+    }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+    }
+    button:hover{
+        background-color: deepskyblue;
+    }
+    #barra_de_pesquisa{
+      width: 50%;
+      right:14%;
+      position: relative;
+    }
+    #botao_pesquisa{
+      position: relative;
+      right:12%;
+      width: 20%;
+      height: 15%;
+    }
+    .error-message {
+    color: #ff0000; 
+    font-weight: bold; 
+    font-size: 16px; 
+    background-color: #ffbdbd;
+    border-radius: 10px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border:solid 1.5px rgb(255, 1, 1);
+    }
+    img{
+      height: 40px;
+      width: 40px;
+      cursor:pointer
+    }
+    .tabela-corpo {
+  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
+  overflow-y: scroll;
+}
+
+
+</style>
+
+</head>
+<body>
+
+  {% include 'navbar.html' %}
+
+    <div class="container">
+        <h1>Estoque</h1><br><br><br>
+
+
+        <div class="search-form">
+          <form action="{% url 'FiltrarProdu' %}" method="get">
+              <div class="search-container">
+                  <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input">
+                  <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
+              </div>
+          </form>
+      </div>
+      <br><br>
+      <div class="tabela-scroll">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Editar</th>
+            </tr>
+          </thead>
+        </table>
+        <div class="tabela-corpo">
+          <table class="table table-hover">
+          <tbody>
+              {% for produto in estoque %}
+            <tr>
+              <td>{{produto.produto.nome}}</td>
+              <td>{{produto.quantidade}}</td>
+              <td><button type="button" onclick="exibirModal('{{ produto.produto.id }}')" data-value="{{ produto.produto }}">Adicionar +</button></td>            </tr>
+            {%endfor%}
+
+          </tbody>
+        </table>
+        </div>
+      </div>
+        <br><br>
+    </div>
+    <div id="meuModal" class="modal">
+      <div class="modal-content">
+        <span class="fechar" onclick="fecharModal()">&times;</span>
+        
+        <form id="meuFormulario" method="post" >
+          {% csrf_token %}
+          <h1>-Adicionar-<br>no estoque</h1>
+          <br><br>
+
+          <label for="quantidade">Digite a quantidade:</label><br><br>
+          <input type="number" placeholder="Quantidade:" name="quantidade" id="quantidade" value="{{quantidade}}" required><br><br><br>
+
+          <br><br><br><br>
+
+
+          <button type="submit">Adicionar</button>   
+      </form>
+
+
+
+      </div>
+    </div>
+
+    <script>
+          function exibirModal(id) {
+          var modal = document.getElementById("meuModal");
+          modal.style.display = "block";
+          var formulario = document.getElementById('meuFormulario');
+          var url = formulario.getAttribute('action');
+          var novaUrl = "{% url 'AtualizarEstoque' 0 %}".replace('0', id);
+          formulario.setAttribute('action', novaUrl);
+          }
+
+        function fecharModal() {
+        var modal = document.getElementById("meuModal");
+        modal.style.display = "none";
+        window.location.href = "{% url 'ListarEstoque'%}"
+        }
+
+    </script>
+</body>
+</html>

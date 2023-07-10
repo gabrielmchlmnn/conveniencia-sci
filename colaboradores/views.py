@@ -55,9 +55,18 @@ def Home(request):
         dia_25_mes_passado = hoje.replace(day=25)
         
     quantidade_compras_ultima_ref = Compra.objects.filter(data__gte=dois_meses_atras,data__lte = dia_25_mes_passado).count()
-    estoque = Estoque.objects.all()
+    estoque = Estoque.objects.filter(quantidade__lt=10).order_by('quantidade')
+    lista_estoque = []
+    for i in estoque:
+        if i.quantidade <10 and i.quantidade>5:
+            lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'amarelo'})
+        elif i.quantidade < 6 and i.quantidade>0:
+            lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'laranja'})
+        elif i.quantidade <=0:
+                lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'vermelho'})
+    print(lista_estoque)
     context = {
-       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':estoque
+       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':lista_estoque
     }
     return render(request,'home/home.html',context=context)
 
