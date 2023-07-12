@@ -30,7 +30,7 @@
 
 <h3>Confira abaixo os dados da sua compra!</h3><br>
 
-    <h1 style="text-align: center;">Total:R${{total}} <br></h1>   <h3>Data:{{data}}</h3>
+    <h1 style="text-align: center;">Total:R${{total}}</h1>  <br><br>  <h3>Data:{{data}}</h3>
     
     <br>
     <table class="table table-hover" style="margin: 0 auto;position: fixed;width: 40%;">
@@ -47,9 +47,9 @@
             {% for produto in produtos %}
           <tr>
             <td style="text-align: center;">{{produto.nome}}</td>
-            <td style="text-align: center;">{{produto.preco}}</td>
+            <td style="text-align: center;">R${{produto.preco}}</td>
             <td style="text-align: center;">{{produto.quantidade}}</td>
-            <td style="text-align: center;">{{produto.total}}</td>
+            <td style="text-align: center;">R${{produto.total}}</td>
           </tr>
           {%endfor%}
           </div>

@@ -12,5 +12,6 @@ urlpatterns = [
    path('home/',include('usuarios.urls')),
    path('home/editar-colaborador/<int:id>/',EditarColab,name='EditarColab'),
    path('home/filtrar-colaboradores',FiltrarColab,name="FiltrarColab"),
-   path('home/colaborador/redefinir-senha/<int:id>',RedefinirSenha,name='RedefinirSenha')
+   path('home/colaborador/redefinir-senha/<int:id>',RedefinirSenha,name='RedefinirSenha'),
+   path('home/',include('estoque.urls')),
    ]

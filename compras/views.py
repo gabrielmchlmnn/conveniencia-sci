@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
-from produtos.models import Produtos,Estoque
+from produtos.models import Produtos
 from .models import Compra,ItemCompra
 from colaboradores.models import Colaboradore
 from datetime import datetime
@@ -15,7 +15,8 @@ from django.core.mail import send_mail,EmailMessage
 from django.template.loader import render_to_string
 from reportlab.pdfgen import canvas
 from weasyprint import HTML
-
+from estoque.models import Estoque
+from django.utils import timezone
 
 lista_carrinho = []
 
@@ -54,13 +55,16 @@ def AdicionarItem(request):
 def DescontarEstoque(nmr_produto:int,quantidade_descontada):
     produto = Estoque.objects.get(produto=int(nmr_produto))
     Estoque.objects.filter(id=int(nmr_produto)).update(quantidade=produto.quantidade-quantidade_descontada)
+    
 
 
 
 def RegistrarCompra(request):
     soma = 0
     ingresso = False
+    roupa = False
     lista_ingressos = []
+    lista_roupas = []
     usuario = request.POST.get('login')
     senha = request.POST.get('senha')
     senha = str(senha).encode('utf8')
@@ -86,7 +90,7 @@ def RegistrarCompra(request):
             dois_meses_atras = dois_meses_atras.replace(year=dois_meses_atras.year-1)
 
         if user.situacao == True:
-                nova_compra = Compra.objects.create(colaborador=Colaboradore.objects.get(login=usuario),data=data,total=soma)
+                nova_compra = Compra.objects.create(colaborador=Colaboradore.objects.get(login=usuario),total=soma)
                 nova_compra.save()
 
                 carrinho_quantidades = {}
@@ -100,14 +104,16 @@ def RegistrarCompra(request):
                         carrinho_quantidades[produto_id] = 1
                 itens_da_compra = []
                 cont = 0
-
                 for produto_id, quantidade in carrinho_quantidades.items():
                     produto = Produtos.objects.get(id=int(produto_id))
                     if produto.tipo == 'Ingresso':
                         ingresso = True
                         lista_ingressos.append({'nome':produto.nome,'preco':produto.preco,'quantidade':quantidade,'total':quantidade*produto.preco})
-
-                    DescontarEstoque(int(produto_id),quantidade)
+                    elif produto.tipo == 'Roupa':
+                        roupa = True
+                        lista_roupas.append({'nome':produto.nome,'preco':produto.preco,'quantidade':quantidade,'total':quantidade*produto.preco})
+                    else:
+                        DescontarEstoque(int(produto_id),quantidade)
                     item_compra = ItemCompra(compra=nova_compra, produto_id=produto_id, quantidade=quantidade,preco_unitario=produto.preco,total=quantidade*produto.preco)
                     item_compra.save()
                     cont +=1
@@ -124,28 +130,40 @@ def RegistrarCompra(request):
                 }
 
 
-                if ingresso == True:
-                    html_content = render_to_string('compras/template_email_ingressos.html', {'produtos': lista_ingressos,'colaborador':user.nome,'total':sum(dicionario['total'] for dicionario in lista_ingressos),'data':data})
-                    send_mail('Compra de ingresso realizada na conveniência!',
-                                    f"""O colaborador {user.nome} comprou {len(lista_ingressos)} ingressos!
-                                    \n\nAtt, Conveniência SCI""",
-                                    'testeacademia@sci.com.br',
-                                    ['gabriel_michelmann@estudante.sc.senai.br'],
-                                    html_message=str(html_content))
+                if ingresso:
+                            html_content = render_to_string('compras/template_email_ingressos.html', {'produtos': lista_ingressos,'colaborador':user.nome,'total':sum(dicionario['total'] for dicionario in lista_ingressos),'data':timezone.now,'quantos':len(lista_ingressos)})
+                            email_ingresso = EmailMessage(
+                                'Compra de ingresso realizada na conveniência!',
+                                html_content,
+                                'testeacademia@sci.com.br',
+                                ['gabriel_michelmann@estudante.sc.senai.br'],
+                            )
+                            email_ingresso.content_subtype = 'html'
+                            email_ingresso.send()
 
-                
-                html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':user.nome,'total':soma,'data':data})
+                if roupa:
+                        html_content = render_to_string('compras/template_email_roupas.html', {'produtos': lista_roupas,'colaborador':user.nome,'total':sum(dicionario['total'] for dicionario in lista_roupas),'data':timezone.now,'quantos':len(lista_roupas)})
+                        email_ingresso = EmailMessage(
+                            'Compra de roupas realizada na conveniência!',
+                            html_content,
+                            'testeacademia@sci.com.br',
+                            ['gabriel_michelmann@estudante.sc.senai.br'],
+                        )
+                        email_ingresso.content_subtype = 'html'
+                        email_ingresso.send()
+
+                html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':user.nome,'total':soma,'data':timezone.now})
                 pdf = 'relatorio_de_compra.pdf'
                 HTML(string=html_content).write_pdf(pdf)
-                email = EmailMessage('Compra realizada na conveniência!',
-                                    'Segue em anexo os detalhes da sua compra!\n\nAtt, Conveniência SCI!',
-                                    'testeacademia@sci.com.br',
-                                    ['michelmanngabriel@gmail.com']
-                                )
+                email_compra = EmailMessage(
+                    'Compra realizada na conveniência!',
+                    'Segue em anexo os detalhes da sua compra!\n\nAtt, Conveniência SCI!',
+                    'testeacademia@sci.com.br',
+                    ['michelmanngabriel@gmail.com']
+)
                 with open(pdf, 'rb') as f:
-                    email.attach('relatorio_de_compra.pdf', f.read(), 'application/pdf')
-
-                email.send()
+                    email_compra.attach('relatorio_de_compra.pdf', f.read(), 'application/pdf')
+                email_compra.send()
                 return render(request,'compras/registrar_compra.html',context=context)
         else:
             messages.error(request,'Colaborador desligado!Consulte o RH.')

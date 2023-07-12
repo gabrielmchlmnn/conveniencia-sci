@@ -1,13 +1,14 @@
 from django.db import models
 from colaboradores.models import Colaboradore
 from produtos.models import Produtos
+from django.utils import timezone
 
 # Create your models here.
 
 class Compra(models.Model):
     colaborador = models.ForeignKey(Colaboradore,on_delete=models.DO_NOTHING)
     produtos = models.ManyToManyField(Produtos,through='ItemCompra')
-    data = models.DateTimeField()
+    data = models.DateTimeField(default=timezone.now)
     total = models.DecimalField(max_digits=8,decimal_places=2)
 
 

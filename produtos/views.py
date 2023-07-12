@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
-from .models import Produtos,Estoque
+from .models import Produtos
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Q
 from django.http import HttpResponseBadRequest
+from estoque.models import Estoque
 
 # Create your views here.
 
@@ -55,7 +56,7 @@ def EditarProdu(request,id):
         
     else:  
         context = {
-        "nome":produto.nome,'cod_barras':produto.cod_barras,'preco':produto.preco,'id':produto.id,'tipo':produto.tipo
+        "nome":produto.nome,'cod_barras':produto.cod_barras,'preco':produto.preco,'id':produto.id,'tipo':produto.tipo,'situacao':produto.situacao
         }
         return render(request,'produtos/editar_produ.html',context=context)
     
@@ -82,44 +83,4 @@ def FiltrarProdu(request):
                 i.situacao = 'Inativo'
         return render(request, 'produtos/listar_produ.html', {'produto': produtos_filtrados})
     
-
-def ListarEstoque(request):
-    if request.method =='GET':
-        context = {
-            'estoque':Estoque.objects.all()
-        }
-        return render(request,'estoque/estoque.html',context=context)
-    else:
-        try:
-            if request.method == 'POST':
-                produto_id = request.GET.get('id')
-                quantidade = request.POST.get('quantidade')
-                Adicionar(produto_id, quantidade)
-                return redirect('ListarEstoque')
-            else:
-                return HttpResponseBadRequest("Invalid request method.")
-        except Exception as erro:
-            messages.error(request, f'{erro}')
-            return redirect('ListarEstoque')
-
-
-
-
-
-
-
-def AtualizarEstoque(request, id):
-    try:
-        if request.method == 'POST':
-            quantidade = request.POST.get('quantidade')
-            produto = Estoque.objects.get(produto=id)
-            produto.quantidade = quantidade
-            produto.save()
-
-            return redirect('ListarEstoque')
-        else:
-            return HttpResponseBadRequest("Invalid request method.")
-    except Exception as erro:
-        messages.error(request, str(erro))
-        return redirect('ListarEstoque')
 

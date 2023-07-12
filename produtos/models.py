@@ -16,9 +16,3 @@ class Produtos(models.Model):
         return self.nome
     
 
-class Estoque(models.Model):
-    produto = models.OneToOneField(Produtos,on_delete=models.DO_NOTHING)
-    quantidade = models.IntegerField()
-
-    def __str__(self) -> str:
-        return self.produto.nome

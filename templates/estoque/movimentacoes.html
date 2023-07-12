@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações</title>
+    <style>
+    *{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+    .container{
+        background-color: rgba(0, 0, 0, 0.8);
+        padding:50px;
+        border-radius:15px;
+        width: 60%;
+        margin:auto;
+        margin-top:2%;
+        text-align: center;
+    }
+    body {
+      background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  table,th,td{
+      border: 0.5px solid black;
+      border-collapse: collapse;
+      margin: 0 auto;
+  }
+  td,th{
+      padding: 10px;
+      background-color: white;
+      text-align: center;
+      font-size: larger;
+      width: 300px;
+    }
+    td .situation-dot.active {
+    background-color: green;
+    border-color: green;
+  }
+
+  td .situation-dot.inactive {
+    background-color: red;
+    border-color: red;
+  }
+  .situation-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+  }
+  th{
+      background-color: darkblue;
+      color:white;
+      border-radius: 5px;
+      width: 300px;
+  }
+  h1{
+      color:white;
+      text-align: center;
+  }
+
+.search-form {
+    align-items: center; /* Alinhar verticalmente os elementos filhos */
+  }
+
+  .search-form input[type="text"] {
+    padding: 8px; /* Espaçamento interno do campo de entrada */
+    font-size: 14px; /* Tamanho da fonte do campo de entrada */
+    border: 1px solid #ccc; /* Borda do campo de entrada */
+    border-radius: 4px; /* Borda arredondada do campo de entrada */
+  }
+
+  .search-form input[type="submit"] {
+    background-color: dodgerblue; /* Cor de fundo do botão de envio */
+    color: white; /* Cor do texto do botão de envio */
+    padding: 8px 16px; /* Espaçamento interno do botão de envio */
+    border: none; /* Remover borda do botão de envio */
+    border-radius: 4px; /* Borda arredondada do botão de envio */
+    cursor: pointer; /* Cursor do mouse em formato de mão */
+  }
+  .tabela-scroll {
+  height: 500px; /* Defina a altura desejada para o scroll */
+  overflow: auto;
+}
+  div.modal {
+  display: none;
+  z-index: 1;
+  left: 50%;
+  top: 55%;
+  width: 60%;
+  transform: translate(-50%,-50%);
+  height: 85%;
+  text-align: center;
+  background-color: rgba(30, 27, 53, 0.952); 
+  position: absolute;
+  border-radius: 30px;
+  color:azure;
+}
+
+div.modal-content {
+  margin: 17% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+.fechar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+input{
+        padding:15px;
+        border:none;
+        padding:13px;
+        width: 90%;
+        border-radius: 10px;
+    }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+    }
+    button:hover{
+        background-color: deepskyblue;
+    }
+    #barra_de_pesquisa{
+      width: 50%;
+      right:14%;
+      position: relative;
+    }
+    #botao_pesquisa{
+      position: relative;
+      right:12%;
+      width: 20%;
+      height: 15%;
+    }
+    .error-message {
+    color: #ff0000; 
+    font-weight: bold; 
+    font-size: 16px; 
+    background-color: #ffbdbd;
+    border-radius: 10px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border:solid 1.5px rgb(255, 1, 1);
+    }
+    img{
+      height: 40px;
+      width: 40px;
+      cursor:pointer
+    }
+    .tabela-corpo {
+  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
+  overflow-y: scroll;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+#filtro {
+  width: 200px; /* Define a largura do seletor */
+  padding: 8px; /* Define o espaçamento interno do seletor */
+  border: 1px solid #ccc; /* Define a borda do seletor */
+  border-radius: 4px; /* Define o raio de borda do seletor */
+  font-size: 16px; /* Define o tamanho da fonte do seletor */
+  cursor: pointer;
+}
+
+/* Estilizando as opções */
+#filtro option {
+  background-color: #fc0000; /* Define a cor de fundo das opções */
+  color: #333; /* Define a cor do texto das opções */
+  cursor:pointer
+}
+
+/* Estilizando a opção selecionada */
+#filtro option:checked {
+  background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
+  font-weight: bold; /* Define o peso da fonte da opção selecionada */
+}
+#botao-tipo-entrada{
+        background-color: deepskyblue;
+        font-size: larger;
+        cursor:pointer;
+        border:1px solid black
+}
+#botao-tipo-baixa{
+  background-color: #fc0000;
+  font-size: larger;
+  cursor: pointer;
+  border:1px solid black;
+}
+#botao-tipo-entrada:hover{
+        background-color: rgb(0, 154, 206);
+        color:white;
+        border:1px solid rgb(255, 255, 255);
+
+}
+#botao-tipo-baixa:hover{
+  background-color: #c20000;
+  color:white;
+  border: 1px solid white
+}
+
+</style>
+
+</head>
+<body>
+
+  {% include 'navbar.html' %}
+
+    <div class="container">
+        <h1>Movimentações</h1><br><br><br>
+
+  
+        <br>
+        <div class="search-form">
+          <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
+              <div class="search-container">
+                  <h2 style="position: relative;color:white;left:40%">Filtrar por:</h2><br>
+                  <select name="filtro" id="filtro" style="position: relative;left:40%;top:-30%" required>
+                    <option disabled selected >--Selecione um filtro--</option>
+                      <option value="data" onclick="exibirModalData()">Data</option>
+                      <option value="data" onclick="exibirModalUsuario()">Usuário</option>
+                      <option value="data" onclick="exibirModalTipo()">Tipo</option>
+                      <option value="geral" onclick="desfazerFiltros()">Desfazer filtros</option>
+                  </select>
+              </div>
+          </form>
+      </div>
+      <br><br>
+      <div class="tabela-scroll">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Produto</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Data</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Usuario</th>
+            </tr>
+          </thead>
+        </table>
+        <div class="tabela-corpo">
+          <table class="table table-hover">
+          <tbody>
+              {% for item in movimentacoes %}
+            <tr>
+              <td>{{item.produto.nome}}</td>
+              <td>{{item.quantidade}}</td>
+              <td>{{item.data}}</td>    
+              <td>{{item.tipo}}</td>
+              <td>{{item.usuario.username}}</td>
+            </tr>
+            {%endfor%}
+
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+        <div id="modal-data" class="modal">
+          <div class="modal-content">
+            <span class="fechar" onclick="fecharModalData()">&times;</span>
+
+
+
+              <div class="search-form">
+                <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
+                    <div class="search-container">
+                      <br><br>
+                      <label for="data_inicio">Data de início:</label><br>
+                      <input type="date" placeholder="Digite uma data:" name="data_inicio"><br><br><br><br><br>
+                      <label for="data_final">Data final:</label><br>
+                      <input type="date" name="data_final"><br><br><br>
+                      <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa" style="position: relative;left:0%;font-size: large;">
+                      <br><br>
+                    </div>
+                </form> 
+              </div>   
+                    <br><br>
+          </div>
+        </div>
+
+    <div id="modal-usuario" class="modal">
+      <div class="modal-content">
+        <span class="fechar" onclick="fecharModalUsuario()">&times;</span>
+
+          <div class="search-form">
+            <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
+                <div class="search-container">
+                  <br><br>
+                  <select name="usuario" id="filtro"  required>
+                    <option disabled selected >--Selecione um usuario--</option>
+                      {%for item in usuarios %}
+                       <option value="{{item.username}}">{{item.username}}</option>
+                       {%endfor%}
+                  </select><br><br><br><br>
+                  <button type="submit" value="Filtrar" class="search-button" id="botao_pesquisa" style="position: relative;left:0;font-size: large;color:#f9f9f9">Filtrar</button>
+
+                  <br><br>
+                </div>
+            </form>
+          </div>
+      </div>
+          <br><br>
+    </div>
+  
+    <div id="modal-tipo" class="modal">
+      <div class="modal-content">
+        <span class="fechar" onclick="fecharModalTipo()">&times;</span>
+          <br><br>
+          <div class="search-form">
+            <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
+                  <button type="submit" value="Entrada" class="search-button" id="botao-tipo-entrada" name="botao_tipo">Entrada</button><br><br>
+                  <button type="submit" value="Saída" class="search-button" id="botao-tipo-baixa" name="botao_tipo">Saída</button>
+                  <br><br>
+                </div>
+            </form>
+          </div>
+      </div>
+          <br><br>
+    </div>
+
+
+    <script>
+        function exibirModalData() {
+            var modal = document.getElementById("modal-data");
+            modal.style.display = "block";
+          }
+
+          function fecharModalData() {
+          var modal = document.getElementById("modal-data");
+          modal.style.display = "none";
+        }
+
+        function desfazerFiltros(){
+          window.location.href = "{% url 'ListarMovimentacoes'%}"
+        }
+        function exibirModalUsuario (){
+          var modal = document.getElementById("modal-usuario");
+            modal.style.display = "block";
+        }
+        function fecharModalUsuario () {
+          var modal = document.getElementById('modal-usuario');
+          modal.style.display = 'none';
+        }
+
+        function exibirModalTipo () {
+          var modal = document.getElementById('modal-tipo');
+          modal.style.display = 'block';
+        }
+        function fecharModalTipo() {
+          var modal = document.getElementById('modal-tipo');
+          modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

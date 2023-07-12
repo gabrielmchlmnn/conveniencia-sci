@@ -1,0 +1,58 @@
+<style>
+    table,th,td{
+        border: 1px solid black;
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+      .celulas{
+        padding: 10px;
+        background-color: aliceblue;
+        text-align: center;
+        width:30%;
+    }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+    }
+    th{
+        background-color: darkblue;
+        color:aliceblue
+      }
+  
+  </style>
+  
+  
+  <h4>O colaborador {{colaborador}} comprou roupas!
+    <br><br>Att, Conveniência SCI!</h4>
+  <h3>Confira abaixo as roupas compradas!</h3><br>
+  
+      <h1 style="text-align: center;">Total:R${{total}}</h1><br>   <h3>Data:{{data}}</h3>
+      
+      <br>
+      <table class="table table-hover" style="margin: 0 auto;position: fixed;width: 40%;">
+          <thead class="thead-light" style="background-color: darkblue;color:aliceblue;width: 100px;">
+            <tr>
+              <th scope="col">Nome do produto</th>
+              <th scope="col">Preço</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <div class="celulas" style="background-color: aliceblue;text-align: center;width:100px;">
+              {% for produto in produtos %}
+            <tr>
+              <td style="text-align: center;">{{produto.nome}}</td>
+              <td style="text-align: center;">R${{produto.preco}}</td>
+              <td style="text-align: center;">{{produto.quantidade}}</td>
+              <td style="text-align: center;">R${{produto.total}}</td>
+            </tr>
+            {%endfor%}
+            </div>
+  
+          </tbody>
+        </table>
+        <br><br>

@@ -97,11 +97,11 @@
   }
   div.modal {
   display: none;
-  z-index: 1;
-  left: 50%;
+  z-index: 999;
+  left: 20%;
   top: 55%;
   width: 60%;
-  transform: translate(-50%,-50%);
+  transform: translate(-0%,-50%);
   height: 85%;
   text-align: center;
   background-color: rgba(30, 27, 53, 0.952); 
@@ -116,7 +116,7 @@ div.modal-content {
   border: 1px solid #888;
   width: 50%;
   border-radius: 15px;
-  background-color: #b0bfff;
+  background-color: #e8ecff;
   color:black
 }
 .fechar {
@@ -180,6 +180,36 @@ input{
   height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
   overflow-y: scroll;
 }
+.modal-entrada {
+  animation-name: modalEntrada;
+  animation-duration: 0.5s;
+}
+.modal-entrada-dados {
+  animation-name: modalEntrada-dados;
+  animation-duration: 0.5s;
+}
+
+@keyframes modalEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes modalEntrada-dados {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
       </style>
 </head>
 <body>
@@ -237,13 +267,8 @@ input{
               <td>{{pessoa.login}}</td>
               <td>{{pessoa.email|slice:":11" }}...</td>
               <td><span
-                class="situation-dot {% if pessoa.situacao %}active{% else %}inactive{% endif %}">
-              </span>
-              {% if pessoa.situacao%}
-                Ativo
-              {%else%}
-              Inativo
-              {%endif%}
+                class="situation-dot {% if pessoa.situacao == 'Ativo'%}active{% else %}inactive{% endif %}">
+              </span> {{pessoa.situacao}}
               </td>
 
               <td><a href="{% url 'EditarColab' id=pessoa.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
@@ -302,10 +327,10 @@ input{
 <!-- Exemplo de modal com Bootstrap -->
 <div class="modal" id="modalVisualizar" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
-      <div class="modal-content">
+      <div class="modal-content" id="modal-content">
           <div class="modal-header">
               <h1 class="modal-title" style="color:#2c2c2c">Visualizar Dados</h1>
-              <span class="fechar" onclick="fecharModal_visu()">&times;</span>
+              <span class="fechar" style="position: relative;margin: -8% 0;" onclick="fecharModal_visu()">&times;</span>
           </div>
           <br><br>
           <div class="modal-body">
@@ -332,6 +357,7 @@ input{
           document.getElementById('cpfPessoa').textContent = 'CPF: ' + cpf;
           document.getElementById('situacaoPessoa').textContent = 'Situação: ' + situacao;
 
+
         var modal = document.getElementById("modalVisualizar");
         modal.style.display = "block";
         }
@@ -339,18 +365,23 @@ input{
         function fecharModal_visu() {
         var modal = document.getElementById("modalVisualizar");
         modal.style.display = "none";
+        var modalCentro = document.getElementById('modal-content')
+        modalCentro.classList.add("modal-entrada-dados");
+
         }
 
 
         function exibirModal() {
         var modal = document.getElementById("meuModal");
         modal.style.display = "block";
+        modal.classList.add("modal-entrada");
 
         }
 
         function fecharModal() {
         var modal = document.getElementById("meuModal");
         modal.style.display = "none";
+        window.location.href = "{% url 'MostrarColab' %}"
         }
         
         function formatarCPF() {

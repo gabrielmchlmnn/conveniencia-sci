@@ -61,6 +61,7 @@
       padding: 15px;
       width: 100%;
       border-radius: 10px;
+      cursor: pointer;
   }
   th{
       background-color: darkblue;
@@ -144,9 +145,6 @@ input{
         width: 100%;
         border-radius: 10px;
     }
-    button:hover{
-        background-color: deepskyblue;
-    }
     #barra_de_pesquisa{
       width: 50%;
       right:14%;
@@ -179,7 +177,67 @@ input{
   overflow-y: scroll;
 }
 
+.adicionar-entrada{
+  background-color: deepskyblue;
+  width: 25%;
+  color:aliceblue;
+  font-weight: bold;
+  border:4px solid aliceblue;
+  height: 5%;
+  position: relative;
+  left:20%
+}
+.adicionar-baixa{
+  background-color: white;
+  font-weight: bold;
+  color:deepskyblue;
+  border:4px solid deepskyblue;
+  width: 25%;
+  left:25%;
+  position: relative;
+  height: 5%;
+}
+.adicionar-entrada:hover{
+  background-color: white;
+  width: 25%;
+  color:rgb(0, 151, 25);
+  font-weight: bold;
+  border:5px solid rgb(0, 151, 25);
+  height: 5%;
+  position: relative;
+  left:20%
+}
+.adicionar-baixa:hover{
+  background-color: rgb(255, 255, 255);
+  font-weight: bold;
+  color:rgb(156, 0, 0);
+  border:5px solid rgb(156, 0, 0);
+  width: 25%;
+  left:25%;
+  position: relative;
+  height: 5%;
+}
+#produto {
+  width: 200px; /* Define a largura do seletor */
+  padding: 8px; /* Define o espaçamento interno do seletor */
+  border: 1px solid #ccc; /* Define a borda do seletor */
+  border-radius: 4px; /* Define o raio de borda do seletor */
+  font-size: 16px; /* Define o tamanho da fonte do seletor */
+  cursor: pointer;
+}
 
+/* Estilizando as opções */
+#produto option {
+  background-color: #fc0000; /* Define a cor de fundo das opções */
+  color: #333; /* Define a cor do texto das opções */
+  cursor:pointer
+}
+
+/* Estilizando a opção selecionada */
+#produto option:checked {
+  background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
+  font-weight: bold; /* Define o peso da fonte da opção selecionada */
+}
 </style>
 
 </head>
@@ -190,9 +248,10 @@ input{
     <div class="container">
         <h1>Estoque</h1><br><br><br>
 
+        
 
         <div class="search-form">
-          <form action="{% url 'FiltrarProdu' %}" method="get">
+          <form action="{% url 'FiltrarEstoque' %}" method="get">
               <div class="search-container">
                   <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input">
                   <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
@@ -206,7 +265,6 @@ input{
             <tr>
               <th scope="col">Nome</th>
               <th scope="col">Quantidade</th>
-              <th scope="col">Editar</th>
             </tr>
           </thead>
         </table>
@@ -217,31 +275,91 @@ input{
             <tr>
               <td>{{produto.produto.nome}}</td>
               <td>{{produto.quantidade}}</td>
-              <td><button type="button" onclick="exibirModal('{{ produto.produto.id }}')" data-value="{{ produto.produto }}">Adicionar +</button></td>            </tr>
+            </tr>
             {%endfor%}
 
           </tbody>
         </table>
         </div>
       </div>
+      <br><br><br>
+      <button class="adicionar-entrada" type="button" onclick="exibirModalEntrada()" data-value="{{ produto.produto }}">Adicionar+<br>entrada</button>  
+      <button class="adicionar-baixa" type="button" onclick="exibirModalBaixa()" data-value="{{ produto.produto }}">Adicionar+<br>baixa</button>
         <br><br>
     </div>
-    <div id="meuModal" class="modal">
+    <div id="modalEntrada" class="modal">
       <div class="modal-content">
-        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <span class="fechar" onclick="fecharModalEntrada()">&times;</span>
         
-        <form id="meuFormulario" method="post" >
+        <form id="meuFormulario" action="{% url 'AdicionarEntrada' %}" method="post">
           {% csrf_token %}
-          <h1>-Adicionar-<br>no estoque</h1>
+          <h1>-Atualizar-<br> estoque</h1>
           <br><br>
+          <label for="produto">Produto:</label><br>
+          <select name="produto" id="produto" required>
+                      <option disabled selected >--Selecione um produto--</option>
+                      {% for item in estoque %}
+                        <option value="{{item.produto.id}}">{{item.produto.nome}}</option>
+                      {%endfor%}
+          </select><br><br>
 
           <label for="quantidade">Digite a quantidade:</label><br><br>
-          <input type="number" placeholder="Quantidade:" name="quantidade" id="quantidade" value="{{quantidade}}" required><br><br><br>
+          <input type="number" min="1" placeholder="Quantidade:" name="quantidade" id="quantidade" value="{{quantidade}}" required><br><br><br>
 
+                  {% if messages %}
+                  {% for message in messages %}
+                      {% if message.message == 'Escolha um produto!'%}
+                      <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+                      <script>
+                          window.onload = function() {
+                          exibirModalEntrada();
+                          };
+                      </script>
+                      {%endif%}
+                  {% endfor %}
+              {%endif%}
           <br><br><br><br>
+          <button type="submit">Atualizar</button>   
+      </form>
 
 
-          <button type="submit">Adicionar</button>   
+
+      </div>
+    </div>
+
+    <div id="modalBaixa" class="modal">
+      <div class="modal-content">
+        <span class="fechar" onclick="fecharModalBaixa()">&times;</span>
+        
+        <form id="meuFormulario2" action="{% url 'BaixarEstoque'%}" method="post" >
+          {% csrf_token %}
+          <h1>-Baixar-<br>no estoque</h1>
+          <br><br>
+          <label for="produto">Produto:</label><br>
+          <select name="produto" id="produto" required >
+                      <option disabled selected >--Selecione um produto--</option>
+                      {% for item in estoque %}
+                        <option value="{{item.produto.id}}">{{item.produto.nome}}</option>
+                      {%endfor%}
+          </select><br><br>
+
+          <label for="quantidade">Digite a quantidade:</label><br><br>
+          <input type="number" min="1" placeholder="Quantidade:" name="quantidade" id="quantidade" value="{{quantidade}}" required><br><br><br>
+
+          {% if messages %}
+          {% for message in messages %}
+              {% if message.message == 'Selecione um produto!'%}
+              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+              <script>
+                  window.onload = function() {
+                  exibirModalBaixa();
+                  };
+              </script>
+              {%endif%}
+          {% endfor %}
+      {%endif%}
+          <br><br><br><br>
+          <button type="submit">Atualizar</button>   
       </form>
 
 
@@ -250,21 +368,37 @@ input{
     </div>
 
     <script>
-          function exibirModal(id) {
-          var modal = document.getElementById("meuModal");
-          modal.style.display = "block";
-          var formulario = document.getElementById('meuFormulario');
-          var url = formulario.getAttribute('action');
-          var novaUrl = "{% url 'AtualizarEstoque' 0 %}".replace('0', id);
-          formulario.setAttribute('action', novaUrl);
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
+
+          function exibirModalEntrada() {
+            var modal = document.getElementById("modalEntrada");
+            modal.style.display = "block";
           }
 
-        function fecharModal() {
-        var modal = document.getElementById("meuModal");
-        modal.style.display = "none";
-        window.location.href = "{% url 'ListarEstoque'%}"
+        function fecharModalEntrada() {
+          var modal = document.getElementById("modalEntrada");
+          modal.style.display = "none";
+          window.location.href = "{% url 'ListarEstoque'%}";
         }
 
+        function exibirModalBaixa() {
+          var modal = document.getElementById("modalBaixa");
+          modal.style.display = "block";
+          }
+
+        function fecharModalBaixa() {
+        var modal = document.getElementById("modalBaixa");
+        modal.style.display = "none";
+        window.location.href = "{% url 'ListarEstoque'%}";
+        }
     </script>
 </body>
 </html>

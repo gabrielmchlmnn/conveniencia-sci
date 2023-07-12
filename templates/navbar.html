@@ -45,6 +45,7 @@
       <a href="{% url 'MostrarColab' %}">Listar colaboradores</a>
       <a href="{% url 'ListarProdu' %}">Listar produtos</a>
       <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+      <a href="{% url 'ListarMovimentacoes'%}">Entradas/Baixas</a>
       {% if user.is_superuser %}
               <a href="{% url 'ListarUser'%}">Usuários</a>
       {% endif %}

@@ -76,6 +76,28 @@
   line-height: 30px;
   border:solid 1.5px rgb(255, 1, 1);
 }
+#tipo {
+  width: 200px; /* Define a largura do seletor */
+  padding: 8px; /* Define o espaçamento interno do seletor */
+  border: 1px solid #ccc; /* Define a borda do seletor */
+  border-radius: 4px; /* Define o raio de borda do seletor */
+  font-size: 16px; /* Define o tamanho da fonte do seletor */
+  cursor: pointer;
+}
+
+/* Estilizando as opções */
+#tipo option {
+  background-color: #fc0000; /* Define a cor de fundo das opções */
+  color: #333; /* Define a cor do texto das opções */
+  cursor:pointer
+}
+
+/* Estilizando a opção selecionada */
+#tipo option:checked {
+  background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
+  font-weight: bold; /* Define o peso da fonte da opção selecionada */
+}
+
 </style>
 
 </head>
@@ -91,6 +113,15 @@
             <h1>-Editar- <br>  Produto</h1>
             <br><br>
 
+            <label for="tipo">Tipo:</label><br>
+            <select id="tipo" name="tipo" required value="{{tipo}}">
+                        <option disabled selected >--Selecione um tipo--</option>
+                        <option value="Alimento"{% if tipo == 'Alimento' %} selected{% endif %}>Alimento</option>
+                        <option value="Ingresso"{% if tipo == 'Ingresso' %} selected{% endif %}>Ingresso</option>
+                        <option value="Roupa"{% if tipo == 'Roupa' %} selected{% endif %}>Roupa</option>
+
+            </select><br><br>
+
             <label for="nome">Nome do produto:</label><br>
             <input type="text" placeholder="Nome:" name="nome" id="nome" value="{{nome}}" required><br><br>
 
@@ -103,15 +134,9 @@
             <label for="preco">Preço:</label><br>
             <input type="number"  step="0.01" placeholder="Preço:" name="preco" id="preco" onkeypress="validarEntrada(event)" value="{{preco}}" required><br><br>
 
-            <label for="tipo">Tipo:</label><br>
-            <select id="tipo" name="tipo" required value="{{tipo}}">
-                        <option disabled selected >--Selecione um tipo--</option>
-                        <option value="Alimento"{% if tipo == 'Alimento' %} selected{% endif %}>Alimento</option>
-                        <option value="Ingresso"{% if tipo == 'Ingresso' %} selected{% endif %}>Ingresso</option>
-            </select><br><br>
 
             <label for="ativo">Ativo:</label>
-            <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo"checked><br><br>
+            <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo" {%if situacao%}checked{%endif%}><br><br>
 
 
             {% if messages %}

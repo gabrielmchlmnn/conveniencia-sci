@@ -99,10 +99,10 @@
   div.modal {
   display: none;
   z-index: 1;
-  left: 50%;
+  left: 20%;
   top: 55%;
   width: 60%;
-  transform: translate(-50%,-50%);
+  transform: translate(-0%,-50%);
   height: 85%;
   text-align: center;
   background-color: rgba(30, 27, 53, 0.952); 
@@ -177,6 +177,21 @@ input{
     .tabela-corpo {
   height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
   overflow-y: scroll;
+}
+.modal-entrada {
+  animation-name: modalEntrada;
+  animation-duration: 0.5s;
+}
+
+@keyframes modalEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
 }
 
 
@@ -261,6 +276,16 @@ input{
           <h1>-Adicionar- <br>  Produto</h1>
           <br><br>
 
+
+          <label for="tipo">Tipo:</label><br><br>
+          <select id="tipo" name="tipo" required oninvalid="this.setCustomValidity('Selecione uma opção válida.')">
+            <option value="" disabled selected>--Selecione um tipo--</option>
+                      <option value="Alimento">Alimento</option>
+                      <option value="Ingresso">Ingresso</option>
+                      <option value="Roupa">Roupa</option>
+          </select><br><br>
+
+
           <label for="nome">Nome do produto:</label><br><br>
           <input type="text" placeholder="Nome:" name="nome" id="nome" value="{{nome}}" required><br><br><br>
 
@@ -280,13 +305,7 @@ input{
           <label for="preco">Preço:</label><br><br>
           <input type="number"  step="0.01" placeholder="Preço:" name="preco" id="preco" onkeypress="validarEntrada(event)" value="{{preco}}" required><br><br><br>
 
-          <label for="tipo">Tipo:</label><br><br>
-          <select id="tipo" name="tipo" required oninvalid="this.setCustomValidity('Selecione uma opção válida.')">
-            <option value="" disabled selected>--Selecione um tipo--</option>
-                      <option value="Alimento">Alimento</option>
-                      <option value="Ingresso">Ingresso</option>
-          </select>
-          <br><br><br><br>
+          <br><br><br>
 
 
           <button type="submit">Adicionar produto</button>   
@@ -301,6 +320,8 @@ input{
         function exibirModal() {
         var modal = document.getElementById("meuModal");
         modal.style.display = "block";
+        modal.classList.add("modal-entrada");
+
 
         }
 

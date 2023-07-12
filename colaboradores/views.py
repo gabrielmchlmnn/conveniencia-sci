@@ -15,7 +15,7 @@ from django.urls import reverse
 from validate_docbr import CPF
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
-from produtos.models import Estoque
+from estoque.models import Estoque
 
 
 
@@ -55,16 +55,14 @@ def Home(request):
         dia_25_mes_passado = hoje.replace(day=25)
         
     quantidade_compras_ultima_ref = Compra.objects.filter(data__gte=dois_meses_atras,data__lte = dia_25_mes_passado).count()
-    estoque = Estoque.objects.filter(quantidade__lt=10).order_by('quantidade')
+    estoque = Estoque.objects.filter(quantidade__lt=4).order_by('quantidade')
     lista_estoque = []
     for i in estoque:
-        if i.quantidade <10 and i.quantidade>5:
-            lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'amarelo'})
-        elif i.quantidade < 6 and i.quantidade>0:
-            lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'laranja'})
-        elif i.quantidade <=0:
-                lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'vermelho'})
-    print(lista_estoque)
+        if i.produto.situacao == True:
+            if i.quantidade <4 and i.quantidade>0:
+                lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'amarelo'})
+            elif i.quantidade <=0:
+                    lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'vermelho'})
     context = {
        "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':lista_estoque
     }
@@ -136,6 +134,11 @@ def AdicionarColab(request):
 @login_required(login_url='Login')
 def MostrarColab(request):
     colaboradores = Colaboradore.objects.all()
+    for i in colaboradores:
+        if i.situacao:
+            i.situacao = "Ativo"
+        else:
+            i.situacao = "Inativo"
     return render(request,'colab/mostrar_colab.html',{'colaboradores':colaboradores})
 
 @login_required(login_url='Login')
