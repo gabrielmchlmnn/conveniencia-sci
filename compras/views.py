@@ -6,22 +6,24 @@ from colaboradores.models import Colaboradore
 from datetime import datetime
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
-from fpdf import FPDF
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from django.contrib import messages
 from hashlib import md5
 from django.core.mail import send_mail,EmailMessage
 from django.template.loader import render_to_string
-from reportlab.pdfgen import canvas
 from weasyprint import HTML
 from estoque.models import Estoque
 from django.utils import timezone
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+from django.db.models import Q
+
+
+
+
 
 lista_carrinho = []
-
-
-
 
 def DeletarItem(request,id):
     for produto in lista_carrinho:
@@ -229,71 +231,61 @@ def ConferirGastos(request):
 
 
 
-from reportlab.pdfgen import canvas
-
 def GerarRelatorio(request):
     if request.method == 'GET':
-        return render(request, 'relatorios/relatorios.html')
+        return render(request, 'relatorios/relatorios.html',{'colaboradores':Colaboradore.objects.all().order_by('nome')})
     elif request.method == 'POST':
-        print('a')
         data_inicio = request.POST.get('data_inicio')
         data_fim = request.POST.get('data_final')
-        try:
-            compras_filtradas = Compra.objects.filter(data__range=(data_inicio,data_fim)).order_by('-colaborador_id')
 
+        colaborador = request.POST.get('colaborador')
+
+        if colaborador is not None:
+            print('isso')
+            compras_filtradas = Compra.objects.filter(Q(data__range=(data_inicio,data_fim)) & Q(colaborador__cpf__icontains=colaborador)).order_by('-data')
+        else:
+            compras_filtradas = Compra.objects.filter(data__range=(data_inicio,data_fim)).order_by('-data')
+        try:
+
+            dados = []
+
+            dados.append(['Compra','Nome','Data','Itens','Quantidade','Preço Unit.','Total'])
+
+            for item in compras_filtradas:
+                itens_compra = ItemCompra.objects.filter(compra=item.id)
+                for itens in itens_compra:
+                    dados.append([item.id,item.colaborador,item.data.strftime('%d/%m/%Y %H:%M'),itens.produto.nome,itens.quantidade,itens.preco_unitario,itens.total])
+
+            # Configurações da página
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="relatorio_compras.pdf"'
 
-            p = canvas.Canvas(response, pagesize=letter)
-            y = 700
+            # Criação do documento PDF
+            doc = SimpleDocTemplate(response, pagesize=letter)
+            # Criação da tabela
+            table = Table(dados,colWidths=[50, 100, 80, 145, 65, 75, 75])
 
-            MAX_ITENS_POR_PAGINA = 7  # Número máximo de itens por página
-            itens_processados = 0  # Contador de itens processados
+            # Estilo da tabela
+            style = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 10),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ])
+            table.setStyle(style)
 
-            print('b')
-            p.setFont("Helvetica-Bold", 14)
-            p.drawString(50, y+30, "Relatório de Compras")
-            p.setFont("Helvetica", 12)
-
-            for compra in compras_filtradas:
-                itens_compra = ItemCompra.objects.filter(compra=compra)
-                lista_itens = []
-                for item in itens_compra:
-                    lista_itens.append({'produto':item.produto,'quantidade':item.quantidade,'total':item.total})
-
-                if itens_processados % MAX_ITENS_POR_PAGINA == 0:
-                    if itens_processados != 0:
-                        p.showPage()  # Finaliza a página atual antes de criar uma nova
-
-                    y = 700  # Reinicia a posição vertical para o início da nova página
-
-                p.drawString(50, y - 20, f"Data: {compra.data.strftime('%d/%m/%Y %H:%M:%S')}")
-                p.drawString(50, y - 40, f"Total: R$ {compra.total}")
-                p.drawString(50, y - 60, f"Colaborador: {compra.colaborador.nome}")
-
-                p.drawString(50, y - 80, "Itens:")
-                y -= 100
-
-                for item in lista_itens:
-                    p.drawString(50, y, f"Produto: {item['produto'].nome}")
-                    p.drawString(50, y - 20, f"Quantidade: {item['quantidade']}")
-                    p.drawString(50, y - 40, f"Total: {item['total']}")
-
-                    y -= 60
-
-                p.drawString(50, y - 20, "----------------------------------------")
-                y -= 40
-
-                itens_processados += 1
-
-            print('c')
-            if itens_processados % MAX_ITENS_POR_PAGINA != 0:
-                p.showPage()  # Finaliza a última página caso não esteja completa
-            p.save()
+            # Adiciona a tabela ao documento
+            elementos = [table]
+            doc.build(elementos)
 
             return response
 
         except Exception as e:
+            print(f'{e}')
             return redirect('GerarRelatorio')
 
 

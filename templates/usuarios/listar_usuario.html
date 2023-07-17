@@ -46,6 +46,7 @@
         padding: 15px;
         width: 100%;
         border-radius: 10px;
+        cursor:pointer;
     }
     th{
         background-color: darkblue;
@@ -93,12 +94,12 @@
   left: 50%;
   top: 55%;
   width: 60%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%,-55%);
   height: 85%;
   text-align: center;
   background-color: rgba(30, 27, 53, 0.952); 
   position: absolute;
-  border-radius: 30px;
+  border-radius: 15px;
   color:azure
 }
 
@@ -195,12 +196,12 @@ div.modal-content {
       </div>
         
         <br><br>
-        <button onclick="exibirModal()">Adicionar usuário +</button>
+        <button onclick="exibirModalAdicionar()">Adicionar usuário +</button>
     </div>
 
-    <div id="meuModal" class="modal">
+    <div id="modal-adicionar" class="modal">
       <div class="modal-content">
-        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         <form method="post" action="{% url 'CadastrarUser'%}">
           {% csrf_token %}
           <h1>-CADASTRAR- <br>  
@@ -229,14 +230,14 @@ div.modal-content {
 
 
     <script>
-        function exibirModal() {
-        var modal = document.getElementById("meuModal");
+        function exibirModalAdicionar() {
+        var modal = document.getElementById("modal-adicionar");
         modal.style.display = "block";
 
         }
 
-        function fecharModal() {
-        var modal = document.getElementById("meuModal");
+        function fecharModalAdicionar() {
+        var modal = document.getElementById("modal-adicionar");
         modal.style.display = "none";
         }
         

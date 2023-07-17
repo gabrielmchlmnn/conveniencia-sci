@@ -30,7 +30,7 @@
       border-radius:15px;
       color:#fff;
       width: 60%;
-      height: 60%;
+      height: 70%;
   }
   input{
       padding:15px;
@@ -105,7 +105,7 @@
     
   {% include 'navbar.html' %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <a href="{% url 'ListarProdu'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 22%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+  <a href="{% url 'VoltarProdutos'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 18%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
 
     <div class="container">
         <form method="post" action="{% url 'EditarProdu' id=id %}">
@@ -138,17 +138,17 @@
             <label for="ativo">Ativo:</label>
             <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo" {%if situacao%}checked{%endif%}><br><br>
 
-
             {% if messages %}
               {% for message in messages %}
               <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
               {% endfor %}
             {%endif%}
+            <br><br><br>
 
             <button type="submit">Atualizar</button>   
         </form>
 
-
+        <br><br><br>
     </div>
     <script>
       function validarEntrada(event) {

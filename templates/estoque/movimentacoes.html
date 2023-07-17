@@ -265,6 +265,14 @@ input{
       <br><br>
       <div class="tabela-scroll">
         <table class="table table-hover">
+          <colgroup>
+            <col style="width: 20.9%">
+            <col style="width: 19.5%">
+            <col style="width: 20.7%">
+            <col style="width: 20.5%">
+            <col style="width: 20%">
+            <col style="width: 19%">
+          </colgroup>
           <thead class="thead-light">
             <tr>
               <th scope="col">Produto</th>
@@ -277,6 +285,14 @@ input{
         </table>
         <div class="tabela-corpo">
           <table class="table table-hover">
+            <colgroup>
+              <col style="width: 20.9%">
+              <col style="width: 19.5%">
+              <col style="width: 20.7%">
+              <col style="width: 20.5%">
+              <col style="width: 20%">
+              <col style="width: 19%">
+            </colgroup>
           <tbody>
               {% for item in movimentacoes %}
             <tr>
@@ -304,9 +320,9 @@ input{
                     <div class="search-container">
                       <br><br>
                       <label for="data_inicio">Data de início:</label><br>
-                      <input type="date" placeholder="Digite uma data:" name="data_inicio"><br><br><br><br><br>
+                      <input type="date" placeholder="Digite uma data:" name="data_inicio" required><br><br><br><br><br>
                       <label for="data_final">Data final:</label><br>
-                      <input type="date" name="data_final"><br><br><br>
+                      <input type="date" name="data_final" required><br><br><br>
                       <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa" style="position: relative;left:0%;font-size: large;">
                       <br><br>
                     </div>
@@ -316,36 +332,38 @@ input{
           </div>
         </div>
 
-    <div id="modal-usuario" class="modal">
-      <div class="modal-content">
-        <span class="fechar" onclick="fecharModalUsuario()">&times;</span>
-
-          <div class="search-form">
-            <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
+        <div id="modal-usuario" class="modal">
+          <div class="modal-content">
+              <span class="fechar" onclick="fecharModalUsuario()">&times;</span>
+            <div class="search-form">
+              <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
                 <div class="search-container">
                   <br><br>
-                  <select name="usuario" id="filtro"  required>
-                    <option disabled selected >--Selecione um usuario--</option>
-                      {%for item in usuarios %}
-                       <option value="{{item.username}}">{{item.username}}</option>
-                       {%endfor%}
-                  </select><br><br><br><br>
-                  <button type="submit" value="Filtrar" class="search-button" id="botao_pesquisa" style="position: relative;left:0;font-size: large;color:#f9f9f9">Filtrar</button>
+                  <label for="usuario">Selecione o usuário:</label><br><br>
+                  <select id="filtro" name="usuario" required>
+                    <option value="" disabled selected>--Selecione um usuario--</option>
+                        {% for usuario in usuarios%}
+                        <option value="{{usuario.username}}" >{{usuario.username}}</option>
+                        {%endfor%}
+                  </select>
 
+
+                  <br><br><br><br>
+                  <button type="submit"class="search-button" id="botao_pesquisa" 
+                  style="position: relative;left:0;font-size: large;color:#f9f9f9">Filtrar</button>
                   <br><br>
                 </div>
-            </form>
-          </div>
+              </form>
+            </div>
+          </div>        
       </div>
-          <br><br>
-    </div>
   
     <div id="modal-tipo" class="modal">
       <div class="modal-content">
         <span class="fechar" onclick="fecharModalTipo()">&times;</span>
-          <br><br>
           <div class="search-form">
             <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
+              <br><br><br><br>
                   <button type="submit" value="Entrada" class="search-button" id="botao-tipo-entrada" name="botao_tipo">Entrada</button><br><br>
                   <button type="submit" value="Saída" class="search-button" id="botao-tipo-baixa" name="botao_tipo">Saída</button>
                   <br><br>

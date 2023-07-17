@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 
 def ListarEstoque(request):
-        estoque = Estoque.objects.all()
+        estoque = Estoque.objects.all().order_by('quantidade')
         lista_estoque = []
         for i in estoque:
             if i.produto.situacao == True:
@@ -28,6 +28,9 @@ def FiltrarEstoque(request):
     produto = request.GET.get('search')
     produtos_filtrados = Estoque.objects.filter(produto__nome__icontains=produto)
     return render(request,'estoque/estoque.html',{'estoque':produtos_filtrados})
+
+
+
 
 
 
@@ -81,7 +84,6 @@ def FiltrarMovimentacoes(request):
 
     if usuario:
         movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=(usuario))
-        print(movimentacoes_filtradas)
     
     if tipo:
         movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo__icontains=(tipo))

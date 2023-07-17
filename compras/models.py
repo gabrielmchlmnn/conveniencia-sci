@@ -11,10 +11,13 @@ class Compra(models.Model):
     data = models.DateTimeField(default=timezone.now)
     total = models.DecimalField(max_digits=8,decimal_places=2)
 
+    def __str__(self) -> str:
+        return self.id
+
 
 class ItemCompra(models.Model):
     compra = models.ForeignKey(Compra,on_delete=models.DO_NOTHING)
     produto = models.ForeignKey(Produtos,on_delete=models.DO_NOTHING)
     quantidade = models.IntegerField()
     preco_unitario = models.DecimalField(max_digits=8,decimal_places=2)
-    total = models.DecimalField(max_digits=8,decimal_places=2,default=10)
+    total = models.DecimalField(max_digits=8,decimal_places=2)

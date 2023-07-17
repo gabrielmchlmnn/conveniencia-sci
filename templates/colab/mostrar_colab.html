@@ -104,7 +104,7 @@
   transform: translate(-0%,-50%);
   height: 85%;
   text-align: center;
-  background-color: rgba(30, 27, 53, 0.952); 
+  background-color: rgba(30, 27, 53, 0.986); 
   position: absolute;
   border-radius: 30px;
   color:azure
@@ -281,12 +281,12 @@ input{
         </div>
       </div>  
       <br><br>
-      <button onclick="exibirModal()">Adicionar Colaborador +</button>
+      <button onclick="exibirModalAdicionar()">Adicionar Colaborador +</button>
     </div>
 
-    <div id="meuModal" class="modal">
+    <div id="modal-adicionar" class="modal">
       <div class="modal-content">
-        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         
         <form method="post" action="{% url 'AdicionarColab' %}">
           {% csrf_token %}
@@ -360,26 +360,26 @@ input{
 
         var modal = document.getElementById("modalVisualizar");
         modal.style.display = "block";
+        var modalCentro = document.getElementById('modal-content')
+        modalCentro.classList.add("modal-entrada-dados");
         }
 
         function fecharModal_visu() {
         var modal = document.getElementById("modalVisualizar");
         modal.style.display = "none";
-        var modalCentro = document.getElementById('modal-content')
-        modalCentro.classList.add("modal-entrada-dados");
 
         }
 
 
-        function exibirModal() {
-        var modal = document.getElementById("meuModal");
+        function exibirModalAdicionar() {
+        var modal = document.getElementById("modal-adicionar");
         modal.style.display = "block";
         modal.classList.add("modal-entrada");
 
         }
 
-        function fecharModal() {
-        var modal = document.getElementById("meuModal");
+        function fecharModalAdicionar() {
+        var modal = document.getElementById("modal-adicionar");
         modal.style.display = "none";
         window.location.href = "{% url 'MostrarColab' %}"
         }

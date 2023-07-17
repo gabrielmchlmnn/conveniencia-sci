@@ -255,7 +255,7 @@ input{
               <td>{{produto.tipo}}</td>
               <td><span
                 class="situation-dot {% if produto.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
-              </span>{{produto.situacao}}</td>
+              </span> {{produto.situacao}}</td>
               <td><a href="{% url 'EditarProdu' id=produto.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
             </tr>
             {%endfor%}
@@ -265,11 +265,11 @@ input{
         </div>
       </div>
         <br><br>
-          <button type="button" onclick="exibirModal()">Adicionar Produto +</button>
+          <button type="button" onclick="exibirModalAdicionar()">Adicionar Produto +</button>
     </div>
-    <div id="meuModal" class="modal">
+    <div id="modal-adicionar" class="modal">
       <div class="modal-content">
-        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         
         <form method="post" action="{% url 'AdicionarProdu' %}">
           {% csrf_token %}
@@ -278,11 +278,11 @@ input{
 
 
           <label for="tipo">Tipo:</label><br><br>
-          <select id="tipo" name="tipo" required oninvalid="this.setCustomValidity('Selecione uma opção válida.')">
+          <select id="tipo" name="tipo" required>
             <option value="" disabled selected>--Selecione um tipo--</option>
-                      <option value="Alimento">Alimento</option>
-                      <option value="Ingresso">Ingresso</option>
-                      <option value="Roupa">Roupa</option>
+                <option value="Alimento" >Alimento</option>
+                <option value="Ingresso">Ingresso</option>
+                <option value="Roupa">Roupa</option>
           </select><br><br>
 
 
@@ -317,16 +317,14 @@ input{
     </div>
 
     <script>
-        function exibirModal() {
-        var modal = document.getElementById("meuModal");
+        function exibirModalAdicionar() {
+        var modal = document.getElementById("modal-adicionar");
         modal.style.display = "block";
         modal.classList.add("modal-entrada");
-
-
         }
 
-        function fecharModal() {
-        var modal = document.getElementById("meuModal");
+        function fecharModalAdicionar() {
+        var modal = document.getElementById("modal-adicionar");
         modal.style.display = "none";
         window.location.href = "{% url 'ListarProdu'%}"
         }
@@ -336,6 +334,8 @@ input{
               event.preventDefault();
           }
       }
+
+      
       document.addEventListener('DOMContentLoaded', function() {
         var erro = document.getElementById('error-mensagem');
         erro.style.display = 'block';

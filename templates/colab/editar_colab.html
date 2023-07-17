@@ -128,7 +128,7 @@ input[type="checkbox"] {
   {% include 'navbar.html' %}
 
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-          <a href="{% url 'MostrarColab'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 14%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+          <a href="{% url 'Voltar' %}"><i class="fas fa-arrow-left fa-2x" id="voltar" style="position: absolute; top: 14%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i></a>
 
 
     <div class="container">
@@ -146,7 +146,7 @@ input[type="checkbox"] {
             <input type="text" name="login" placeholder="Digite o username do colaborador:" id="login" value="{{login}}" required><br><br>
 
             <label for="ativo">Ativo:</label>
-            <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo" {%if situacao == 'on'%}checked{%endif%}><br><br>
+            <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo" {%if situacao%}checked{%endif%}><br><br>
 
             <label for="email">Email:</label><br>
             <input type="email" placeholder="Email:" name="email" id="email" value="{{email}}" required><br><br>
@@ -188,6 +188,7 @@ input[type="checkbox"] {
             erro.style.display = 'none';
         }, 3000);
         });
+
   </script>
 </body>
 </html>

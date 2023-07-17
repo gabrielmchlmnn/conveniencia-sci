@@ -7,7 +7,7 @@ from django.utils import timezone
 # Create your models here.
 
 class Estoque(models.Model):
-    produto = models.OneToOneField(Produtos,on_delete=models.DO_NOTHING)
+    produto = models.OneToOneField(Produtos,on_delete=models.CASCADE)
     quantidade = models.IntegerField()
 
     def __str__(self) -> str:

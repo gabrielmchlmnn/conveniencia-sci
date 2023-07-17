@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import Login,Home,Logout,AdicionarColab,MostrarColab,EditarColab,FiltrarColab,RedefinirSenha
+from .views import Login,Home,Logout,AdicionarColab,MostrarColab,EditarColab,FiltrarColab,RedefinirSenha,Voltar
 
 urlpatterns = [
    path('',Login,name='Login'),
@@ -14,4 +14,5 @@ urlpatterns = [
    path('home/filtrar-colaboradores',FiltrarColab,name="FiltrarColab"),
    path('home/colaborador/redefinir-senha/<int:id>',RedefinirSenha,name='RedefinirSenha'),
    path('home/',include('estoque.urls')),
+   path('voltar/',Voltar,name='Voltar')
    ]
