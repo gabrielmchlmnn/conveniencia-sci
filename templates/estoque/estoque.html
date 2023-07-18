@@ -6,44 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estoque</title>
     <style>
-    *{margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  *{margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   }
-    .container{
-        background-color: rgba(0, 0, 0, 0.8);
-        padding:50px;
-        border-radius:15px;
-        width: 60%;
-        margin:auto;
-        margin-top:2%;
-        text-align: center;
-    }
-    body {
-      background-color: #b0bfff;
-    margin: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, Helvetica, sans-serif;
-    height: 100vh; 
+  .container{
+      background-color: rgba(0, 0, 0, 0.8);
+      padding:50px;
+      border-radius:15px;
+      width: 90%;
+      margin:auto;
+      margin-top:2%;
+      text-align: center;
   }
+  body {
+    background-color: #b0bfff;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh; 
+}
   table,th,td{
-      border: 0.5px solid black;
+      border: 0.5px solid rgb(97, 97, 97);
       border-collapse: collapse;
       margin: 0 auto;
+      width: 100%;
   }
   td,th{
-      padding: 10px;
-      background-color: white;
-      text-align: center;
-      font-size: larger;
-      width: 300px;
+      padding: 2px;
+      background-color: rgb(243, 243, 243);
+      text-align: left;
+      font-size:large;
+      height: 4px;
+      width: 50%;
+
     }
+
+    th:last-child, td:last-child {
+            width: 20%;
+            text-align: center;
+        }
     td .situation-dot.active {
     background-color: green;
     border-color: green;
   }
+
 
   td .situation-dot.inactive {
     background-color: red;
@@ -61,13 +70,19 @@
       padding: 15px;
       width: 100%;
       border-radius: 10px;
-      cursor: pointer;
+      font-weight: bold;
+      cursor:pointer;
+      color:white
   }
+  button:hover{
+        background-color: deepskyblue;
+        color:black
+    }
   th{
       background-color: darkblue;
       color:white;
       border-radius: 5px;
-      width: 300px;
+      text-align: center;
   }
   h1{
       color:white;
@@ -86,29 +101,36 @@
   }
 
   .search-form input[type="submit"] {
-    background-color: dodgerblue; /* Cor de fundo do botão de envio */
+    background-color: rgb(11, 133, 255); /* Cor de fundo do botão de envio */
     color: white; /* Cor do texto do botão de envio */
     padding: 8px 16px; /* Espaçamento interno do botão de envio */
     border: none; /* Remover borda do botão de envio */
     border-radius: 4px; /* Borda arredondada do botão de envio */
     cursor: pointer; /* Cursor do mouse em formato de mão */
+    font-weight: bold;
+    color:white
   }
-  .tabela-scroll {
-  height: 500px; /* Defina a altura desejada para o scroll */
-  overflow: auto;
-}
+
+  .search-form input[type="submit"]:hover {
+    background-color: deepskyblue; /* Cor de fundo do botão de envio */
+    color:black
+  }
+  .tabela-scroll{
+    overflow: auto;
+    height: 500px;
+  }
   div.modal {
   display: none;
-  z-index: 1;
-  left: 50%;
+  z-index: 999;
+  left: 5%;
   top: 55%;
-  width: 60%;
-  transform: translate(-50%,-50%);
+  width: 90%;
+  transform: translate(0%,-54%);
   height: 85%;
   text-align: center;
-  background-color: rgba(30, 27, 53, 0.952); 
+  background-color: rgba(30, 27, 53, 0.986); 
   position: absolute;
-  border-radius: 30px;
+  border-radius: 15px;
   color:azure
 }
 
@@ -117,12 +139,16 @@ div.modal-content {
   padding: 20px;
   border: 1px solid #888;
   width: 50%;
+  border-radius: 15px;
+  background-color: #e8ecff;
+  color:black
 }
 .fechar {
-  color: #aaa;
+  color: #2c2c2c;
   float: right;
   font-size: 28px;
   font-weight: bold;
+
 }
 
 .fechar:hover,
@@ -138,13 +164,12 @@ input{
         width: 90%;
         border-radius: 10px;
     }
-    button{
-        background-color: dodgerblue;
-        border:none;
-        padding: 15px;
-        width: 100%;
-        border-radius: 10px;
+
+    h1{
+        top:50%;
+        text-align: center;
     }
+
     #barra_de_pesquisa{
       width: 50%;
       right:14%;
@@ -176,6 +201,7 @@ input{
   height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
   overflow-y: scroll;
 }
+
 
 .adicionar-entrada{
   background-color: deepskyblue;
@@ -293,7 +319,7 @@ input{
         
         <form id="meuFormulario" action="{% url 'AdicionarEntrada' %}" method="post">
           {% csrf_token %}
-          <h1>-Atualizar-<br> estoque</h1>
+          <h1 style="color:black">Entrada</h1>
           <br><br>
           <label for="produto">Produto:</label><br>
           <select name="produto" id="produto" required>
@@ -333,7 +359,7 @@ input{
         
         <form id="meuFormulario2" action="{% url 'BaixarEstoque'%}" method="post" >
           {% csrf_token %}
-          <h1>-Baixar-<br>no estoque</h1>
+          <h1 style="color:black">Baixa</h1>
           <br><br>
           <label for="produto">Produto:</label><br>
           <select name="produto" id="produto" required >

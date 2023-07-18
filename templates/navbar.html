@@ -2,7 +2,7 @@
 .topnav {
     width: 100%;
     overflow: hidden;
-    background-color: #00000041;
+    background-color: #00000069;
     position:static;
   }
   
@@ -34,22 +34,23 @@
     color: white;
   }
   .topnav img{
-    height: 35px;
-    margin-right: 30px;
+    height: 33px;
+    margin-right: 28px;
+    width: 67px;
   }
 
   </style>
     <nav class="topnav">
       <a href="{% url 'Home' %}"><img src="https://www.scivale.com.br/wp-content/uploads/2017/12/logo-sci.png" alt="logo-sci"></a>
       <a href="{%url 'ComecarCompra'%}">Adicionar compra</a>
-      <a href="{% url 'MostrarColab' %}">Listar colaboradores</a>
-      <a href="{% url 'ListarProdu' %}">Listar produtos</a>
+      <a href="{% url 'MostrarColab' %}">Colaboradores</a>
+      <a href="{% url 'ListarProdu' %}">Produtos</a>
       <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
       <a href="{% url 'ListarMovimentacoes'%}">Movimentações</a>
       {% if user.is_superuser %}
               <a href="{% url 'ListarUser'%}">Usuários</a>
       {% endif %}
-      <a class="logout" href="{%url 'Logout' %}">Logout -></a>
+      <a class="logout" href="{%url 'Logout' %}">Sair -></a>
   
   </nav>
 

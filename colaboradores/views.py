@@ -239,6 +239,11 @@ def FiltrarColab(request):
     if request.method == 'GET':
         search_term = request.GET.get('search')
         colaboradores_filtrados = Colaboradore.objects.filter(Q(nome__icontains=search_term) | Q(cpf__icontains=search_term))
+        for i in colaboradores_filtrados:
+            if i.situacao:
+                i.situacao = "Ativo"
+            else:
+                i.situacao = "Inativo"
         return render(request, 'colab/mostrar_colab.html', {'colaboradores': colaboradores_filtrados})
     
 
