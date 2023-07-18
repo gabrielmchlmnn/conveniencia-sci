@@ -6,56 +6,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar usuários</title>
     <style>
-    *{margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  *{margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   }
   .container{
       background-color: rgba(0, 0, 0, 0.8);
       padding:50px;
       border-radius:15px;
-      width: 60%;
+      width: 90%;
       margin:auto;
       margin-top:2%;
       text-align: center;
   }
-    body {
-      background-color: #b0bfff;
-    margin: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, Helvetica, sans-serif;
-    height: 100vh; 
-  }
+  body {
+    background-color: #b0bfff;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh; 
+}
   table,th,td{
-      border: 0.5px solid black;
+      border: 0.5px solid rgb(97, 97, 97);
       border-collapse: collapse;
       margin: 0 auto;
+      width: 100%;
   }
   td,th{
-      padding: 10px;
-      background-color: white;
+      padding: 2px;
+      background-color: rgb(243, 243, 243);
+      text-align: left;
+      font-size:large;
+      height: 4px;
+      width: 33%;
+    }
+    th:nth-child(1), td:nth-child(1) {
+            width: 7%;
+            text-align: center;
+        }
+
+        th:nth-child(4), td:nth-child(4) {
+            width: 20%;
+        }
+    th:last-child, td:last-child {
+            width: 30%;
+            text-align: center;
+        }
+    td .situation-dot.active {
+    background-color: green;
+    border-color: green;
+  }
+
+
+  td .situation-dot.inactive {
+    background-color: red;
+    border-color: red;
+  }
+  .situation-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+  button{
+      background-color: dodgerblue;
+      border:none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor:pointer;
+      color:white
+  }
+  th{
+      background-color: darkblue;
+      color:white;
+      border-radius: 5px;
       text-align: center;
-      width:30%;
-      font-size: larger;
-    }
-    button{
-        background-color: dodgerblue;
-        border:none;
-        padding: 15px;
-        width: 100%;
-        border-radius: 10px;
-        cursor:pointer;
-    }
-    th{
-        background-color: darkblue;
-        color:aliceblue
-    }
-    h1{
-        color:white;
-        text-align: center;
-    }
+  }
+  h1{
+      color:white;
+      text-align: center;
+  }
 
 .search-form {
     align-items: center; /* Alinhar verticalmente os elementos filhos */
@@ -69,14 +103,93 @@
   }
 
   .search-form input[type="submit"] {
-    background-color: dodgerblue; /* Cor de fundo do botão de envio */
+    background-color: rgb(11, 133, 255); /* Cor de fundo do botão de envio */
     color: white; /* Cor do texto do botão de envio */
     padding: 8px 16px; /* Espaçamento interno do botão de envio */
     border: none; /* Remover borda do botão de envio */
     border-radius: 4px; /* Borda arredondada do botão de envio */
     cursor: pointer; /* Cursor do mouse em formato de mão */
+    font-weight: bold;
+    color:white
   }
-  .error-message {
+
+  .search-form input[type="submit"]:hover {
+    background-color: deepskyblue; /* Cor de fundo do botão de envio */
+    color:black
+  }
+  .tabela-scroll{
+    overflow: auto;
+    height: 500px;
+  }
+  div.modal {
+  display: none;
+  z-index: 999;
+  left: 5%;
+  top: 55%;
+  width: 90%;
+  transform: translate(0%,-54%);
+  height: 85%;
+  text-align: center;
+  background-color: rgba(30, 27, 53, 0.986); 
+  position: absolute;
+  border-radius: 15px;
+  color:azure
+}
+
+div.modal-content {
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 15px;
+  background-color: #e8ecff;
+  color:black;
+  height: 85%;
+
+}
+.fechar {
+  color: #2c2c2c;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+input{
+        padding:15px;
+        border:none;
+        padding:13px;
+        width: 90%;
+        border-radius: 10px;
+    }
+
+    button:hover{
+        background-color: deepskyblue;
+        color:black
+    }
+    h1{
+        top:50%;
+        text-align: center;
+    }
+
+    #barra_de_pesquisa{
+      width: 50%;
+      right:14%;
+      position: relative;
+    }
+    #botao_pesquisa{
+      position: relative;
+      right:12%;
+      width: 20%;
+      height: 15%;
+    }
+    .error-message {
     color: #ff0000; 
     font-weight: bold; 
     font-size: 16px; 
@@ -86,76 +199,32 @@
     text-align: center;
     line-height: 30px;
     border:solid 1.5px rgb(255, 1, 1);
+    margin-top: -40px;
     }
-
-    div.modal {
-  display: none;
-  z-index: 1;
-  left: 50%;
-  top: 55%;
-  width: 60%;
-  transform: translate(-50%,-55%);
-  height: 85%;
-  text-align: center;
-  background-color: rgba(30, 27, 53, 0.952); 
-  position: absolute;
-  border-radius: 15px;
-  color:azure
+    img{
+      height: 40px;
+      width: 40px;
+      cursor:pointer
+    }
+    .tabela-corpo {
+  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
+  overflow-y: scroll;
+}
+.modal-entrada {
+  animation-name: modalEntrada;
+  animation-duration: 0.5s;
 }
 
-div.modal-content {
-  margin: 20% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-}
-.fechar {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.fechar:hover,
-.fechar:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-.tabela-scroll{
-    overflow: auto;
-    height: 500px;
+@keyframes modalEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
   }
-  input{
-        padding:15px;
-        border:none;
-        padding:13px;
-        width: 90%;
-        border-radius: 10px;
-    }
-    button{
-        background-color: dodgerblue;
-        border:none;
-        padding: 15px;
-        width: 100%;
-        border-radius: 10px;
-    }
-    button:hover{
-        background-color: deepskyblue;
-    }
-    #barra_de_pesquisa{
-      width: 50%;
-      right:14%;
-      position: relative;
-      height: 30%;
-
-    }
-    #botao_pesquisa{
-      position: relative;
-      right:12%;
-      width: 20%;
-      height: 18%;
-    }
+  to {
+    opacity: 1;
+    transform: translateY(-0%);
+  }
+}
       </style>
 </head>
 <body>
@@ -178,16 +247,20 @@ div.modal-content {
           <thead class="thead-light">
             <tr>
               <th scope="col">ID</th>
+              <th scope="col">Nome</th>
+              <th scope="col">Email</th>
               <th scope="col">Username</th>
-              <th scope="col">-</th>
+              <th scope="col">Editar</th>
             </tr>
           </thead>
           <tbody>
               {% for i in usuarios %}
             <tr>
               <td>{{i.id}}</td>
+              <td>{{i.first_name}}</td>
+              <td>{{i.email}}</td>
               <td>{{i.username}}</td>
-              <td><a href="{% url 'EditarUser' id=i.id%}"><button type="button"> Editar</button></a></td>
+              <td><a href="{% url 'EditarUser' id=i.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
             </tr>
             {%endfor%}
 
@@ -200,26 +273,37 @@ div.modal-content {
     </div>
 
     <div id="modal-adicionar" class="modal">
-      <div class="modal-content">
+      <div class="modal-content" id="modal-content">
         <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         <form method="post" action="{% url 'CadastrarUser'%}">
           {% csrf_token %}
-          <h1>-CADASTRAR- <br>  
-              USUÁRIO </h1><br>
+          <h1 style="color:black">Cadastro </h1><br><br>
+
+          <label for="nome">Nome:</label><br>
+          <input type="text" name="nome" placeholder="Digite o nome completo:" id="nome" value="{{nome}}" required><br><br>
+
           <label for="username">Nome de usuário:</label><br>
-          <input type="text" name="username" placeholder="Digite o nome de usuário:" id="username" valeu="{{username}}" required><br><br>
+          <input type="text" name="username" placeholder="Digite o nome de usuário:" id="username" value="{{username}}" required><br><br>
+
+          <label for="email">Email:</label><br>
+          <input type="email" name="email" placeholder="Digite o email do usuário" id="email" value="{{email}}" required><br><br>
+
 
           <label for="senha">Senha:</label><br>
-          <input type="password" name="senha" placeholder="Digite a senha usuário:" id="senha" valeu="{{senha}}" required><br><br>
+          <input type="password" name="senha" placeholder="Digite a senha usuário:" id="senha" value="{{senha}}" required><br><br><br>
+
+          <label for="confirmacao">Confirme a senha:</label><br>
+          <input type="password" name="confirmacao" placeholder="Digite a senha novamente:" id="confirmacao" value="{{confirmacao}}" required><br><br><br><br><br>
+        
 
           {% if messages %}
             <script>
               window.onload = function() {
-              exibirModal();
+              exibirModalAdicionar();
               };
           </script>
             {% for message in messages %}
-                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br><br>
             {% endfor %}
           {%endif%}
           <button type="submit">Cadastrar usuário</button><br><br>
@@ -233,12 +317,16 @@ div.modal-content {
         function exibirModalAdicionar() {
         var modal = document.getElementById("modal-adicionar");
         modal.style.display = "block";
+        var content = document.getElementById("modal-content")
+        content.classList.add("modal-entrada");
+
 
         }
 
         function fecharModalAdicionar() {
         var modal = document.getElementById("modal-adicionar");
         modal.style.display = "none";
+        window.location.href = "{% url 'VoltarUsuarios'%}"
         }
         
         document.addEventListener('DOMContentLoaded', function() {

@@ -38,7 +38,7 @@
     justify-content: space-around;
     right: -10%;
     top:50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-40%,-50%);
     position: absolute;
 
   }
@@ -71,16 +71,16 @@
       border-radius: 10px;
       overflow: auto;
     height: 400px;
-    transform: translate(30%,-15%);
+    transform: translate(0%,-15%);
     border:1px solid rgba(0, 0, 0, 0.514);
 
 }
 .graf-pizza{
-  transform: translate(60%,-45%);
+  transform: translate(40%,-20%);
   color:black
 }
 .tabela-compradores{
-  transform: translate(-160%,-45%);
+  transform: translate(-180%,-10%);
   height: 30px;
   overflow-y: auto;
 }
@@ -147,6 +147,7 @@
   <a href="{% url 'MostrarColab' %}">Colaboradores</a>
   <a href="{% url 'ListarProdu' %}">Produtos</a>
   <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+  <a href="{% url 'ListarEstoque' %}">Estoque</a>
   <a href="{% url 'ListarMovimentacoes'%}">Movimentações</a>
   {% if user.is_superuser %}
           <a href="{% url 'ListarUser'%}">Usuários</a>

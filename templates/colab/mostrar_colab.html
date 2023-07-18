@@ -142,7 +142,8 @@ div.modal-content {
   width: 50%;
   border-radius: 15px;
   background-color: #e8ecff;
-  color:black
+  color:black;
+  height: 90%;
 }
 .fechar {
   color: #2c2c2c;
@@ -294,13 +295,12 @@ input{
     </div>
 
     <div id="modal-adicionar" class="modal">
-      <div class="modal-content">
+      <div class="modal-content" id="modal-content">
         <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         
         <form method="post" action="{% url 'AdicionarColab' %}">
           {% csrf_token %}
-          <h1 style="color: #2c2c2c;">-Adicionar-<br>
-              Colaborador</h1><br>
+          <h1 style="color: #2c2c2c;">Cadastrar</h1><br>
 
           <label for="nome">Nome completo:</label><br><br>
           <input type="text" placeholder="Nome:" name="nome" id="nome" value="{{nome}}" required><br><br>
@@ -321,13 +321,14 @@ input{
           {% if messages %}
                 <script>
                   window.onload = function() {
-                  exibirModal();
+                  exibirModalAdicionar();
                   };
               </script>
               {% for message in messages %}
-              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
+              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
               {% endfor %}
           {%endif%}
+          <br><br><br>
           <button type="submit">Adicionar colaborador</button>   
       </form><br><br>
       </div>
@@ -336,7 +337,7 @@ input{
 <!-- Exemplo de modal com Bootstrap -->
 <div class="modal" id="modalVisualizar" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
-      <div class="modal-content" id="modal-content">
+      <div class="modal-content" id="modal-content-dados">
           <div class="modal-header">
               <h1 class="modal-title" style="color:#2c2c2c">Dados</h1>
               <span class="fechar" style="position: relative;margin: -5% 0;" onclick="fecharModal_visu()">&times;</span>
@@ -369,7 +370,7 @@ input{
 
         var modal = document.getElementById("modalVisualizar");
         modal.style.display = "block";
-        var modalCentro = document.getElementById('modal-content')
+        var modalCentro = document.getElementById('modal-content-dados')
         modalCentro.classList.add("modal-entrada-dados");
         }
 
@@ -383,14 +384,15 @@ input{
         function exibirModalAdicionar() {
         var modal = document.getElementById("modal-adicionar");
         modal.style.display = "block";
-        modal.classList.add("modal-entrada");
+        var modalCentro = document.getElementById('modal-content')
+        modalCentro.classList.add("modal-entrada-dados");
 
         }
 
         function fecharModalAdicionar() {
         var modal = document.getElementById("modal-adicionar");
         modal.style.display = "none";
-        window.location.href = "{% url 'MostrarColab' %}"
+        window.location.href = "{% url 'VoltarColaboradores' %}"
         }
         
         function formatarCPF() {

@@ -6,66 +6,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios</title>
     <style>
-    *{margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  *{margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   }
-
+  .container{
+      background-color: rgba(0, 0, 0, 0.8);
+      padding:50px;
+      border-radius:15px;
+      width: 90%;
+      margin:auto;
+      margin-top:2%;
+      text-align: center;
+      color:white;
+      font-weight: bold;
+  }
   body {
     background-color: #b0bfff;
-    margin: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, Helvetica, sans-serif;
-    height: 100vh; 
-  }
-  div{
-      background-color: rgba(0, 0, 0, 0.8);
-      position: absolute;
-      top:50%;
-      left:50%;
-      transform: translate(-50%,-50%);
-      padding:80px;
-      border-radius:15px;
-      color:#fff;
-      width: 500px;
-  }
-  input{
-      padding:15px;
-      border:none;
-      padding:13px;
-      width: 90%;
-      border-radius: 10px;
-  }
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh; 
+}
+
   button{
       background-color: dodgerblue;
       border:none;
       padding: 15px;
-      width: 100%;
+      width: 50%;
       border-radius: 10px;
+      font-weight: bold;
+      cursor:pointer;
+      color:white
   }
-  button:hover{
-      background-color: deepskyblue;
-  }
+
   h1{
-      top:50%;
+      color:white;
       text-align: center;
   }
-  
+
+
+
+input{
+        padding:15px;
+        border:none;
+        padding:13px;
+        width: 50%;
+        border-radius: 10px;
+    }
+
+    button:hover{
+        background-color: deepskyblue;
+        color:black
+    }
+    h1{
+        top:50%;
+        text-align: center;
+    }
+
     .error-message {
-  color: #ff0000; 
-  font-weight: bold; 
-  font-size: 16px; 
-  background-color: #ffbdbd;
-  border-radius: 10px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
-  border:solid 1.5px rgb(255, 1, 1);
+    color: #ff0000; 
+    font-weight: bold; 
+    font-size: 16px; 
+    background-color: #ffbdbd;
+    border-radius: 10px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border:solid 1.5px rgb(255, 1, 1);
+    }
+
+#colaborador {
+  width: 200px; /* Define a largura do seletor */
+  padding: 8px; /* Define o espaçamento interno do seletor */
+  border: 1px solid #ccc; /* Define a borda do seletor */
+  border-radius: 4px; /* Define o raio de borda do seletor */
+  font-size: 16px; /* Define o tamanho da fonte do seletor */
+  cursor: pointer;
+  margin-top: 50px;
+  overflow: auto;
 }
 
+/* Estilizando as opções */
+#colaborador option {
+  background-color: #fc0000; /* Define a cor de fundo das opções */
+  color: #333; /* Define a cor do texto das opções */
+  cursor:pointer
+}
 
+/* Estilizando a opção selecionada */
+#colaborador option:checked {
+  background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
+  font-weight: bold; /* Define o peso da fonte da opção selecionada */
+}
     </style>
 </head>
 <body>
@@ -76,10 +111,10 @@
 
         <form method="POST" action="{% url 'GerarRelatorio' %}">
             {% csrf_token %}
-            <h1>-Gerar- <br>  Relatório</h1><br><br>
+            <h1>Gerar <br>  Relatório</h1><br><br>
 
             <label for="data_inicio">Data de início:</label><br>
-            <input type="date" placeholder="Digite uma data:" name="data_inicio"><br><br>
+            <input type="date" placeholder="Digite uma data:" name="data_inicio"><br><br><br><br>
             <label for="data_final">Data final:</label><br>
             <input type="date" name="data_final"><br>
             <br>

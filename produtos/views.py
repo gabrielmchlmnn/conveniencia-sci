@@ -9,6 +9,7 @@ from estoque.models import Estoque
 from django.core.cache import cache
 
 
+@login_required(login_url='Login')
 def Voltar(request):
     limpar_cache_sessao(request)
     return redirect('ListarProdu')

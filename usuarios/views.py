@@ -11,30 +11,87 @@ from django.contrib import messages
 
 
 # Create your views here.
+@user_passes_test(lambda u: u.is_superuser)
+def Voltar(request):
+    limpar_cache_sessao(request)
+    return redirect('ListarUser')
+
+
+def limpar_cache_sessao(request):
+    chaves = list(request.session.keys())  
+    for chave in chaves:
+        if chave != '_auth_user_id' and chave != '_auth_user_backend' and chave != '_auth_user_hash':
+            del request.session[chave] 
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def CadastrarUser(request):
     if request.method == 'POST':
+        nome = request.POST.get('nome')
         usuario = request.POST.get('username')
+        email = request.POST.get('email')
         senha = request.POST.get('senha')
-        lista_usuarios = User.objects.values_list('username',flat=True)
-        if usuario not in lista_usuarios:
-            user = User.objects.create_user(username=usuario,password=senha)
-            user.save()
-            return redirect('ListarUser')
-        else:
-            messages.error(request,'Nome de usuário indisponível!')
+        confirmacao = request.POST.get('confirmacao')
+        try:
+            lista_usuarios = User.objects.values_list('username',flat=True)
+            if usuario not in lista_usuarios:
+                lista_emails = User.objects.values_list('email',flat=True)
+                if email not in lista_emails:
+                    if senha == confirmacao:
+                        user = User.objects.create_user(first_name=nome, username=usuario,email=email,password=senha)
+                        user.save()
+                        limpar_cache_sessao(request)
+                        return redirect('ListarUser')
+                    else:
+                        ultima_tentativa = {
+                            'nome':nome,
+                            'usuario':usuario,
+                            'email':email,
+                            'senha':'',
+                            'confirmacao':''
+                        }
+                        request.session['ultima_tentativa'] = ultima_tentativa
+                        raise Exception('As senhas não coincidem!')
+                else:
+                    ultima_tentativa = {
+                            'nome':nome,
+                            'usuario':usuario,
+                            'email':'',
+                            'senha':senha,
+                            'confirmacao':confirmacao
+                        }
+                    request.session['ultima_tentativa'] = ultima_tentativa
+                    raise Exception('Email indisponível!')
+            else:
+                ultima_tentativa = {
+                            'nome':nome,
+                            'usuario':'',
+                            'email':email,
+                            'senha':senha,
+                            'confirmacao':confirmacao
+                        }
+                request.session['ultima_tentativa'] = ultima_tentativa
+                raise Exception('Nome de usuário indisponível!')
+        except Exception as erro:
+            messages.error(request,f'{erro}')
             return redirect('ListarUser')
     else:
-        return render(request,'usuarios/criar_usuario.html')
+        return render(request,'usuarios/listar_usuario.html')
         
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def ListarUser(request):
-    context = {
-        'usuarios': User.objects.all()
-    }
+    ultima_tentativa = request.session.get('ultima_tentativa')
+    if ultima_tentativa is None:
+        context = {
+            'usuarios': User.objects.all()
+        }
+    else:
+        context = {
+            'usuarios':User.objects.all(),'nome':ultima_tentativa['nome'],'username':ultima_tentativa['usuario'],'email':ultima_tentativa['email'],
+            'senha':ultima_tentativa['senha'],'confirmacao':ultima_tentativa['confirmacao']
+        }
     return render(request,'usuarios/listar_usuario.html',context=context)
 
 
@@ -45,20 +102,50 @@ def EditarUser(request,id):
     usuario = User.objects.get(id=id)
     if request.method == 'POST':
         login = request.POST.get('username')
-        lista_usuarios = User.objects.exclude(id=id).values_list('username',flat=True)
-        if login not in lista_usuarios:
-            user = User.objects.filter(id=id).update(username=login)
-            return redirect('ListarUser')
-        else:
-            messages.error(request,'Nome de usuário indisponível!')
+        nome = request.POST.get('nome')
+        email = request.POST.get('email')
+        lista_usernames = User.objects.exclude(id=id).values_list('username',flat=True)
+        try:
+            if login not in lista_usernames:
+                lista_email = User.objects.exclude(id=id).values_list('email',flat=True)
+                if email not in lista_email:
+                    User.objects.filter(id=id).update(username=login,first_name=nome,email=email)
+                    limpar_cache_sessao(request)
+                    return redirect('ListarUser')
+                else:
+                    ultima_edicao = {
+                        'nome':nome,
+                        'email':'',
+                        'login':login
+                    }
+                    request.session['ultima_edicao'] = ultima_edicao
+                    raise Exception('Email indisponível!')
+            else:  
+                ultima_edicao = {
+                        'nome':nome,
+                        'email':email,
+                        'login':''
+                    }
+                request.session['ultima_edicao'] = ultima_edicao  
+                raise Exception('Nome de usuário indisponível!')
+        except Exception as erro:
+            messages.error(request,f'{erro}')
             url = reverse('EditarUser',args=[usuario.id])
             return redirect(url)
 
     else:
-        context = {
-            'username':usuario.username,'id':usuario.id
-        }
+        ultima_edicao = request.session.get('ultima_edicao')
+        if ultima_edicao is None:
+            context = {
+                'username':usuario.username,'id':usuario.id,'nome':usuario.first_name,'email':usuario.email
+            }
+        else:
+            context = {
+                'username':ultima_edicao['login'],'id':usuario.id,'nome':ultima_edicao['nome'],'email':ultima_edicao['email']
+            }
         return render(request,'usuarios/editar_usuario.html',context=context)
+
+
     
 
 
@@ -90,6 +177,7 @@ def RedefinirSenhaUser(request,id):
         return render(request, 'usuarios/redefinir_senha.html',{'id':usuario.id})
     
 
+@user_passes_test(lambda u: u.is_superuser)
 def DeletarUser(request,id):
     usuario = User.objects.get(id=id)
     print(usuario)

@@ -21,6 +21,7 @@ from django.http import JsonResponse
 
 # Create your views here.
 
+@login_required(login_url='Login')
 def Voltar(request):
     limpar_cache_sessao(request)
     return redirect('MostrarColab')
@@ -45,7 +46,8 @@ def Login(request):
    else:
        return render(request,'login/login.html')
 
-@never_cache
+
+
 @login_required(login_url='Login')
 def Home(request):
     hoje = datetime.now()
@@ -94,35 +96,50 @@ def AdicionarColab(request):
 
         cpf_validator = CPF()
         try:
-            if len(cpf) == 14 and cpf_validator.validate(cpf):
+            if cpf_validator.validate(cpf):
                     lista_cpf = Colaboradore.objects.values_list('cpf',flat=True)
                     if cpf not in lista_cpf:
                         lista_usernames = Colaboradore.objects.values_list('login',flat=True)
                         if login not in lista_usernames:
                             lista_emails = Colaboradore.objects.values_list('email',flat=True)
-                            # if email not in lista_emails:
-                            senha = str(senha).encode("utf8")
-                            senha_criptografada = md5(senha).hexdigest()
-                            user = Colaboradore(nome=nome,cpf=cpf,login=login,senha=senha_criptografada,email=email)
-                            user.save()
-                            limpar_cache_sessao(request)
-                            return redirect('MostrarColab')
-                            # else:
-                            #     messages.error(request,'Email indisponível!')
-                            #     return redirect('MostrarColab')
+                            if email not in lista_emails:
+                                senha = str(senha).encode("utf8")
+                                senha_criptografada = md5(senha).hexdigest()
+                                user = Colaboradore(nome=nome,cpf=cpf,login=login,senha=senha_criptografada,email=email)
+                                user.save()
+                                limpar_cache_sessao(request)
+                                return redirect('MostrarColab')
+                            else:
+                                ultima_tentativa = {
+                                    'nome':nome,
+                                    'cpf':cpf,
+                                    'login':login,
+                                    'senha':senha,
+                                    'email':''
+                                }
+                                request.session['ultima_tentativa'] = ultima_tentativa
+                                raise Exception('Email indisponível!')
                         else:
                             ultima_tentativa = {
-                                'nome':nome,
-                                'cpf':cpf,
-                                'login':'',
-                                'senha':senha,
-                                'email':email
+                            'nome':nome,
+                            'cpf':cpf,
+                            'login':'',
+                            'senha':senha,
+                            'email':email
                             }
                             request.session['ultima_tentativa'] = ultima_tentativa
                             raise Exception('Nome de usuário indisponível!')
 
                     else:
-                        raise Exception('CPF já cadastrado')
+                        ultima_tentativa = {
+                            'nome':nome,
+                            'cpf':'',
+                            'login':login,
+                            'senha':senha,
+                            'email':email
+                        }
+                        request.session['ultima_tentativa'] = ultima_tentativa
+                        raise Exception('CPF já cadastrado!')
             else:
                 raise Exception('Digite um CPF válido!')
         except Exception as erro:
@@ -143,8 +160,10 @@ def MostrarColab(request):
         else:
             i.situacao = "Inativo"
     if ultima_tentativa is None:
+        print('nao teve')
         return render(request,'colab/mostrar_colab.html',{'colaboradores':colaboradores})
     else:
+        print('teve')
         context = {
             'colaboradores':colaboradores,'nome':ultima_tentativa['nome'],
             'cpf':ultima_tentativa['cpf'],'login':ultima_tentativa['login'],
@@ -168,51 +187,48 @@ def EditarColab(request,id):
             situacao = False
 
         cpf_validator = CPF()
-        if len(cpf) != 14 and cpf_validator.validate(cpf):
-            messages.error('Preencha um CPF válido!')
-            url = reverse('EditarColab',args=[colab.id])
-            return redirect(url)
-        lista_usernames = Colaboradore.objects.exclude(id=id).values_list('login',flat=True)
+
+
+        lista_cpf = Colaboradore.objects.exclude(id=id).values_list('cpf',flat=True)
         try:
-            if login not in lista_usernames:
-                lista_cpf = Colaboradore.objects.exclude(id=id).values_list('cpf',flat=True)
-                if cpf not in lista_cpf:
+            if cpf not in lista_cpf and cpf_validator.validate(cpf):
+                lista_usernames = Colaboradore.objects.exclude(id=id).values_list('login',flat=True)
+                if login not in lista_usernames:
                     lista_emails = Colaboradore.objects.exclude(id=id).values_list('email',flat=True)
-                    # if email not in lista_emails:
-                    Colaboradore.objects.filter(id=id).update(nome=nome,cpf=cpf,login=login,situacao=situacao,email=email)
-                    limpar_cache_sessao(request)
-                    return redirect('MostrarColab')
-                    # else:
-                    #     ultima_tentativa = {
-                    #     'nome':nome,
-                    #     'cpf':'',
-                    #     'login':login,
-                    #     'email':email,
-                    #     'situacao':situacao
-                    #     }
-                    #     request.session['ultima_tentativa'] = ultima_tentativa
-                    #     messages.error(request,'Email indisponível')
-                    #     raise Exception('Email já cadastrado!')
-                else:
-                    ultima_tentativa = {
+                    if email not in lista_emails:
+                        Colaboradore.objects.filter(id=id).update(nome=nome,cpf=cpf,login=login,situacao=situacao,email=email)
+                        limpar_cache_sessao(request)
+                        return redirect('MostrarColab')
+                    else:
+                        ultima_tentativa = {
                         'nome':nome,
                         'cpf':'',
                         'login':login,
                         'email':email,
                         'situacao':situacao
+                        }
+                        request.session['ultima_tentativa'] = ultima_tentativa
+                        raise Exception('Email já cadastrado!')
+                else:
+                    ultima_tentativa = {
+                        'nome':nome,
+                        'cpf':cpf,
+                        'login':'',
+                        'email':email,
+                        'situacao':situacao
                     }
                     request.session['ultima_tentativa'] = ultima_tentativa
-                    raise Exception('CPF já cadastrado ou inválido!')
+                    raise Exception('Nome de usuário indisponível!')
             else:
                 ultima_tentativa = {
                     'nome':nome,
-                    'cpf':cpf,
-                    'login':'',
+                    'cpf':'',
+                    'login':login,
                     'email':email,
                     'situacao':situacao
                 }
                 request.session['ultima_tentativa'] = ultima_tentativa
-                raise Exception('Nome de usuário indisponível!')
+                raise Exception('CPF já cadastrado ou inválido!')
         except Exception as erro:
             messages.error(request,f'{erro}')
             url = reverse('EditarColab',args=[colab.id])
@@ -247,6 +263,9 @@ def FiltrarColab(request):
         return render(request, 'colab/mostrar_colab.html', {'colaboradores': colaboradores_filtrados})
     
 
+
+    
+@login_required(login_url='Login')
 def RedefinirSenha(request,id):
     colab = Colaboradore.objects.get(id=id)
     if request.method == 'POST':

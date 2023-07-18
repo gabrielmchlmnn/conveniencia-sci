@@ -28,7 +28,7 @@ div{
     border-radius:15px;
     color:#fff;
     width: 60%;
-    height: 55%;
+    height: 70%;
         }
   input{
       padding:15px;
@@ -45,11 +45,13 @@ div{
       border-radius: 10px;
       position: absolute;
       left: 80%;
-      top:80%;
+      top:85%;
       cursor: pointer;
+      color:white
   }
   button:hover{
       background-color: deepskyblue;
+      color:black
   }
   h1{
       top:50%;
@@ -68,12 +70,12 @@ div{
   border:solid 1.5px rgb(255, 1, 1);
 }
 #redefinir{
-  width: 40%;
+  width: 25%;
   background-color: rgb(0, 81, 255);
   color:rgb(255, 255, 255);
   position:absolute;
-  left:7%;
-  top:50%;
+  left:38%;
+  top:85%;
   cursor:pointer;
 }
 #redefinir:hover {
@@ -88,8 +90,9 @@ div{
       border-radius: 10px;
       position: absolute;
       left: 5%;
-      top:80%;
+      top:85%;
       cursor: pointer;
+      color:black
 }
 .excluir:hover{
   background-color: #ff0000;
@@ -102,14 +105,22 @@ div{
 <body>
   {% include 'navbar.html' %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <a href="{% url 'ListarUser'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 25%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+  <a href="{% url 'VoltarUsuarios'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 18%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
     <div class="container">
         <form method="post" action="{% url 'EditarUser' id=id %}">
             {% csrf_token %}
-            <h1>-EDITAR- <br>  
-                USUÁRIO </h1><br><br>
+            <h1>EDITAR <br>  
+                {{username}} </h1><br><br>
+
+            <label for="nome">Nome:</label><br>
+            <input type="text" name="nome" placeholder="Digite o nome do usuário:" id="nome" value="{{nome}}" required><br><br>
+
+
             <label for="username">Nome de usuário:</label><br>
             <input type="text" name="username" placeholder="Digite o nome de usuário:" id="username" value="{{username}}" required><br><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" name="email" placeholder="Digite o email do usuário:" id="email" value="{{email}}" required><br><br>
 
             <a href="{% url 'RedefinirSenhaUser' id=id %}"><button type="button" id="redefinir"> Redefinir Senha</button></a><br><br>
             <button type="submit">Atualizar usuário</button>

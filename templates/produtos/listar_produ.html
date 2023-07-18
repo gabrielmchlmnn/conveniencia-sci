@@ -149,7 +149,9 @@ div.modal-content {
   width: 50%;
   border-radius: 15px;
   background-color: #e8ecff;
-  color:black
+  color:black;
+  height: 85%;
+
 }
 .fechar {
   color: #2c2c2c;
@@ -248,7 +250,7 @@ input{
   }
   to {
     opacity: 1;
-    transform: translateY(-54%);
+    transform: translateY(0%);
   }
 }
 
@@ -325,7 +327,7 @@ input{
           <button type="button" onclick="exibirModalAdicionar()">Adicionar Produto +</button>
     </div>
     <div id="modal-adicionar" class="modal">
-      <div class="modal-content">
+      <div class="modal-content" id="modal-content">
         <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         
         <form method="post" action="{% url 'AdicionarProdu' %}">
@@ -351,7 +353,7 @@ input{
           {% if messages %}
                 <script>
                   window.onload = function() {
-                  exibirModal();
+                  exibirModalAdicionar();
                   };
               </script>
               {% for message in messages %}
@@ -377,13 +379,14 @@ input{
         function exibirModalAdicionar() {
         var modal = document.getElementById("modal-adicionar");
         modal.style.display = "block";
-        modal.classList.add("modal-entrada");
+        content = document.getElementById('modal-content')
+        content.classList.add("modal-entrada");
         }
 
         function fecharModalAdicionar() {
         var modal = document.getElementById("modal-adicionar");
         modal.style.display = "none";
-        window.location.href = "{% url 'ListarProdu'%}"
+        window.location.href = "{% url 'VoltarProdutos'%}"
         }
         function validarEntrada(event) {
           var tecla = event.which || event.keyCode;

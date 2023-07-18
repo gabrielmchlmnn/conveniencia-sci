@@ -32,6 +32,7 @@
             border-radius:15px;
             color:#fff;
             width: 60%;
+            height: 80%;
         }
         input{
             padding:15px;
@@ -109,14 +110,16 @@ input[type="checkbox"] {
   text-align: center;
   line-height: 30px;
   border:solid 1.5px rgb(255, 1, 1);
+  margin-top: -150px;
 }
 
 #redefinir{
-  width: 40%;
+  width: 30%;
   background-color: rgb(0, 81, 255);
   color:rgb(255, 255, 255);
   position:relative;
   left:0;
+  margin-top: 122px;
 }
 #redefinir:hover{
   background-color:  rgb(39, 108, 255);
@@ -128,7 +131,7 @@ input[type="checkbox"] {
   {% include 'navbar.html' %}
 
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-          <a href="{% url 'Voltar' %}"><i class="fas fa-arrow-left fa-2x" id="voltar" style="position: absolute; top: 14%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i></a>
+          <a href="{% url 'VoltarColaboradores' %}"><i class="fas fa-arrow-left fa-2x" id="voltar" style="position: absolute; top: 14%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i></a>
 
 
     <div class="container">
@@ -151,13 +154,17 @@ input[type="checkbox"] {
             <label for="email">Email:</label><br>
             <input type="email" placeholder="Email:" name="email" id="email" value="{{email}}" required><br><br>
 
+
+
+            <a href="{% url 'RedefinirSenha' id=id %}"><button type="button" id="redefinir" class="redefinir"> Redefinir Senha</button></a><br><br>
+
+
             {% if messages %}
             {% for message in messages %}
             <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br><br>
             {% endfor %}
             {%endif%}
-
-            <a href="{% url 'RedefinirSenha' id=id %}"><button type="button" id="redefinir"> Redefinir Senha</button></a><br><br>
+            
 
             <button type="submit">Atualizar colaborador</button><br><br>
           </form><br>

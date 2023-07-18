@@ -14,5 +14,5 @@ urlpatterns = [
    path('home/filtrar-colaboradores',FiltrarColab,name="FiltrarColab"),
    path('home/colaborador/redefinir-senha/<int:id>',RedefinirSenha,name='RedefinirSenha'),
    path('home/',include('estoque.urls')),
-   path('voltar/',Voltar,name='Voltar')
+   path('voltar/',Voltar,name='VoltarColaboradores')
    ]

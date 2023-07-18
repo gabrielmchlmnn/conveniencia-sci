@@ -5,12 +5,13 @@ from django.contrib import messages
 from produtos.models import Produtos
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 
 
 # Create your views here.
 
-
+@login_required(login_url='Login')
 def ListarEstoque(request):
         estoque = Estoque.objects.all().order_by('quantidade')
         lista_estoque = []
@@ -23,7 +24,7 @@ def ListarEstoque(request):
         }
         return render(request,'estoque/estoque.html',context=context)
 
-
+@login_required(login_url='Login')
 def FiltrarEstoque(request):
     produto = request.GET.get('search')
     produtos_filtrados = Estoque.objects.filter(produto__nome__icontains=produto)
@@ -34,7 +35,7 @@ def FiltrarEstoque(request):
 
 
 
-
+@login_required(login_url='Login')
 def AdicionarEntrada(request):
         try:
             quantidade = request.POST.get('quantidade')
@@ -52,7 +53,7 @@ def AdicionarEntrada(request):
 
 
 
-
+@login_required(login_url='Login')
 def AdicionarBaixa(request):
     try:
         quantidade = request.POST.get('quantidade')
@@ -69,11 +70,11 @@ def AdicionarBaixa(request):
         return redirect('ListarEstoque')
 
 
-
+@login_required(login_url='Login')
 def ListarMovimentacoes(request):
     return render(request,'estoque/movimentacoes.html',{'movimentacoes':Movimentacao_estoque.objects.all().order_by('-data'),'usuarios':User.objects.all()})
 
-
+@login_required(login_url='Login')
 def FiltrarMovimentacoes(request):
     data_inicio = request.GET.get('data_inicio')
     data_final = request.GET.get('data_final')

@@ -18,6 +18,8 @@ from django.utils import timezone
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -230,7 +232,7 @@ def ConferirGastos(request):
 
 
 
-
+@login_required(login_url='Login')
 def GerarRelatorio(request):
     if request.method == 'GET':
         return render(request, 'relatorios/relatorios.html',{'colaboradores':Colaboradore.objects.all().order_by('nome')})
@@ -290,15 +292,4 @@ def GerarRelatorio(request):
 
 
 
-def Compras(request):
-    context= {
-        'compras':Compra.objects.all()
-    }
-    return render(request,'compras/compras.html',context=context)
 
-def Deletar_compra(request,id):
-    compra_excluida = Compra.objects.filter(id=id).delete()
-    context= {
-        'compras':Compra.objects.all()
-    }
-    return render(request,'compras/compras.html',context=context)
