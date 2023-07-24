@@ -1,0 +1,96 @@
+*{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+    .container{
+        background-color: rgba(0, 0, 0, 0.8);
+        padding:50px;
+        border-radius:15px;
+        width: 90%;
+        margin:auto;
+        margin-top:2%;
+        text-align: center;
+        color:white;
+        font-weight: bold;
+        height: 80%;
+    }
+    body {
+      background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+  
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 45%;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor:pointer;
+        color:white
+    }
+  
+    h1{
+        color:white;
+        text-align: center;
+    }
+  
+  
+  
+  input{
+          padding:15px;
+          border:none;
+          padding:13px;
+          width: 50%;
+          border-radius: 10px;
+      }
+  
+      button:hover{
+          background-color: deepskyblue;
+          color:black
+      }
+      h1{
+          top:50%;
+          text-align: center;
+      }
+  
+      .error-message {
+      color: #ff0000; 
+      font-weight: bold; 
+      font-size: 16px; 
+      background-color: #ffbdbd;
+      border-radius: 10px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      border:solid 1.5px rgb(255, 1, 1);
+      }
+  
+  #colaborador {
+    width: 200px; /* Define a largura do seletor */
+    padding: 8px; /* Define o espaçamento interno do seletor */
+    border: 1px solid #ccc; /* Define a borda do seletor */
+    border-radius: 4px; /* Define o raio de borda do seletor */
+    font-size: 16px; /* Define o tamanho da fonte do seletor */
+    cursor: pointer;
+    margin-top: 50px;
+    overflow: auto;
+  }
+  
+  /* Estilizando as opções */
+  #colaborador option {
+    background-color: #fc0000; /* Define a cor de fundo das opções */
+    color: #333; /* Define a cor do texto das opções */
+    cursor:pointer
+  }
+  
+  /* Estilizando a opção selecionada */
+  #colaborador option:checked {
+    background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
+    font-weight: bold; /* Define o peso da fonte da opção selecionada */
+  }

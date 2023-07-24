@@ -8,5 +8,5 @@ urlpatterns = [
     path('filtrar-usuarios/',FiltrarUsuario,name="FiltrarUser"),
     path('redefinir-senha/<int:id>/',RedefinirSenhaUser,name='RedefinirSenhaUser'),
     path('deletar-usuario/<int:id>/',DeletarUser,name='DeletarUser'),
-    path('voltar/',Voltar,name='VoltarUsuarios')
+    path('voltar/usuarios/',Voltar,name='VoltarUsuarios')
 ]

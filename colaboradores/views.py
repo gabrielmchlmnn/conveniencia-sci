@@ -8,14 +8,14 @@ from django.db.models import Sum
 from django.db.models.functions import Round
 from datetime import datetime
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
 from hashlib import md5
 from django.urls import reverse
 from validate_docbr import CPF
-from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from estoque.models import Estoque
-from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 
 
@@ -66,16 +66,9 @@ def Home(request):
         dia_25_mes_passado = hoje.replace(day=25)
         
     quantidade_compras_ultima_ref = Compra.objects.filter(data__gte=dois_meses_atras,data__lte = dia_25_mes_passado).count()
-    estoque = Estoque.objects.filter(quantidade__lt=4).order_by('quantidade')
-    lista_estoque = []
-    for i in estoque:
-        if i.produto.situacao == True:
-            if i.quantidade <4 and i.quantidade>0:
-                lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'amarelo'})
-            elif i.quantidade <=0:
-                    lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade,'cor':'vermelho'})
+    estoque = Estoque.objects.filter(Q(quantidade__lt=4) & Q(produto__situacao=True)).order_by('quantidade')
     context = {
-       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':lista_estoque
+       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':estoque
     }
     return render(request,'home/home.html',context=context)
 
@@ -93,6 +86,7 @@ def AdicionarColab(request):
         login = request.POST.get('username')
         senha = request.POST.get('senha')
         email = request.POST.get('email')
+        confirmacao = request.POST.get('confirmacao')
 
         cpf_validator = CPF()
         try:
@@ -103,19 +97,34 @@ def AdicionarColab(request):
                         if login not in lista_usernames:
                             lista_emails = Colaboradore.objects.values_list('email',flat=True)
                             if email not in lista_emails:
-                                senha = str(senha).encode("utf8")
-                                senha_criptografada = md5(senha).hexdigest()
-                                user = Colaboradore(nome=nome,cpf=cpf,login=login,senha=senha_criptografada,email=email)
-                                user.save()
-                                limpar_cache_sessao(request)
-                                return redirect('MostrarColab')
+                                if senha == confirmacao:
+                                    senha = str(senha).encode("utf8")
+                                    senha_criptografada = md5(senha).hexdigest()
+                                    user = Colaboradore(nome=nome,cpf=cpf,login=login,senha=senha_criptografada,email=email)
+                                    user.save()
+                                    Enviar_email_bem_vindo({'nome':nome,'email':email})
+
+                                    limpar_cache_sessao(request)
+                                    return redirect('MostrarColab')
+                                else:
+                                    ultima_tentativa = {
+                                    'nome':nome,
+                                    'cpf':cpf,
+                                    'login':login,
+                                    'senha':senha,
+                                    'email':email,
+                                    'confirmacao':confirmacao
+                                    }
+                                    request.session['ultima_tentativa'] = ultima_tentativa
+                                    raise Exception('As senhas não coincidem!')
                             else:
                                 ultima_tentativa = {
                                     'nome':nome,
                                     'cpf':cpf,
                                     'login':login,
                                     'senha':senha,
-                                    'email':''
+                                    'email':'',
+                                    'confirmacao':confirmacao
                                 }
                                 request.session['ultima_tentativa'] = ultima_tentativa
                                 raise Exception('Email indisponível!')
@@ -125,7 +134,8 @@ def AdicionarColab(request):
                             'cpf':cpf,
                             'login':'',
                             'senha':senha,
-                            'email':email
+                            'email':email,
+                            'confirmacao':confirmacao
                             }
                             request.session['ultima_tentativa'] = ultima_tentativa
                             raise Exception('Nome de usuário indisponível!')
@@ -136,11 +146,21 @@ def AdicionarColab(request):
                             'cpf':'',
                             'login':login,
                             'senha':senha,
-                            'email':email
+                            'email':email,
+                            'confirmacao':confirmacao
                         }
                         request.session['ultima_tentativa'] = ultima_tentativa
                         raise Exception('CPF já cadastrado!')
             else:
+                ultima_tentativa = {
+                            'nome':nome,
+                            'cpf':'',
+                            'login':login,
+                            'senha':senha,
+                            'email':email,
+                            'confirmacao':confirmacao
+                }
+                request.session['ultima_tentativa'] = ultima_tentativa
                 raise Exception('Digite um CPF válido!')
         except Exception as erro:
             messages.error(request,f'{erro}')
@@ -152,22 +172,30 @@ def AdicionarColab(request):
 
 @login_required(login_url='Login')
 def MostrarColab(request):
-    colaboradores = Colaboradore.objects.all()
+    colaboradores = Colaboradore.objects.all().order_by('nome')
     ultima_tentativa = request.session.get('ultima_tentativa')
     for i in colaboradores:
         if i.situacao:
             i.situacao = "Ativo"
         else:
             i.situacao = "Inativo"
+
+    paginator = Paginator(colaboradores, 9) 
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+
     if ultima_tentativa is None:
-        print('nao teve')
-        return render(request,'colab/mostrar_colab.html',{'colaboradores':colaboradores})
+        return render(request,'colab/mostrar_colab.html',{'colaboradores':page_obj})
+    
+
     else:
-        print('teve')
         context = {
-            'colaboradores':colaboradores,'nome':ultima_tentativa['nome'],
+            'colaboradores':page_obj,'nome':ultima_tentativa['nome'],
             'cpf':ultima_tentativa['cpf'],'login':ultima_tentativa['login'],
-            'email':ultima_tentativa['email'],'senha':ultima_tentativa['senha']
+            'email':ultima_tentativa['email'],'senha':ultima_tentativa['senha'],
+            'confirmacao':ultima_tentativa['confirmacao']
         }
         return render(request,'colab/mostrar_colab.html',context=context)
 
@@ -202,9 +230,9 @@ def EditarColab(request,id):
                     else:
                         ultima_tentativa = {
                         'nome':nome,
-                        'cpf':'',
+                        'cpf':cpf,
                         'login':login,
-                        'email':email,
+                        'email':'',
                         'situacao':situacao
                         }
                         request.session['ultima_tentativa'] = ultima_tentativa
@@ -253,14 +281,29 @@ def EditarColab(request,id):
 @login_required(login_url='Login')
 def FiltrarColab(request):
     if request.method == 'GET':
-        search_term = request.GET.get('search')
-        colaboradores_filtrados = Colaboradore.objects.filter(Q(nome__icontains=search_term) | Q(cpf__icontains=search_term))
+        procura = request.session.get('procura_colaboradores')
+        if procura is None:
+            search_term = request.GET.get('search')
+            request.session['procura_colaboradores'] = search_term
+        else:
+            busca = request.GET.get('search')
+            if busca is not None or busca == '':
+                search_term = busca
+            else:
+                search_term = procura
+
+        colaboradores_filtrados = Colaboradore.objects.filter(Q(nome__icontains=search_term) | Q(cpf__icontains=search_term)).order_by('nome')
         for i in colaboradores_filtrados:
             if i.situacao:
                 i.situacao = "Ativo"
             else:
                 i.situacao = "Inativo"
-        return render(request, 'colab/mostrar_colab.html', {'colaboradores': colaboradores_filtrados})
+        paginator = Paginator(colaboradores_filtrados, 9)  
+
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        return render(request, 'colab/mostrar_colab.html', {'colaboradores': page_obj,'filtro':'filtro'})
     
 
 
@@ -297,9 +340,14 @@ def RedefinirSenha(request,id):
         return render(request,'colab/redefinir_senha.html',{'id':colab.id})
 
 
+def Enviar_email_bem_vindo(destinatario):
+        html_content = render_to_string('colab/email_bem_vindo.html', {'nome_colaborador':destinatario['nome']})
+        email = EmailMessage(
+            'Seu cadastro foi realizado com sucesso!',
+            html_content,
+            'testeacademia@sci.com.br',
+            [f'{destinatario["email"]}']
+            )       
+        email.content_subtype = 'html'
+        email.send()
 
-
-# senha = request.POST.get('senha')
-# senha = str(senha).encode('utf8')
-# senha_criptografada = md5(senha).hexdigest()
-# senha=senha_criptografada

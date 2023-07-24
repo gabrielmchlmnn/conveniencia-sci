@@ -1,284 +1,13 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'estoque/css/movimentacoes.css'%}">
     <title>Movimentações</title>
-    <style>
-      *{margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  }
-  .container{
-      background-color: rgba(0, 0, 0, 0.8);
-      padding:50px;
-      border-radius:15px;
-      width: 90%;
-      margin:auto;
-      margin-top:2%;
-      text-align: center;
-  }
-  body {
-    background-color: #b0bfff;
-  margin: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  height: 100vh; 
-}
-  table,th,td{
-      border: 0.5px solid rgb(97, 97, 97);
-      border-collapse: collapse;
-      margin: 0 auto;
-      width: 100%;
-  }
-  td,th{
-      padding: 2px;
-      background-color: rgb(243, 243, 243);
-      text-align: center;
-      font-size:large;
-      height: 4px;
-      width: 17%;
 
-    }
-    th:nth-child(3), td:nth-child(3) {
-            width: 12%;
-            text-align: center;
-        }
-        th:nth-child(4), td:nth-child(4) {
-            width: 12%;
-            text-align: center;
-        }
-        th:nth-child(5), td:nth-child(5) {
-            width: 12%;
-            text-align: center;
-        }
-
-    th:last-child, td:last-child {
-            width: 30%;
-            text-align: center;
-        }
-    td .situation-dot.active {
-    background-color: green;
-    border-color: green;
-  }
-
-
-  td .situation-dot.inactive {
-    background-color: red;
-    border-color: red;
-  }
-  .situation-dot {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-    }
-  button{
-      background-color: dodgerblue;
-      border:none;
-      padding: 15px;
-      width: 100%;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor:pointer;
-
-  }
-  th{
-      background-color: darkblue;
-      color:white;
-      border-radius: 5px;
-      text-align: center;
-  }
-  h1{
-      color:white;
-      text-align: center;
-  }
-
-.search-form {
-    align-items: center; /* Alinhar verticalmente os elementos filhos */
-  }
-
-  .search-form input[type="text"] {
-    padding: 8px; /* Espaçamento interno do campo de entrada */
-    font-size: 14px; /* Tamanho da fonte do campo de entrada */
-    border: 1px solid #ccc; /* Borda do campo de entrada */
-    border-radius: 4px; /* Borda arredondada do campo de entrada */
-  }
-
-  .search-form input[type="submit"] {
-    background-color: rgb(11, 133, 255); /* Cor de fundo do botão de envio */
-    color: white; /* Cor do texto do botão de envio */
-    padding: 8px 16px; /* Espaçamento interno do botão de envio */
-    border: none; /* Remover borda do botão de envio */
-    border-radius: 4px; /* Borda arredondada do botão de envio */
-    cursor: pointer; /* Cursor do mouse em formato de mão */
-    font-weight: bold;
-    color:white
-  }
-
-  .search-form input[type="submit"]:hover {
-    background-color: deepskyblue; /* Cor de fundo do botão de envio */
-    color:black
-  }
-  .tabela-scroll{
-    overflow: auto;
-    height: 500px;
-  }
-  div.modal {
-  display: none;
-  z-index: 999;
-  left: 5%;
-  top: 55%;
-  width: 90%;
-  transform: translate(0%,-54%);
-  height: 85%;
-  text-align: center;
-  background-color: rgba(30, 27, 53, 0.986); 
-  position: absolute;
-  border-radius: 15px;
-  color:azure
-}
-
-div.modal-content {
-  margin: 5% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-  border-radius: 15px;
-  background-color: #e8ecff;
-  color:black
-}
-.fechar {
-  color: #2c2c2c;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-
-}
-
-.fechar:hover,
-.fechar:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-input{
-        padding:15px;
-        border:none;
-        padding:13px;
-        width: 90%;
-        border-radius: 10px;
-    }
-
-    h1{
-        top:50%;
-        text-align: center;
-    }
-
-    #barra_de_pesquisa{
-      width: 50%;
-      right:14%;
-      position: relative;
-    }
-    #botao_pesquisa{
-      position: relative;
-      right:12%;
-      width: 20%;
-      height: 15%;
-    }
-    .error-message {
-    color: #ff0000; 
-    font-weight: bold; 
-    font-size: 16px; 
-    background-color: #ffbdbd;
-    border-radius: 10px;
-    height: 30px;
-    text-align: center;
-    line-height: 30px;
-    border:solid 1.5px rgb(255, 1, 1);
-    }
-    img{
-      height: 40px;
-      width: 40px;
-      cursor:pointer
-    }
-    .tabela-corpo {
-  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
-  overflow-y: scroll;
-}
-#tipo {
-  width: 200px; /* Define a largura do seletor */
-  padding: 8px; /* Define o espaçamento interno do seletor */
-  border: 1px solid #ccc; /* Define a borda do seletor */
-  border-radius: 4px; /* Define o raio de borda do seletor */
-  font-size: 16px; /* Define o tamanho da fonte do seletor */
-  cursor: pointer;
-}
-
-/* Estilizando as opções */
-#tipo option {
-  background-color: #fc0000; /* Define a cor de fundo das opções */
-  color: #333; /* Define a cor do texto das opções */
-  cursor:pointer
-}
-
-/* Estilizando a opção selecionada */
-#tipo option:checked {
-  background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
-  font-weight: bold; /* Define o peso da fonte da opção selecionada */
-}
-
-#filtro {
-  width: 200px; /* Define a largura do seletor */
-  padding: 8px; /* Define o espaçamento interno do seletor */
-  border: 1px solid #ccc; /* Define a borda do seletor */
-  border-radius: 4px; /* Define o raio de borda do seletor */
-  font-size: 16px; /* Define o tamanho da fonte do seletor */
-  cursor: pointer;
-}
-
-/* Estilizando as opções */
-#filtro option {
-  background-color: #fc0000; /* Define a cor de fundo das opções */
-  color: #333; /* Define a cor do texto das opções */
-  cursor:pointer
-}
-
-/* Estilizando a opção selecionada */
-#filtro option:checked {
-  background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
-  font-weight: bold; /* Define o peso da fonte da opção selecionada */
-}
-#botao-tipo-entrada{
-        background-color: deepskyblue;
-        font-size: larger;
-        cursor:pointer;
-        border:1px solid black;
-        width: 30%;
-}
-#botao-tipo-baixa{
-  background-color: #fc0000;
-  font-size: larger;
-  cursor: pointer;
-  border:1px solid black;
-  width: 30%;
-}
-#botao-tipo-entrada:hover{
-        background-color: rgb(0, 154, 206);
-        color:white;
-        border:1px solid rgb(255, 255, 255);
-
-}
-#botao-tipo-baixa:hover{
-  background-color: #c20000;
-  color:white;
-  border: 1px solid white
-}
-
-</style>
 
 </head>
 <body>
@@ -293,16 +22,18 @@ input{
         <div class="search-form">
           <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
               <div class="search-container">
-                  <h2 style="position: relative;color:white;left:40%">Filtrar por:</h2><br>
-                  <select name="filtro" id="filtro" style="position: relative;left:40%;top:-30%" required>
+                  <h2 style="position: relative;color:white;left:-45%">Filtrar por:</h2><br>
+                  <select name="filtro" id="filtro" style="position: relative;left:-43%;top:-39%" required>
                     <option disabled selected >--Selecione um filtro--</option>
                       <option value="data" onclick="exibirModalData()">Data</option>
                       <option value="data" onclick="exibirModalUsuario()">Usuário</option>
                       <option value="data" onclick="exibirModalTipo()">Tipo</option>
-                      <option value="geral" onclick="desfazerFiltros()">Desfazer filtros</option>
                   </select>
               </div>
           </form>
+          {% if filtro %}
+          <a href="{% url 'VoltarMovimentacoes'%}"><input type="submit" value="Desfazer filtro" class="search-button2"></a>
+          {%endif%}
       </div>
       <br><br>
       <div class="tabela-scroll">
@@ -338,7 +69,11 @@ input{
           <tbody>
               {% for item in movimentacoes %}
             <tr>
+              {% if item.produto.nome|length > 35%}
+              <td>{{item.produto.nome|slice:":36"}}...</td>
+              {%else%}
               <td>{{item.produto.nome}}</td>
+              {%endif%}
               <td>{{item.quantidade}}</td>
               <td>{{item.data}}</td>    
               <td>{{item.tipo}}</td>
@@ -349,6 +84,28 @@ input{
           </tbody>
         </table>
         </div>
+        <nav aria-label="Page navigation" class="paginator">
+          <ul class="pagination-justify-content-center">
+            {% if movimentacoes.has_previous %}
+              <a class="page-link" href="?page=1">Primeira</a>
+              <a class="page-link" href="?page={{ movimentacoes.previous_page_number }}">Anterior</a>
+            {% endif %}
+        
+            {% for num in movimentacoes.paginator.page_range %}
+              {% if num == movimentacoes.number %}
+                  <span class="page-link"  id="pagina_atual">{{ num }}</span>
+                
+              {% else %}
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+        
+            {% if movimentacoes.has_next %}
+              <a class="page-link" href="?page={{ movimentacoes.next_page_number }}">>></a>
+              <a class="page-link" href="?page={{ movimentacoes.paginator.num_pages }}">Última</a>
+            {% endif %}
+          </ul>
+        </nav>
       </div>
 
         <div id="modal-data" class="modal">
@@ -429,7 +186,7 @@ input{
         }
 
         function desfazerFiltros(){
-          window.location.href = "{% url 'ListarMovimentacoes'%}"
+          window.location.href = "{% url 'VoltarMovimentacoes'%}"
         }
         function exibirModalUsuario (){
           var modal = document.getElementById("modal-usuario");

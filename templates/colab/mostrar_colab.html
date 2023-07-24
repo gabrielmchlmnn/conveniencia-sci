@@ -5,239 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{%static 'colab/css/mostrar_colab.css'%}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Listar colaboradores</title>
-    <style>
-  *{margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  }
-  .container{
-      background-color: rgba(0, 0, 0, 0.8);
-      padding:50px;
-      border-radius:15px;
-      width: 90%;
-      margin:auto;
-      margin-top:2%;
-      text-align: center;
-  }
-  body {
-    background-color: #b0bfff;
-  margin: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  height: 100vh; 
-}
-  table,th,td{
-      border: 0.5px solid rgb(97, 97, 97);
-      border-collapse: collapse;
-      margin: 0 auto;
-      width: 100%;
-  }
-  td,th{
-      padding: 2px;
-      background-color: rgb(243, 243, 243);
-      text-align: left;
-      font-size:large;
-      height: 4px;
-      width: 25%;
-
-    }
-    th:nth-child(4), td:nth-child(4) {
-            width: 15%;
-            text-align: center;
-        }
-
-    th:last-child, td:last-child {
-            width: 30%;
-            text-align: center;
-        }
-    td .situation-dot.active {
-    background-color: green;
-    border-color: green;
-  }
-
-
-  td .situation-dot.inactive {
-    background-color: red;
-    border-color: red;
-  }
-  .situation-dot {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-    }
-  button{
-      background-color: dodgerblue;
-      border:none;
-      padding: 15px;
-      width: 100%;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor:pointer;
-      color:white
-  }
-  th{
-      background-color: darkblue;
-      color:white;
-      border-radius: 5px;
-      text-align: center;
-  }
-  h1{
-      color:white;
-      text-align: center;
-  }
-
-.search-form {
-    align-items: center; /* Alinhar verticalmente os elementos filhos */
-  }
-
-  .search-form input[type="text"] {
-    padding: 8px; /* Espaçamento interno do campo de entrada */
-    font-size: 14px; /* Tamanho da fonte do campo de entrada */
-    border: 1px solid #ccc; /* Borda do campo de entrada */
-    border-radius: 4px; /* Borda arredondada do campo de entrada */
-  }
-
-  .search-form input[type="submit"] {
-    background-color: rgb(11, 133, 255); /* Cor de fundo do botão de envio */
-    color: white; /* Cor do texto do botão de envio */
-    padding: 8px 16px; /* Espaçamento interno do botão de envio */
-    border: none; /* Remover borda do botão de envio */
-    border-radius: 4px; /* Borda arredondada do botão de envio */
-    cursor: pointer; /* Cursor do mouse em formato de mão */
-    font-weight: bold;
-    color:white
-  }
-
-  .search-form input[type="submit"]:hover {
-    background-color: deepskyblue; /* Cor de fundo do botão de envio */
-    color:black
-  }
-  .tabela-scroll{
-    overflow: auto;
-    height: 500px;
-  }
-  div.modal {
-  display: none;
-  z-index: 999;
-  left: 5%;
-  top: 55%;
-  width: 90%;
-  transform: translate(0%,-54%);
-  height: 85%;
-  text-align: center;
-  background-color: rgba(30, 27, 53, 0.986); 
-  position: absolute;
-  border-radius: 15px;
-  color:azure
-}
-
-div.modal-content {
-  margin: 5% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-  border-radius: 15px;
-  background-color: #e8ecff;
-  color:black;
-  height: 90%;
-}
-.fechar {
-  color: #2c2c2c;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-
-}
-
-.fechar:hover,
-.fechar:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-input{
-        padding:15px;
-        border:none;
-        padding:13px;
-        width: 90%;
-        border-radius: 10px;
-    }
-
-    button:hover{
-        background-color: deepskyblue;
-        color:black
-    }
-    h1{
-        top:50%;
-        text-align: center;
-    }
-
-    #barra_de_pesquisa{
-      width: 50%;
-      right:14%;
-      position: relative;
-    }
-    #botao_pesquisa{
-      position: relative;
-      right:12%;
-      width: 20%;
-      height: 15%;
-    }
-    .error-message {
-    color: #ff0000; 
-    font-weight: bold; 
-    font-size: 16px; 
-    background-color: #ffbdbd;
-    border-radius: 10px;
-    height: 30px;
-    text-align: center;
-    line-height: 30px;
-    border:solid 1.5px rgb(255, 1, 1);
-    }
-    img{
-      height: 40px;
-      width: 40px;
-      cursor:pointer
-    }
-    .tabela-corpo {
-  height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
-  overflow-y: scroll;
-}
-.modal-entrada {
-  animation-name: modalEntrada;
-  animation-duration: 0.5s;
-}
-.modal-entrada-dados {
-  animation-name: modalEntrada-dados;
-  animation-duration: 0.5s;
-}
-
-@keyframes modalEntrada {
-  from {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-54%);
-  }
-}
-
-@keyframes modalEntrada-dados {
-  from {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0%);
-  }
-}
-      </style>
 </head>
 <body>
 
@@ -250,10 +20,13 @@ input{
         <div class="search-form">
           <form action="{% url 'FiltrarColab' %}" method="get">
               <div class="search-container">
-                  <input type="text" name="search" placeholder="Pesquisar" class="search-input" id="barra_de_pesquisa">
+                  <input type="text" name="search" placeholder="Pesquisar" class="search-input" id="barra_de_pesquisa" required>
                   <input type="submit" value="Pesquisar" class="search-button" id="botao_pesquisa">
               </div>
           </form>
+          {% if filtro %}
+          <a href="{% url 'VoltarColaboradores'%}"><input type="submit" value="Desfazer filtro" class="search-button2"></a>
+          {%endif%}
       </div>
       <br><br>
       <div class="tabela-scroll">
@@ -273,9 +46,17 @@ input{
           <tbody>
               {% for pessoa in colaboradores %}
             <tr>
-              <td>{{pessoa.nome|slice:":35"}}</td>
+              {% if pessoa.nome|length > 35 %}
+                <td>{{pessoa.nome|slice:":35"}}...</td>
+              {%else%}
+                <td>{{pessoa.nome}}</td>
+              {%endif%}
               <td>{{pessoa.login}}</td>
+              {% if pessoa.email|length > 35%}
               <td>{{pessoa.email|slice:":35" }}...</td>
+              {%else%}
+              <td>{{pessoa.email}}</td>
+              {%endif%}
               <td><span
                 class="situation-dot {% if pessoa.situacao == 'Ativo'%}active{% else %}inactive{% endif %}">
               </span> {{pessoa.situacao}}
@@ -292,6 +73,28 @@ input{
       </div>  
       <br><br>
       <button onclick="exibirModalAdicionar()">Adicionar Colaborador +</button>
+      <nav aria-label="Page navigation" class="paginator">
+        <ul class="pagination-justify-content-center">
+          {% if colaboradores.has_previous %}
+            <a class="page-link" href="?page=1">Primeira</a>
+            <a class="page-link" href="?page={{ colaboradores.previous_page_number }}">Anterior</a>
+          {% endif %}
+      
+          {% for num in colaboradores.paginator.page_range %}
+            {% if num == colaboradores.number %}
+                <span class="page-link"  id="pagina_atual">{{ num }}</span>
+              
+            {% else %}
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+      
+          {% if colaboradores.has_next %}
+            <a class="page-link" href="?page={{ colaboradores.next_page_number }}">>></a>
+            <a class="page-link" href="?page={{ colaboradores.paginator.num_pages }}">Última</a>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
 
     <div id="modal-adicionar" class="modal">
@@ -316,7 +119,18 @@ input{
           <input type="email" placeholder="Email:" name="email" id="email" value="{{email}}" required><br><br>
 
           <label for="senha">Senha:</label><br><br>
-          <input type="password" placeholder="Senha:" name="senha" id="senha" value="{{senha}}" required><br><br>
+          <div class="password-input">
+            <input type="password" placeholder="Senha:" class="form-control" name="senha" id="senha" value="{{senha}}" style="flex:1;padding-right: 4%" required>
+            <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;margin-top:0.8%;left: 70%;" onclick="togglePasswordVisibility('senha')"></i>
+          </div><br>
+        
+          <label for="confirmacao">Confirme a senha:</label><br><br>
+          <div class="password-input">
+            <input type="password" placeholder="Digite a senha novamente:" class="form-control" name="confirmacao"
+              id="confirmacao" value="{{confirmacao}}" style="flex:1;padding-right: 4%" required>
+            <i class="toggle-password fas fa-eye" style="position: absolute; left:70%; margin-top: 0.8%;" id="mostrar-confirmacao" onclick="togglePasswordVisibility('confirmacao')"></i>
+          </div><br>
+
 
           {% if messages %}
                 <script>
@@ -328,8 +142,8 @@ input{
               <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
               {% endfor %}
           {%endif%}
-          <br><br><br>
-          <button type="submit">Adicionar colaborador</button>   
+          <br><br><br><br>
+          <button class="cadastrar" type="submit">Adicionar colaborador</button>   
       </form><br><br>
       </div>
     </div>
@@ -418,6 +232,21 @@ input{
             erro.style.display = 'none';
         }, 3000);
         });
+
+        function togglePasswordVisibility(inputId) {
+      var input = document.getElementById(inputId);
+      var icon = document.querySelector(`#${inputId} + i`);
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
     </script>
 </body>
 </html>

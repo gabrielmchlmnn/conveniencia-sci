@@ -1,12 +1,10 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth.models import User
 from produtos.models import Produtos
 from .models import Compra,ItemCompra
 from colaboradores.models import Colaboradore
 from datetime import datetime
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from django.contrib import messages
 from hashlib import md5
@@ -15,12 +13,10 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from estoque.models import Estoque
 from django.utils import timezone
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,Paragraph
 from reportlab.lib import colors
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-
-
 
 
 
@@ -35,22 +31,45 @@ def DeletarItem(request,id):
     return redirect('Carrinho')
 
 
+def Conferir_estoque(carrinho:list,id):
+    cont = 0
+    for i in carrinho:
+        if i['id'] == id:
+            cont += 1
+    try:
+        estoque = Estoque.objects.get(produto=id)
+        if cont >= estoque.quantidade:
+            return False
+        else:
+            return True
+    except Exception as erro:
+        print(erro)
+
+
+
+
 
 def AdicionarItem(request):
     if request.method == 'POST':
         input_codbarras = request.POST.get('valores[]')
+        input_codbarras = input_codbarras.replace('-','').replace('_','')
         lista_cods = Produtos.objects.values_list('cod_barras',flat=True)
-        if int(input_codbarras) in lista_cods:
-            produto = Produtos.objects.get(cod_barras=int(input_codbarras))
-            if produto.situacao == True:
-                lista_carrinho.append({'produto':produto.nome, 'preco':produto.preco,'id':produto.id})
-                return redirect('Carrinho')
+        try:
+            if int(input_codbarras) in lista_cods:
+                produto = Produtos.objects.get(cod_barras=int(input_codbarras))
+                if produto.situacao == True:
+                    if Conferir_estoque(lista_carrinho,produto.id):
+                        lista_carrinho.append({'produto':produto.nome, 'preco':produto.preco,'id':produto.id})
+                        return redirect('Carrinho')
+                    else:
+                        raise Exception('Produto não disponível em estoque!')
+                else:
+                    raise Exception('Produto inativo!')
+            
             else:
-                messages.error(request,'Produto inativado!')
-                return redirect('Carrinho')
-        
-        else:
-            messages.error(request,'Código de barras inválido!')
+                raise Exception('Código de barras inválido!')
+        except Exception as erro:
+            messages.error(request,f'{erro}')
             return redirect('Carrinho')
     else:
        return render(request,'compras/registrar_compra.html')
@@ -133,41 +152,13 @@ def RegistrarCompra(request):
                     'aviso':'aviso','colaborador':user.nome,'total':soma,'ultima_ref':ultima_referencia,'mensal':mensal
                 }
 
-
                 if ingresso:
-                            html_content = render_to_string('compras/template_email_ingressos.html', {'produtos': lista_ingressos,'colaborador':user.nome,'total':sum(dicionario['total'] for dicionario in lista_ingressos),'data':timezone.now,'quantos':len(lista_ingressos)})
-                            email_ingresso = EmailMessage(
-                                'Compra de ingresso realizada na conveniência!',
-                                html_content,
-                                'testeacademia@sci.com.br',
-                                ['gabriel_michelmann@estudante.sc.senai.br'],
-                            )
-                            email_ingresso.content_subtype = 'html'
-                            email_ingresso.send()
+                        EnviarEmailIngresso(lista_ingressos,f'{user.nome}',sum(dicionario['total'] for dicionario in lista_ingressos))
 
                 if roupa:
-                        html_content = render_to_string('compras/template_email_roupas.html', {'produtos': lista_roupas,'colaborador':user.nome,'total':sum(dicionario['total'] for dicionario in lista_roupas),'data':timezone.now,'quantos':len(lista_roupas)})
-                        email_ingresso = EmailMessage(
-                            'Compra de roupas realizada na conveniência!',
-                            html_content,
-                            'testeacademia@sci.com.br',
-                            ['gabriel_michelmann@estudante.sc.senai.br'],
-                        )
-                        email_ingresso.content_subtype = 'html'
-                        email_ingresso.send()
+                        EnviarEmailRoupa(lista_roupas,f'{user.nome}',sum(dicionario['total'] for dicionario in lista_roupas))
 
-                html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':user.nome,'total':soma,'data':timezone.now})
-                pdf = 'relatorio_de_compra.pdf'
-                HTML(string=html_content).write_pdf(pdf)
-                email_compra = EmailMessage(
-                    'Compra realizada na conveniência!',
-                    'Segue em anexo os detalhes da sua compra!\n\nAtt, Conveniência SCI!',
-                    'testeacademia@sci.com.br',
-                    ['michelmanngabriel@gmail.com']
-)
-                with open(pdf, 'rb') as f:
-                    email_compra.attach('relatorio_de_compra.pdf', f.read(), 'application/pdf')
-                email_compra.send()
+                EnviarEmailColaborador(f'{user.email}',itens_da_compra,f'{user.nome}',soma)
                 return render(request,'compras/registrar_compra.html',context=context)
         else:
             messages.error(request,'Colaborador desligado!Consulte o RH.')
@@ -242,30 +233,30 @@ def GerarRelatorio(request):
 
         colaborador = request.POST.get('colaborador')
 
+
         if colaborador is not None:
-            print('isso')
             compras_filtradas = Compra.objects.filter(Q(data__range=(data_inicio,data_fim)) & Q(colaborador__cpf__icontains=colaborador)).order_by('-data')
         else:
             compras_filtradas = Compra.objects.filter(data__range=(data_inicio,data_fim)).order_by('-data')
-        try:
-
-            dados = []
-
-            dados.append(['Compra','Nome','Data','Itens','Quantidade','Preço Unit.','Total'])
-
-            for item in compras_filtradas:
-                itens_compra = ItemCompra.objects.filter(compra=item.id)
-                for itens in itens_compra:
-                    dados.append([item.id,item.colaborador,item.data.strftime('%d/%m/%Y %H:%M'),itens.produto.nome,itens.quantidade,itens.preco_unitario,itens.total])
-
-            # Configurações da página
+        try:    
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="relatorio_compras.pdf"'
 
             # Criação do documento PDF
             doc = SimpleDocTemplate(response, pagesize=letter)
+
+
             # Criação da tabela
-            table = Table(dados,colWidths=[50, 100, 80, 145, 65, 75, 75])
+            dados = []
+
+            dados.append(['Compra', 'Nome', 'Data', 'Itens', 'Quantidade', 'Preço Unit.', 'Total'])
+
+            for item in compras_filtradas:
+                itens_compra = ItemCompra.objects.filter(compra=item.id)
+                for itens in itens_compra:
+                    dados.append([item.id, item.colaborador, item.data.strftime('%d/%m/%Y %H:%M'), itens.produto.nome, itens.quantidade, f' R$ {itens.preco_unitario}', f'R$ {itens.total} '])
+
+            table = Table(dados, colWidths=[50, 100, 80, 145, 65, 75, 75])
 
             # Estilo da tabela
             style = TableStyle([
@@ -291,5 +282,43 @@ def GerarRelatorio(request):
             return redirect('GerarRelatorio')
 
 
+def EnviarEmailColaborador(destinatario,itens_da_compra:list,colaborador,soma):
+        html_content = render_to_string('compras/template_email.html', {'produtos': itens_da_compra,'colaborador':colaborador,'total':soma,'data':timezone.now})
+        pdf = 'relatorio_de_compra.pdf'
+        HTML(string=html_content).write_pdf(pdf)
+        email_compra = EmailMessage(
+            'Compra realizada na conveniência!',
+            'Segue em anexo os detalhes da sua compra!\n\nAtt, Conveniência SCI!',
+            'testeacademia@sci.com.br',
+            [f'{destinatario}']
+)
+        with open(pdf, 'rb') as f:
+            email_compra.attach('relatorio_de_compra.pdf', f.read(), 'application/pdf')
+        email_compra.send()
+
+
+
+def EnviarEmailIngresso(lista_ingressos:list,colaborador,soma):
+    html_content = render_to_string('compras/template_email_ingressos.html', {'produtos': lista_ingressos,'colaborador':colaborador,'total':soma,'data':timezone.now})
+    email_ingresso = EmailMessage(
+        'Compra de ingresso realizada na conveniência!',
+        html_content,
+        'testeacademia@sci.com.br',
+        ['gabriel_michelmann@estudante.sc.senai.br'],
+    )
+    email_ingresso.content_subtype = 'html'
+    email_ingresso.send()
+
+
+def EnviarEmailRoupa(lista_roupas:list,colaborador,soma):
+    html_content = render_to_string('compras/template_email_roupas.html', {'produtos': lista_roupas,'colaborador':colaborador,'total':soma,'data':timezone.now})
+    email_ingresso = EmailMessage(
+        'Compra de roupas realizada na conveniência!',
+        html_content,
+        'testeacademia@sci.com.br',
+        ['gabriel_michelmann@estudante.sc.senai.br'],
+    )
+    email_ingresso.content_subtype = 'html'
+    email_ingresso.send()
 
 

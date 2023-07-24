@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.hashers import check_password
 from django.urls import reverse
 from django.contrib import messages
+from django.core.paginator import Paginator
+
 
                                                     
 
@@ -83,13 +85,21 @@ def CadastrarUser(request):
 @user_passes_test(lambda u: u.is_superuser)
 def ListarUser(request):
     ultima_tentativa = request.session.get('ultima_tentativa')
+    usuarios = User.objects.all()
+
+
+    paginator = Paginator(usuarios, 9)  
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     if ultima_tentativa is None:
+        
         context = {
-            'usuarios': User.objects.all()
+            'usuarios': page_obj
         }
     else:
         context = {
-            'usuarios':User.objects.all(),'nome':ultima_tentativa['nome'],'username':ultima_tentativa['usuario'],'email':ultima_tentativa['email'],
+            'usuarios':page_obj,'nome':ultima_tentativa['nome'],'username':ultima_tentativa['usuario'],'email':ultima_tentativa['email'],
             'senha':ultima_tentativa['senha'],'confirmacao':ultima_tentativa['confirmacao']
         }
     return render(request,'usuarios/listar_usuario.html',context=context)
@@ -146,15 +156,30 @@ def EditarUser(request,id):
         return render(request,'usuarios/editar_usuario.html',context=context)
 
 
-    
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def FiltrarUsuario(request):
     if request.method == 'GET':
-        search_term = request.GET.get('search')
+        filtro_usuarios = request.session.get('filtro_usuarios')
+
+        if filtro_usuarios is None:
+            search_term = request.GET.get('search')
+            request.session['filtro_usuarios'] = search_term
+        else:
+            busca = request.GET.get('search')
+            if busca is not None:
+                search_term = busca
+            else:
+                search_term = filtro_usuarios
+        
         usuarios_filtrados = User.objects.filter(username__icontains=search_term)
-        return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios_filtrados})
+
+        paginator = Paginator(usuarios_filtrados, 9)  
+
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'usuarios/listar_usuario.html', {'usuarios': page_obj,'filtro':'filtro'})
     
 
 @user_passes_test(lambda u: u.is_superuser)

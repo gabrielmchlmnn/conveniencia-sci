@@ -21,6 +21,9 @@
       background-color: darkblue;
       color:aliceblue
     }
+  td,th{
+    width: 25%;
+  }
 
 </style>
 
@@ -28,12 +31,13 @@
 
 <h1>Olá colaborador {{colaborador}}!</h1><br><br>
 
-<h3>Confira abaixo os dados da sua compra!</h3><br>
+<h3>Confira abaixo os dados da sua compra!</h3>
 
-    <h1 style="text-align: center;">Total:R${{total}}</h1>  <br><br>  <h3>Data:{{data}}</h3>
+    <h3>Data:{{data}}</h3>
+    <h3 >Total:R${{total}}</h3>  
     
     <br>
-    <table class="table table-hover" style="margin: 0 auto;position: fixed;width: 40%;">
+    <table  class="table table-hover" style="margin: 0 auto;position: fixed;width: 40%;">
         <thead class="thead-light" style="background-color: darkblue;color:aliceblue;width: 100px;">
           <tr>
             <th scope="col">Nome do produto</th>

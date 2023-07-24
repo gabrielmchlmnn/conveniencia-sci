@@ -1,0 +1,306 @@
+*{margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+    .container{
+        background-color: rgba(0, 0, 0, 0.8);
+        padding:50px;
+        border-radius:15px;
+        width: 90%;
+        margin:auto;
+        margin-top:2%;
+        text-align: center;
+        height: 90%;
+    }
+    body {
+      background-color: #b0bfff;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh; 
+  }
+    table,th,td{
+        border: 0.5px solid rgb(97, 97, 97);
+        border-collapse: collapse;
+        margin: 0 auto;
+        width: 100%;
+    }
+    td,th{
+        padding: 2px;
+        background-color: rgb(243, 243, 243);
+        text-align: left;
+        font-size:large;
+        height: 4px;
+        width: 50%;
+  
+      }
+  
+      th:last-child, td:last-child {
+              width: 20%;
+              text-align: center;
+          }
+      td .situation-dot.active {
+      background-color: green;
+      border-color: green;
+    }
+  
+  
+    td .situation-dot.inactive {
+      background-color: red;
+      border-color: red;
+    }
+    .situation-dot {
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+      }
+    button{
+        background-color: dodgerblue;
+        border:none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor:pointer;
+        color:white
+    }
+    button:hover{
+          background-color: deepskyblue;
+          color:black
+      }
+    th{
+        background-color: darkblue;
+        color:white;
+        border-radius: 5px;
+        text-align: center;
+    }
+    h1{
+        color:white;
+        text-align: center;
+    }
+  
+  .search-form {
+      align-items: center; /* Alinhar verticalmente os elementos filhos */
+    }
+  
+    .search-form input[type="text"] {
+      padding: 8px; /* Espaçamento interno do campo de entrada */
+      font-size: 14px; /* Tamanho da fonte do campo de entrada */
+      border: 1px solid #ccc; /* Borda do campo de entrada */
+      border-radius: 4px; /* Borda arredondada do campo de entrada */
+    }
+  
+    .search-form input[type="submit"] {
+      background-color: rgb(11, 133, 255); /* Cor de fundo do botão de envio */
+      color: white; /* Cor do texto do botão de envio */
+      padding: 8px 16px; /* Espaçamento interno do botão de envio */
+      border: none; /* Remover borda do botão de envio */
+      border-radius: 4px; /* Borda arredondada do botão de envio */
+      cursor: pointer; /* Cursor do mouse em formato de mão */
+      font-weight: bold;
+      color:white
+    }
+  
+    .search-form input[type="submit"]:hover {
+      background-color: deepskyblue; /* Cor de fundo do botão de envio */
+      color:black
+    }
+    .tabela-scroll{
+      overflow: auto;
+      height: 500px;
+    }
+    div.modal {
+    display: none;
+    z-index: 999;
+    left: 5%;
+    top: 57%;
+    width: 90%;
+    transform: translate(0%,-54%);
+    height: 89%;
+    text-align: center;
+    background-color: rgba(30, 27, 53, 0.986); 
+    position: absolute;
+    border-radius: 15px;
+    color:azure
+  }
+  
+  div.modal-content {
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 15px;
+    background-color: #e8ecff;
+    color:black
+  }
+  .fechar {
+    color: #2c2c2c;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  
+  }
+  
+  .fechar:hover,
+  .fechar:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  input{
+          padding:15px;
+          border:none;
+          padding:13px;
+          width: 90%;
+          border-radius: 10px;
+      }
+  
+      h1{
+          top:50%;
+          text-align: center;
+      }
+  
+      #barra_de_pesquisa{
+        width: 50%;
+        right:14%;
+        position: relative;
+      }
+      #botao_pesquisa{
+        position: relative;
+        right:12%;
+        width: 20%;
+        height: 15%;
+      }
+      .error-message {
+      color: #ff0000; 
+      font-weight: bold; 
+      font-size: 16px; 
+      background-color: #ffbdbd;
+      border-radius: 10px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      border:solid 1.5px rgb(255, 1, 1);
+      }
+      img{
+        height: 40px;
+        width: 40px;
+        cursor:pointer
+      }
+      .tabela-corpo {
+    height: calc(100% - 30px); /* Subtraia a altura do cabeçalho da tabela (40px) */
+    overflow-y: scroll;
+  }
+  
+  
+  .adicionar-entrada{
+    background-color: deepskyblue;
+    width: 25%;
+    color:aliceblue;
+    font-weight: bold;
+    border:4px solid aliceblue;
+    height: 10%;
+    position: relative;
+    left:20%;
+  
+  }
+  .adicionar-baixa{
+    background-color: white;
+    font-weight: bold;
+    color:deepskyblue;
+    border:4px solid deepskyblue;
+    width: 25%;
+    left:25%;
+    position: relative;
+    height: 5%;
+    height: 10%;
+  }
+  .adicionar-entrada:hover{
+    background-color: white;
+    width: 25%;
+    color:rgb(0, 151, 25);
+    font-weight: bold;
+    border:5px solid rgb(0, 151, 25);
+    position: relative;
+    left:20%
+  }
+  .adicionar-baixa:hover{
+    background-color: rgb(255, 255, 255);
+    font-weight: bold;
+    color:rgb(156, 0, 0);
+    border:5px solid rgb(156, 0, 0);
+    width: 25%;
+    left:25%;
+    position: relative;
+  
+  
+  }
+  #produto {
+    width: 200px; /* Define a largura do seletor */
+    padding: 8px; /* Define o espaçamento interno do seletor */
+    border: 1px solid #ccc; /* Define a borda do seletor */
+    border-radius: 4px; /* Define o raio de borda do seletor */
+    font-size: 16px; /* Define o tamanho da fonte do seletor */
+    cursor: pointer;
+  }
+  
+  /* Estilizando as opções */
+  #produto option {
+    background-color: #fc0000; /* Define a cor de fundo das opções */
+    color: #333; /* Define a cor do texto das opções */
+    cursor:pointer
+  }
+  
+  /* Estilizando a opção selecionada */
+  #produto option:checked {
+    background-color: #ff1616; /* Define a cor de fundo da opção selecionada */
+    font-weight: bold; /* Define o peso da fonte da opção selecionada */
+  }
+
+      /* Define a fonte agradável */
+.paginator {
+    font-family: "Arial", sans-serif;
+    position: absolute;
+    top:81%
+  }
+  
+  /* Estiliza as tags <a> e <span> na navegação */
+  .page-link {
+    padding: 5px 10px;
+    margin: 3px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: blue;
+    background-color: white;
+    border-radius: 5px;
+  }
+  
+  /* Estilo para o link "Primeira" */
+  .page-first,
+  .page-last {
+    border-radius: 5px;
+  }
+  
+  /* Estilo para o link "Próxima" */
+  .page-next,
+  .page-previous {
+    border-radius: 5px;
+  }
+  
+  /* Estilo para o link da página atual */
+  #pagina_atual {
+    background-color: rgb(219, 219, 219);
+    color: blue;
+    border-radius: 5px;
+    border:1px solid blue
+  }
+  .search-button2{
+    position: absolute;
+    top:23.8%;
+    left:70%;
+    width: 10%;
+    background-color: rgb(0, 122, 163);
+  }

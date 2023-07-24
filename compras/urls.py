@@ -11,5 +11,4 @@ urlpatterns = [
     path('conferir-gastos/',ConferirGastos,name="ConferirGastos"),
     path('home/gerar-relatorios/',GerarRelatorio,name='GerarRelatorio'),
     path('carrinho/',Carrinho,name='Carrinho'),
-
 ]   

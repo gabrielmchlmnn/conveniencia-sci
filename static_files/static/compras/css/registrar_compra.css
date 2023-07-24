@@ -1,0 +1,202 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #b0bfff;
+}
+div.container{
+    background-color: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    padding:80px;
+    border-radius:15px;
+    color:#fff;
+    height: 100%;
+    width: 700px;
+}
+div td{
+    vertical-align: top;
+}
+input{
+    padding:15px;
+    border:none;
+    padding:13px;
+    width: 90%;
+    border-radius: 10px;
+    align-items: center;
+}
+button{
+    background-color: dodgerblue;
+    border:none;
+    padding: 15px;
+    width: 100%;
+    border-radius: 10px;
+    cursor:pointer;
+    font-weight: bold;
+    height: 46px;
+
+}
+.finalizar{
+    background-color: #49ff1c;
+
+}
+.finalizar:hover{
+    background-color: rgb(12, 104, 0);
+    color:#ddd
+}
+button:hover{
+    background-color: rgb(0, 97, 129);
+    color:#ddd;
+    border:1px solid white;
+
+}
+h1{
+    top:50%;
+    text-align: center;
+}
+
+table,th,td{
+border: 1px solid black;
+border-collapse: collapse;
+text-align: center;
+overflow: auto;
+width: 700px;
+}
+
+td,th{
+padding: 10px;
+background-color: aliceblue;
+color:black;
+}
+th{
+background-color: darkblue;
+color:aliceblue
+}
+.aviso {
+background-color: rgba(202, 202, 202, 0.363);
+display: none;
+color:black;
+height: 100%;
+width: 100%;
+z-index: 1;
+border-radius: 10px;
+top:0;
+right:0;
+position: absolute;
+}
+.aviso-content{
+display: flex;
+padding: 10;
+justify-content: center;
+align-items: center;
+text-align: center;
+border: solid 3px rgb(0, 0, 0);
+background-color: #001883;
+color:rgb(255, 255, 255);
+width: 50%;
+height: 25%;
+margin:50% auto;
+border-radius: 4px;
+font-weight: 900;
+text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+font-size: x-large;
+    }
+
+.esvaziar {
+background-color: red;
+color:black;
+width: 30%;
+position: relative;
+top:50%;
+left:0;
+transform: translate(-0%,-135%)
+}
+.esvaziar:hover{
+background: rgb(170, 26, 26);
+color: #ddd;
+}
+.error-message {
+color: #ff0000; 
+font-weight: bold; 
+font-size: 16px; 
+background-color: #ffbdbd;
+border-radius: 10px;
+height: 30px;
+text-align: center;
+line-height: 30px;
+border:solid 1.5px rgb(255, 1, 1);
+}
+div.modal {
+display: none;
+z-index: 1;
+left: 50%;
+top: 50%;
+width: 90%;
+transform: translate(-50%,-50%);
+height: 80%;
+text-align: center;
+background-color: rgba(12, 12, 12, 0.952); 
+position: absolute;
+border-radius: 30px;
+}
+
+div.modal-content {
+margin: 20% auto;
+padding: 20px;
+border: 1px solid #888;
+width: 50%;
+}
+
+.fechar {
+color: #aaa;
+float: right;
+font-size: 28px;
+font-weight: bold;
+}
+
+.fechar:hover,
+.fechar:focus {
+color: black;
+text-decoration: none;
+cursor: pointer;
+}
+.total{
+color: rgb(0, 0, 41); 
+font-weight: bold; 
+font-size: 16px; 
+background-color: #ffffff;
+border-radius: 13px;
+height: 30px;
+width: 150px;
+text-align: center;
+line-height: 30px;
+border:solid 1.5px rgba(0, 0, 42, 0.5);
+position: relative;
+left: 80%;
+font-size: x-large;
+}
+.tabela-scroll {
+overflow: auto;
+top:30%;
+height: 313px;
+display: flex;
+align-items: flex-start;
+border-collapse: collapse;
+}
+.logo-sci{
+height: 100px;
+width: 100px;
+top:0;
+
+}
+.adicionar{
+width: 70%;
+
+}
+
+.botao-adicionar{
+width: 20%;
+height: 46px;
+transform: translate(20%,0%);
+
+}

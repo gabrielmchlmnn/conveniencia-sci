@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Q
-from django.http import HttpResponseBadRequest
 from estoque.models import Estoque
-from django.core.cache import cache
+from decimal import Decimal
+from django.core.paginator import Paginator
 
 
 @login_required(login_url='Login')
@@ -28,6 +28,7 @@ def AdicionarProdu(request):
         
         nome = request.POST.get('nome')
         cod_barras = request.POST.get('cod_barras')
+        cod_barras = cod_barras.replace('-','').replace('_','')
         preco = request.POST.get('preco')
         tipo = request.POST.get('tipo')
         request.session['nome'] = nome
@@ -37,15 +38,26 @@ def AdicionarProdu(request):
 
         lista_cods = Produtos.objects.values_list('cod_barras',flat=True)
         try:
-            if int(cod_barras) not in lista_cods:
-                novo_produto = Produtos(nome=nome,cod_barras=int(cod_barras),preco=preco,tipo=tipo)
-                novo_produto.save()
-                estoque_novo = Estoque(produto=novo_produto,quantidade=0)
-                estoque_novo.save()
-                limpar_cache_sessao(request)
-                return redirect('ListarProdu')
+            if len(cod_barras) == 12:
+                if int(cod_barras) not in lista_cods:
+                    preco = preco.replace('R$ ','').replace(',','.')
+                    novo_produto = Produtos(nome=nome,cod_barras=int(cod_barras),preco=Decimal(preco),tipo=tipo)
+                    novo_produto.save()
+                    estoque_novo = Estoque(produto=novo_produto,quantidade=0)
+                    estoque_novo.save()
+                    limpar_cache_sessao(request)
+                    return redirect('ListarProdu')
+                else:
+                    raise Exception('Código de barras já cadastrado!')
             else:
-                raise Exception('Código de barras já cadastrado!')
+                ultimo_produto = {
+                'nome': nome,
+                'cod_barras': cod_barras,
+                'preco': preco,
+                'tipo': tipo
+                }
+                request.session['ultimo_produto'] = ultimo_produto
+                raise Exception('O código de barras deve ter 12 números!')
         except Exception as erro:
             ultimo_produto = {
                 'nome': nome,
@@ -62,19 +74,26 @@ def AdicionarProdu(request):
 @login_required(login_url='Login')
 def ListarProdu(request):
     ultimo_produto = request.session.get('ultimo_produto')
-    produtos = Produtos.objects.all()
+    produtos = Produtos.objects.all().order_by('nome')
     for i in produtos:
         if i.situacao == True:
             i.situacao = 'Ativo'
+            i.cod_barras = str(i.cod_barras)
         else:
             i.situacao = "Inativo"
+            i.cod_barras = str(i.cod_barras)
+
+    paginator = Paginator(produtos, 9)  
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     if ultimo_produto is None:
-        return render(request,'produtos/listar_produ.html',{'produto':produtos})
+        return render(request, 'produtos/listar_produ.html', {'produto': page_obj})
     else:
-        context = {'produto':produtos,'nome':ultimo_produto['nome'],'cod_barras':ultimo_produto['cod_barras'],
-                 'preco':ultimo_produto['preco'],'tipo':ultimo_produto['tipo']}
-        return render(request,'produtos/listar_produ.html',context=context)
+        context = {'produto': page_obj, 'nome': ultimo_produto['nome'], 'cod_barras': ultimo_produto['cod_barras'],
+                   'preco': ultimo_produto['preco'], 'tipo': ultimo_produto['tipo']}
+        return render(request, 'produtos/listar_produ.html', context=context)
 
 
 
@@ -84,24 +103,34 @@ def EditarProdu(request,id):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         cod_barras = request.POST.get('cod_barras')
+        cod_barras = cod_barras.replace('-','').replace('_','')
         preco = request.POST.get('preco')
         tipo = request.POST.get('tipo')
         situacao =  request.POST.get('ativo')
-        if situacao == 'on':
-            situacao = True
-        else:
-            situacao = False
         lista_cods = Produtos.objects.exclude(id=id).values_list('cod_barras',flat=True)
         try:
-            if int(cod_barras) not in lista_cods:
-                if situacao == 'on':
-                    situacao = True
+            if len(cod_barras) == 12:
+                if int(cod_barras) not in lista_cods:
+                    if situacao == 'on':
+                        situacao = True
+                    else:
+                        situacao = False
+                    preco = preco.replace('R$ ','').replace(',','.')
+                    print(preco)
+                    produto = Produtos.objects.filter(id=id).update(nome=nome,cod_barras=int(cod_barras),preco=Decimal(preco),tipo=tipo,situacao=situacao)
+                    limpar_cache_sessao(request)
+                    return redirect('ListarProdu')
+                
                 else:
-                    situacao = False
-                Produtos.objects.filter(id=id).update(nome=nome,cod_barras=int(cod_barras),preco=preco,tipo=tipo,situacao=situacao)
-                limpar_cache_sessao(request)
-                return redirect('ListarProdu')
-            
+                    ultima_tentativa = {
+                        'nome':nome,
+                        'cod_barras':cod_barras,
+                        'preco':preco,
+                        'tipo':tipo,
+                        'situacao':situacao,
+                    }
+                    request.session['ultima_tentativa'] = ultima_tentativa
+                    raise Exception('Código de barras já cadastrado!')
             else:
                 ultima_tentativa = {
                     'nome':nome,
@@ -111,7 +140,7 @@ def EditarProdu(request,id):
                     'situacao':situacao,
                 }
                 request.session['ultima_tentativa'] = ultima_tentativa
-                raise Exception('Código de barras já cadastrado!')
+                raise Exception('O código de barra precisa ter 12 números!')
         except Exception as erro:
             messages.error(request,f'{erro}')
             url = reverse('EditarProdu',args=[produto.id])
@@ -139,13 +168,31 @@ def EditarProdu(request,id):
 @login_required(login_url='Login')
 def FiltrarProdu(request):
     if request.method == 'GET':
-        search_term = request.GET.get('search')
-        produtos_filtrados = Produtos.objects.filter(Q(nome__icontains=search_term) | Q(cod_barras__icontains=search_term))
+        procura = request.session.get('procura')
+        if procura is None:
+
+            search_term = request.GET.get('search')
+            request.session['procura'] = search_term
+        else:
+            busca = request.GET.get('search')
+            if busca is not None or busca == '':
+                search_term = busca
+            else:
+                search_term = procura
+
+        produtos_filtrados = Produtos.objects.filter(Q(nome__icontains=search_term) | Q(cod_barras__icontains=search_term)).order_by('nome')
         for i in produtos_filtrados:
             if i.situacao == True:
                 i.situacao = 'Ativo'
             else: 
                 i.situacao = 'Inativo'
-        return render(request, 'produtos/listar_produ.html', {'produto': produtos_filtrados})
+
+        paginator = Paginator(produtos_filtrados, 9) 
+
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, 'produtos/listar_produ.html', {'produto': page_obj,'filtro':'filtro'})
+
     
 
