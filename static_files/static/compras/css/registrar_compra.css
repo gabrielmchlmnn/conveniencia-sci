@@ -1,9 +1,9 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #b0bfff;
+    background-color: #4b7afd;
 }
 div.container{
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(255, 255, 250, 0.801);
     position: absolute;
     top:50%;
     left:50%;
@@ -11,8 +11,10 @@ div.container{
     padding:80px;
     border-radius:15px;
     color:#fff;
-    height: 100%;
-    width: 700px;
+    height: 80%;
+    width: 80%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
 }
 div td{
     vertical-align: top;
@@ -29,25 +31,38 @@ button{
     background-color: dodgerblue;
     border:none;
     padding: 15px;
-    width: 100%;
+    width: 40%;
     border-radius: 10px;
     cursor:pointer;
     font-weight: bold;
     height: 46px;
-
+    font-size: larger;
+    vertical-align: middle;
+    align-items: center;
 }
 .finalizar{
-    background-color: #49ff1c;
-
+    width: 25%;
+    margin-left: -8%;
+    top:74.5%;
+    position: absolute;
 }
-.finalizar:hover{
-    background-color: rgb(12, 104, 0);
-    color:#ddd
+.conferir-gastos{
+    background-color: #ffffff;
+    color:#002ba1;
+    width: 25%;
+    border:3px solid #002ba1;
+    align-content: center;
+    position: fixed;
+    top:82%;
+    left: 4.8%;
+}
+.conferir-gastos:hover{
+    background-color: rgb(254, 255, 215);
+    color:black
 }
 button:hover{
     background-color: rgb(0, 97, 129);
     color:#ddd;
-    border:1px solid white;
 
 }
 h1{
@@ -56,17 +71,24 @@ h1{
 }
 
 table,th,td{
-border: 1px solid black;
 border-collapse: collapse;
 text-align: center;
 overflow: auto;
-width: 700px;
+width: 100%;
+top:50%
+}
+table{
+    border:1px solid yellow;
+    border-radius: 20px;
+    font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+    font-weight: bold;
 }
 
 td,th{
 padding: 10px;
 background-color: aliceblue;
 color:black;
+width: 60%;
 }
 th{
 background-color: darkblue;
@@ -76,13 +98,14 @@ color:aliceblue
 background-color: rgba(202, 202, 202, 0.363);
 display: none;
 color:black;
-height: 100%;
-width: 100%;
+height: 220%;
+width: 220%;
 z-index: 1;
 border-radius: 10px;
 top:0;
-right:0;
+left:-20%;
 position: absolute;
+justify-content: center;
 }
 .aviso-content{
 display: flex;
@@ -93,26 +116,49 @@ text-align: center;
 border: solid 3px rgb(0, 0, 0);
 background-color: #001883;
 color:rgb(255, 255, 255);
-width: 50%;
-height: 25%;
-margin:50% auto;
+width: 15%;
+height: 10%;
+margin:10% 24%;
 border-radius: 4px;
 font-weight: 900;
 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 font-size: x-large;
     }
+    .logo{
+        position: absolute;
+        z-index: -1;
+        opacity: 0.3;
+        transform: scale(1.1);
+        /* Opcional: Adicionando uma transição suave ao zoom */
+        z-index: -1;
+        top: 16%;
+        left:34%
+    }
 
 .esvaziar {
-background-color: red;
-color:black;
-width: 30%;
+background-color: white;
+color:#002ba1;
+width: 20%;
 position: relative;
-top:50%;
-left:0;
-transform: translate(-0%,-135%)
+top:48%;
+left:80%;
+transform: translate(-0%,-135%);
+border:1px solid black
 }
+
+.esvaziar::before {
+    content: '';
+    position: absolute;
+    top: -5px; /* Ajuste a distância da borda interna em relação à borda externa */
+    left: -5px; /* Ajuste a distância da borda interna em relação à borda externa */
+    right: -5px; /* Ajuste a distância da borda interna em relação à borda externa */
+    bottom: -5px; /* Ajuste a distância da borda interna em relação à borda externa */
+    border: 2px solid #002ba1; /* Define a borda interna com a cor desejada */
+    border-radius: 15px;
+  }
+
 .esvaziar:hover{
-background: rgb(170, 26, 26);
+background: rgb(81, 82, 0);
 color: #ddd;
 }
 .error-message {
@@ -125,15 +171,17 @@ height: 30px;
 text-align: center;
 line-height: 30px;
 border:solid 1.5px rgb(255, 1, 1);
+position: absolute;
+width: 30%;
 }
 div.modal {
 display: none;
 z-index: 1;
 left: 50%;
 top: 50%;
-width: 90%;
+width: 120%;
 transform: translate(-50%,-50%);
-height: 80%;
+height: 110%;
 text-align: center;
 background-color: rgba(12, 12, 12, 0.952); 
 position: absolute;
@@ -141,7 +189,7 @@ border-radius: 30px;
 }
 
 div.modal-content {
-margin: 20% auto;
+margin: 10% auto;
 padding: 20px;
 border: 1px solid #888;
 width: 50%;
@@ -166,37 +214,57 @@ font-weight: bold;
 font-size: 16px; 
 background-color: #ffffff;
 border-radius: 13px;
-height: 30px;
-width: 150px;
+height: 7%;
+width: 20%;
 text-align: center;
-line-height: 30px;
 border:solid 1.5px rgba(0, 0, 42, 0.5);
 position: relative;
-left: 80%;
+left: 39%;
+line-height: 1.5;
 font-size: x-large;
+top:10%
+}
+td {
+    border-bottom: 1px solid black; /* Adiciona uma borda inferior em todas as células, exceto na última linha */
 }
 .tabela-scroll {
 overflow: auto;
-top:30%;
-height: 313px;
+height: 400.7px;
 display: flex;
 align-items: flex-start;
 border-collapse: collapse;
+margin-top: 8%;
 }
-.logo-sci{
-height: 100px;
-width: 100px;
-top:0;
 
+.area-adicionar .adicionar{
+width: 190%;
+margin: 20% 180%;
 }
-.adicionar{
+
+
+.area-adicionar .botao-adicionar{
 width: 70%;
-
+height: 46px;
+top:30%;
+left:390%;
+position: absolute;
 }
 
-.botao-adicionar{
-width: 20%;
-height: 46px;
-transform: translate(20%,0%);
-
+.area-adicionar{
+    position: absolute;
+    top:13%
+}
+.finalizar,
+.esvaziar,
+.conferir-gastos,
+.botao-adicionar ,
+.conferir-gastos-modal,
+.finalizar-modal{
+  display: block; /* Altera a exibição para bloco */
+  margin: 0 auto; /* Define margens automáticas para centralização horizontal */
+  text-align: center; /* Centraliza o texto dentro do botão */
+  line-height: 10px; /* Define a altura da linha para centralizar verticalmente o texto */
+}
+.modal-content label{
+    font-size: 20px;
 }

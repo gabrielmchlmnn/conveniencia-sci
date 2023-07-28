@@ -11,9 +11,9 @@ class Produtos(models.Model):
     )   
     nome = models.CharField(max_length=50)
     cod_barras = models.IntegerField()
-    preco = models.DecimalField(max_digits=5,decimal_places=2)
+    preco = models.DecimalField(max_digits=200,decimal_places=2)
     tipo = models.CharField(max_length=8,choices=TIPOS_CHOICES)
-    situacao = models.BooleanField(default=True)
+    situacao = models.CharField(default="Ativo", max_length=7)
 
 
     def __str__(self) -> str:

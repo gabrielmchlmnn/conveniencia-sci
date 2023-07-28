@@ -1,4 +1,5 @@
 {% load static%}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,7 @@
 <body>
     
     <div class="container">
+        <img class="logo" src="https://media.discordapp.net/attachments/1107706902273609869/1133874918833008710/Logo_SCI.png"/>
         <form method="post" action="{% url 'AdicionarItem' %}">
             {% csrf_token %}
             {%if aviso%}
@@ -20,9 +22,9 @@
                     <div class="aviso-content">
                     Compra feita com sucesso!<br>
                     Colaborador:{{colaborador}}<br>
-                    Total da compra: R$ {{total}}<br>
+                    Total da compra: R$ {{total|floatformat:2}}<br>
                     Gastos da última referência:R$ {{ultima_ref}}<br>
-                    Gastos nesse mês: R${{mensal}}
+                    Gastos nesse mês: R$ {{mensal}}
                 </div>
                 </div>
             {%endif%}
@@ -33,14 +35,14 @@
                 <div class="aviso-content">
                 Confira seus gastos!<br><br><br>
                 Colaborador:{{colaborador}}<br>
-                Gastos da última referência: R${{ultima_ref}}<br>
+                Gastos da última referência: R$ {{ultima_ref}}<br>
                 Gastos nesse mês: R${{mensal}}
                 </div>
             </div>
             {%endif%}
             
-            <h1>-COMPRAS- </h1>
-                {% if itens %}
+            <h1 style="font-family: serif;color:black; margin-top: -1%;">CONVENIÊNCIA SCI 2.0 </h1>
+
                 <div class="tabela-scroll">
                     <table class="table">
                         <thead class="thead-dark">
@@ -50,61 +52,60 @@
                             <th scope="col">-</th>
                         </tr>
                         </thead>
-                        {% for item in itens %}
-                        <tbody>
-                            <tr>
-                                <td>{{item.produto}}</td>
-                                <td>R$ {{item.preco}}</td>
-                                <td id="excluir"><a href="{% url 'DeletarItem' id=item.id %}">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/860/860829.png" style="width:20px;height: 20px;">
-                                </a>
-                                </td>
-                        {%endfor%}
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                    <h4 class="total">Total:{{totalCarrinho}}</h4>
-                    <a href="{% url 'ComecarCompra' %}"><button class="esvaziar" type="button">Esvaziar carrinho</button></a> <br><br>
-                {%else%}
-                <li>Nenhum item na lista</li><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-                {%endif%}
+                        {% if itens %}
+                                {% for item in itens %}
+                                <tbody>
+                                    <tr>
+                                        <td>{{item.produto}}</td>
+                                        <td>R$ {{item.preco|floatformat:2}}</td>
+                                        <td id="excluir"><a href="{% url 'DeletarItem' id=item.id %}">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/860/860829.png" style="width:20px;height: 20px;">
+                                        </a>
+                                        </td>
+                                {%endfor%}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-            <label for="valores[]">Código de barras:</label><br><br>
-            <input class="adicionar" type="text" name="valores[]" placeholder="Digite o código de barras" id="item" required>
-  
-            <button class="botao-adicionar" type="submit">Adicionar</button><br>
-            {% if messages %}
-            {% for message in messages %}
-                {% if message.tags != 'success'%}
-                        <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+                        <h4 class="total" style="position: relative;margin-top:4.8%">Total: R$ {{totalCarrinho}}</h4>
+                        <button class="finalizar" onclick="exibir_modal_finalizar()" style="margin: 0 auto;">Finalizar Compra</button>
+
+                        <a href="{% url 'ComecarCompra' %}"><button class="esvaziar" type="button">Esvaziar carrinho</button></a> <br><br>
+                    {%endif%}
+                        <div class="area-adicionar">
+                        <input class="adicionar" type="text" name="valores[]" placeholder="Digite o código de barras:" id="item" required>
+                            
+                        <button class="botao-adicionar" type="submit">Adicionar</button><br>
+                        </div>
+                {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags != 'success'%}
+                            <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %} style="left:35%;top:10%">{{message}}</h4>
+                    {%endif%}
+                {% endfor %}
                 {%endif%}
-            {% endfor %}
-        {%endif%} 
           </form>
 
-          <br>
-          {%if itens%}
-          <button id="meuBotao" onclick="exibir_modal_finalizar()">Finalizar Compra</button><br><br>
-          {%endif%}
+          <br><br>
           <div id="modal-finalizar" class="modal">
             <div class="modal-content">
               <span class="fechar" onclick="fechar_modal_finalizar()">&times;</span>
               
                     <form method="post" action="{% url 'RegistrarCompra' %}">
                         {% csrf_token %}
-                        <h1 style="color: #f2f2f2;">Registrar compra</h1>
+                        <h1 style="color: #f2f2f2;">Finalizar</h1>
                         <label for="login">Login do colaborador:</label><br><br>
                         <input type="text" name="login" placeholder="Digite o seu nome de usuário:" id="login"><br><br>
                         <label for="senha">Senha:</label><br><br>
-                        <input type="password" name="senha" placeholder="Digite a senha:" id="senha" style="flex:1;padding-right: 8%;">
-                        <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;left: 72%;color:black;margin-top:-3.8%;" onclick="togglePasswordVisibility('senha')"></i>
-                        <br><br>
+                        <input type="password" name="senha" placeholder="Digite a sua senha:" id="senha" style="flex:1;padding-right: 8%;width: 84%;">
+                        <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;left: 72%;color:black;margin-top:0.6%;" onclick="togglePasswordVisibility('senha')"></i>
+                        <br><br><br><br><br><br>
 
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.message == 'Login inválido!!'%}
-                                <h4{% if message.tags %} class="error-message" id ="error-mensagem-finalizar" {% endif %}>Login inválido!</h4>
+                                <h4{% if message.tags %} class="error-message" id ="error-mensagem-finalizar" {% endif %} style="margin-top: -4%;left:35%">Login inválido!</h4>
                                 <script>
                                     window.onload = function() {
                                     exibir_modal_finalizar();
@@ -113,15 +114,15 @@
                                 {%endif%}
                             {% endfor %}
                         {%endif%} 
-                        <button class="finalizar" type="submit">Registrar compra</button>
-                    </form> <br><br>
+                        <button class="finalizar-modal" type="submit">Registrar compra</button>
+                    </form> 
             </div>
           </div>
 
 
 
 
-          <button class="finalizar" type="submit" onclick="exibir_modal_gastos()">Conferir meus gastos</button>
+          <button class="conferir-gastos" id="botao-gastos" type="submit" onclick="exibir_modal_gastos()" >Conferir meus gastos</button>
           <div id="modal-gastos" class="modal">
             <div class="modal-content">
               <span class="fechar" onclick="fechar_modal_gastos()">&times;</span>
@@ -134,14 +135,14 @@
                         <input type="text" name="login" placeholder="Digite o seu nome de usuário:" id="login"><br><br>
 
                         <label for="senha">Senha:</label><br><br>
-                        <input type="password" placeholder="Senha:" class="form-control" name="senha" id="senha2" value="{{senha}}" style="flex:1;padding-right: 9%" required>
-                        <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;left: 72.5%;color:black;margin-top: -3.8%;" onclick="togglePasswordVisibility('senha2')"></i>
-                        <br><br>
+                        <input type="password" placeholder="Digite a sua senha:" class="form-control" name="senha" id="senha2" value="{{senha}}" style="flex:1;padding-right: 5%;width: 87%;" required>
+                        <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;left: 71.9%;color:black;margin-top: 0.6%;" onclick="togglePasswordVisibility('senha2')"></i>
+                        <br><br><br><br><br><br>
 
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.message == 'Login inválido!'%}
-                                <h4{% if message.tags %} class="error-message" id ="error-mensagem-dados" {% endif %}>{{message}}</h4>
+                                <h4{% if message.tags %} class="error-message" id ="error-mensagem-dados" {% endif %} style="text-align: center;margin-top: -4%; left:35%">{{message}}</h4>
                                 <script>
                                     window.onload = function() {
                                     exibir_modal_gastos();
@@ -150,7 +151,7 @@
                                 {%endif%}
                             {% endfor %}
                         {%endif%} 
-                        <button class="finalizar" type="submit">Conferir</button>
+                        <button class="conferir-gastos-modal" type="submit">Conferir</button>
                     </form> <br><br>
             </div>
           </div>

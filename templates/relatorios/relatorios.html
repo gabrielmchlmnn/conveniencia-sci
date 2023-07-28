@@ -22,7 +22,7 @@
             <label for="data_inicio" style="font-size: 150%;">Data de início:</label><br>
             <input type="date" placeholder="Digite uma data:" name="data_inicio"><br><br><br><br>
             <label for="data_final" style="font-size: 150%;">Data final:</label><br>
-            <input type="date" name="data_final"><br>
+            <input type="date" name="data_final"><br><br><br>
             
             <label for="colaborador">Selecione um colaborador:</label>
             <select id="colaborador" name="colaborador"><br>
@@ -31,13 +31,25 @@
                     <option value="{{i.cpf}}">{{i.nome}}</option>
             {% endfor %}
             </select>
-            <br><br><br><br>
+            <br><br><br><br><br><br><br>
             <button type="submit" placeholder='Enviar'> Gerar</button>
-        </form>
-
+        </form><br><br>
+        {% if messages %}
+        {% for message in messages %}
+            <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+        {% endfor %}
+    {%endif%}
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var erro = document.getElementById('error-mensagem');
+      erro.style.display = 'block';
 
-
+      setTimeout(function() {
+          erro.style.display = 'none';
+      }, 3000);
+      });
+    </script>
 </body>
 </html>
 

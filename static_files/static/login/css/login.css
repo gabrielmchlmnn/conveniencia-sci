@@ -1,10 +1,10 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #b0bfff;
+    background-color: #4b7afd;
     position: static;
 }
 .container{
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.363);
     position: absolute;
     top:50%;
     left:50%;
@@ -13,25 +13,30 @@ body{
     border-radius:15px;
     color:#fff;
     width: 50%;
-    height: 60%;
+    height: 50%;
     align-content: center;
     text-align: center;
+    border: 1px solid yellow;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
 }
 input{
     padding:15px;
     border:none;
     padding:13px;
-    width: 90%;
+    width: 50%;
     border-radius: 10px;
 }
 button{
     background-color: dodgerblue;
     border:none;
     padding: 15px;
-    width: 90%;
+    width: 50%;
     border-radius: 10px;
+    font-weight: bold;
     cursor:pointer;
-    position: relative;
+    color:white;
+    font-size: 20px;
 }
 button:hover{
     background-color: deepskyblue;
@@ -39,6 +44,10 @@ button:hover{
 h1{
     top:50%;
     text-align: center;
+    font-family: serifa bt;
+}
+label{
+    font-size: 20px;
 }
 .error-message {
 color: #ff0000; 
@@ -54,3 +63,13 @@ position: absolute;
 left:40.5%;
 width: 20%;
 }
+.logo{
+    position: absolute;
+    left:36.5%;
+    opacity: 0.2;
+    transform: scale(1.1);
+    /* Opcional: Adicionando uma transição suave ao zoom */
+    transition: transform 0.5s ease;
+    z-index: -1;
+    margin: 12% auto;
+  }

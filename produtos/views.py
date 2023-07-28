@@ -75,13 +75,6 @@ def AdicionarProdu(request):
 def ListarProdu(request):
     ultimo_produto = request.session.get('ultimo_produto')
     produtos = Produtos.objects.all().order_by('nome')
-    for i in produtos:
-        if i.situacao == True:
-            i.situacao = 'Ativo'
-            i.cod_barras = str(i.cod_barras)
-        else:
-            i.situacao = "Inativo"
-            i.cod_barras = str(i.cod_barras)
 
     paginator = Paginator(produtos, 9)  
 
@@ -112,9 +105,9 @@ def EditarProdu(request,id):
             if len(cod_barras) == 12:
                 if int(cod_barras) not in lista_cods:
                     if situacao == 'on':
-                        situacao = True
+                        situacao = 'Ativo'
                     else:
-                        situacao = False
+                        situacao = 'Inativo'
                     preco = preco.replace('R$ ','').replace(',','.')
                     print(preco)
                     produto = Produtos.objects.filter(id=id).update(nome=nome,cod_barras=int(cod_barras),preco=Decimal(preco),tipo=tipo,situacao=situacao)
@@ -179,13 +172,9 @@ def FiltrarProdu(request):
                 search_term = busca
             else:
                 search_term = procura
+        print(search_term)
+        produtos_filtrados = Produtos.objects.filter(Q(nome__icontains=search_term) | Q(cod_barras__icontains=search_term) | Q(situacao=search_term) | Q(tipo=search_term) ).order_by('nome')
 
-        produtos_filtrados = Produtos.objects.filter(Q(nome__icontains=search_term) | Q(cod_barras__icontains=search_term)).order_by('nome')
-        for i in produtos_filtrados:
-            if i.situacao == True:
-                i.situacao = 'Ativo'
-            else: 
-                i.situacao = 'Inativo'
 
         paginator = Paginator(produtos_filtrados, 9) 
 

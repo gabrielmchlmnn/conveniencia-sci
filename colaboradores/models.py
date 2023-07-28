@@ -9,10 +9,13 @@ class Colaboradore(models.Model):
     cpf = models.CharField(max_length=14)
     login = models.CharField(unique=True,max_length=50)
     senha = models.CharField(max_length=30)
-    situacao = models.BooleanField(default=True)
+    situacao = models.CharField(default="Ativo",max_length=7)
     email = models.EmailField(default='michelmanngabriel@gmail.com')
     
 
     def __str__(self) -> str:
         return self.nome
     
+    @property
+    def codigo_de_barras(self):
+        return self.cpf

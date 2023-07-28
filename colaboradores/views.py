@@ -16,6 +16,8 @@ from estoque.models import Estoque
 from django.core.paginator import Paginator
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from produtos.models import Produtos
+from django.db.models import Count
 
 
 
@@ -52,23 +54,30 @@ def Login(request):
 def Home(request):
     hoje = datetime.now()
     ultimo_26 = datetime(hoje.year, hoje.month, 26)
-    maiores_compradores = Compra.objects.exclude(data__gte=ultimo_26).values('colaborador_id').annotate(total_compras=Round(Sum('total'),2)).order_by('-total_compras')   
+    total_arrecadado_ultima_ref = 0
+    maiores_compradores = Compra.objects.exclude(data__lte=ultimo_26).values('colaborador_id').annotate(total_compras=Round(Sum('total'),2)).order_by('-total_compras')   
     for i in maiores_compradores:
        i['colaborador_id'] = Colaboradore.objects.get(id=i['colaborador_id'])
-       total_compras_formatado = '{:.2f}'.format(i['total_compras'])
+       total_arrecadado_ultima_ref += float(i['total_compras'])
+       total_compras_formatado = f"{float(i['total_compras']):,.2f}".replace(',', '|').replace('.', ',').replace('|', '.')
        i['total_compras'] = total_compras_formatado
 
-    quantidade_compras = Compra.objects.exclude(data__gte=ultimo_26).count()
+
+    quantidade_compras = Compra.objects.exclude(data__lte=ultimo_26).count()
     dois_meses_atras = hoje.replace(day=26, month=hoje.month-2)
     dia_25_mes_passado = hoje.replace(day=25, month=hoje.month-1)
     if hoje.day > 25:
         dois_meses_atras = hoje.replace(day=26, month=hoje.month-1)
         dia_25_mes_passado = hoje.replace(day=25)
-        
+
     quantidade_compras_ultima_ref = Compra.objects.filter(data__gte=dois_meses_atras,data__lte = dia_25_mes_passado).count()
-    estoque = Estoque.objects.filter(Q(quantidade__lt=4) & Q(produto__situacao=True)).order_by('quantidade')
+    estoque = Estoque.objects.filter(Q(quantidade__lt=4) & Q(produto__situacao="Ativo")).order_by('quantidade')
+    produtos_mais_vendidos = Produtos.objects.filter(itemcompra__compra__data__gte=ultimo_26).annotate(total_vendas=Count('itemcompra')).order_by('-total_vendas')
     context = {
-       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':estoque
+       "maiores_compradores":maiores_compradores,'compras_mensal':quantidade_compras,
+       'compras_ultima_ref':quantidade_compras_ultima_ref,'estoque':estoque,
+       'total_arrecadado':f"{float(total_arrecadado_ultima_ref):,.2f}".replace(',', '|').replace('.', ',').replace('|', '.'),
+       'produtos_mais_vendidos':produtos_mais_vendidos
     }
     return render(request,'home/home.html',context=context)
 
@@ -103,7 +112,6 @@ def AdicionarColab(request):
                                     user = Colaboradore(nome=nome,cpf=cpf,login=login,senha=senha_criptografada,email=email)
                                     user.save()
                                     Enviar_email_bem_vindo({'nome':nome,'email':email})
-
                                     limpar_cache_sessao(request)
                                     return redirect('MostrarColab')
                                 else:
@@ -174,11 +182,6 @@ def AdicionarColab(request):
 def MostrarColab(request):
     colaboradores = Colaboradore.objects.all().order_by('nome')
     ultima_tentativa = request.session.get('ultima_tentativa')
-    for i in colaboradores:
-        if i.situacao:
-            i.situacao = "Ativo"
-        else:
-            i.situacao = "Inativo"
 
     paginator = Paginator(colaboradores, 9) 
 
@@ -210,9 +213,9 @@ def EditarColab(request,id):
         email = request.POST.get('email')
 
         if situacao == 'on':
-            situacao = True
+            situacao = "Ativo"
         else:
-            situacao = False
+            situacao = "Inativo"
 
         cpf_validator = CPF()
 
@@ -291,13 +294,9 @@ def FiltrarColab(request):
                 search_term = busca
             else:
                 search_term = procura
+        
 
-        colaboradores_filtrados = Colaboradore.objects.filter(Q(nome__icontains=search_term) | Q(cpf__icontains=search_term)).order_by('nome')
-        for i in colaboradores_filtrados:
-            if i.situacao:
-                i.situacao = "Ativo"
-            else:
-                i.situacao = "Inativo"
+        colaboradores_filtrados = Colaboradore.objects.filter(Q(nome__icontains=search_term) | Q(cpf__icontains=search_term) | Q(situacao=search_term) | Q(email__icontains=search_term)|Q(login__icontains=search_term)).order_by('nome')
         paginator = Paginator(colaboradores_filtrados, 9)  
 
         page_number = request.GET.get('page')

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'produtos/css/editar_produ.css'%}">
-    <title>Adicionar produto</title>
+    <title>Editar produto</title>
     <style>
 
 
@@ -17,12 +17,12 @@
     
   {% include 'navbar.html' %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <a href="{% url 'VoltarProdutos'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 18%; left: 6%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+  <a href="{% url 'VoltarProdutos'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 12%; left: 6%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
 
     <div class="container">
         <form method="post" action="{% url 'EditarProdu' id=id %}">
             {% csrf_token %}
-            <h1>EDITAR <br>  {{nome}}</h1>
+            <h1>EDITAR <i class="fas fa-pencil-alt"></i> <br>  {{nome}}</h1>
             <br><br>
 
             <label for="tipo">Tipo:</label><br>
@@ -47,8 +47,8 @@
             <input type="text" placeholder="Preço:" name="preco" id="preco" onkeypress="validarEntrada(event)" value="R$ {{preco}}" required><br><br>
 
 
-            <label for="ativo">Ativo:</label>
-            <input type="checkbox" id="ativo" name="ativo" placeholder="Ativo" {%if situacao%}checked{%endif%}><br><br>
+            <label for="ativo" class="checkbox-label">Ativo:</label>
+            <input type="checkbox" id="ativo" name="ativo" class="checkbox-custom" placeholder="Ativo" {%if situacao%}checked{%endif%}><br><br>
 
             {% if messages %}
               {% for message in messages %}

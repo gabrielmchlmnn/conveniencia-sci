@@ -2,51 +2,76 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Página inicial</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{% static 'home/css/home.css'%}">
-</head>
-<body>
 
-<nav class="topnav">
+</head>
+<body style="background-color: #4b7afd;">
+<div style="display: flex; justify-content: center;">
+<nav class="topnav" >
   <a style="width:107px;" href="{% url 'Home' %}"><img src="https://www.scivale.com.br/wp-content/uploads/2017/12/logo-sci.png" alt="logo-sci"></a>
-  <a href="{%url 'ComecarCompra'%}">Realizar Compra</a>
+  <a href="{%url 'ComecarCompra'%}" style="margin-left: 18%;">Realizar Compra</a>
   <a href="{% url 'MostrarColab' %}">Colaboradores</a>
   <a href="{% url 'ListarProdu' %}">Produtos</a>
-  <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+  {% if user.is_superuser %}
+  <a href="{% url 'ListarUser'%}">Usuários</a>
+{% endif %}
   <a href="{% url 'ListarEstoque' %}">Estoque</a>
   <a href="{% url 'ListarMovimentacoes'%}">Movimentações</a>
-  {% if user.is_superuser %}
-          <a href="{% url 'ListarUser'%}">Usuários</a>
-  {% endif %}
-  <a class="logout" href="{%url 'Logout' %}">Sair -></a>
+  <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+
+
+  <a class="logout" href="{%url 'Logout' %}" style="margin-left: auto;">Sair -></a>
 
 </nav>
+</div>
 
 <div class="linha">
-    <table class="tabela-compradores">
-    <thead class="thead-light">
-      <tr>
-        <th scope="col">Colaborador</th>
-        <th scope="col">Total gasto</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for item in maiores_compradores %}
-      <tr>
-        {% if item.colaborador_id.nome|length > 20 %}
-        <td>{{item.colaborador_id.nome|slice:":20" }}...</td>
-        {%else%}
-          <td>{{item.colaborador_id.nome}}</td>
-        {%endif%}
-        <td>R${{item.total_compras}}</td>
+
+  <div class="arrecadado-ultima-ref">
+    <div class="arrecadado-content">
+    <h1>Total faturado na referência atual:</h1>
+     <h2 style="font-size:40px;">R$ {{total_arrecadado}}</h2>
+    </div>
+  </div>
+    
+  <div class="arrecadado-ultima-ref" style="top:40%">
+    <div class="arrecadado-content" style="height: 410%; overflow: auto;">
+      <h1>Produtos mais vendidos:</h1>
+      {% for item in produtos_mais_vendidos%}
+        <li style="font-size: 18px;">{{item.nome}} - {{item.total_vendas}}</li>
       {%endfor%}
+    </div>
+  </div>
 
-    </tbody>
-  </table>
 
+  <div class="compradores">
+    <h1 style="color:white;text-align: center;">Maiores compradores:</h1>
+    <table class="tabela-compradores">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Colaborador</th>
+          <th scope="col">Total gasto</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for item in maiores_compradores %}
+        <tr>
+          {% if item.colaborador_id.nome|length > 20 %}
+          <td>{{item.colaborador_id.nome|slice:":20" }}...</td>
+          {%else%}
+            <td>{{item.colaborador_id.nome}}</td>
+          {%endif%}
+          <td>R${{item.total_compras}}</td>
+        {%endfor%}
+
+      </tbody>
+    </table>
+  </div>
   <div class="estoque">
-        <div class="estoque-content" style="text-align: center;border:0px solid grey;">
-          <h1>Estoque</h1>
+        <div class="estoque-content" style="text-align: center;background-color:#007bffbe ;">
+          <h1 style="color:white">Estoque</h1>
           <a href="{% url 'ListarEstoque' %}">
           <table class="tabela-estoque">
             <thead class="thead-light">
@@ -81,10 +106,10 @@
 
 
 
-  <div id="chartContainer" style="width: 400px; height: 400px;justify-content: center;position:relative;left: 0%;">
+  <div id="chartContainer" style="width: 400px; height: 400px;justify-content: center;position:relative;left: -30%; color: white;">
     <canvas id="myChart" class="graf-pizza" ></canvas>
   </div>
-
+  <img class=logo src="https://media.discordapp.net/attachments/1107706902273609869/1133874918833008710/Logo_SCI.png"/>
 </div>
 <br><br> 
 
@@ -104,8 +129,8 @@
     labels: ['Compras desse mês', 'Compras do último mês'],
     datasets: [{
       data: [valor1, valor2],
-      backgroundColor: ['#FF6384', '#36A2EB'],
-      color:'black'
+      backgroundColor: ['#FFCE56', '#36A2EB'],
+      color:'white'
     }]
   };
 
@@ -117,17 +142,25 @@
       position: 'bottom',  // Posição da legenda (top, bottom, left, right)
     },
     aspectRatio: 2,  // Define a relação de aspecto (largura:altura)
-
+    
+    
     layout: {
-      padding: {
-        top: 20,   // Espaçamento superior
-        left: 50,  // Espaçamento esquerdo
-        right: 50, // Espaçamento direito
-        bottom: 20 // Espaçamento inferior
+    padding: {
+      top: 20,   // Espaçamento superior
+      left: 50,  // Espaçamento esquerdo
+      right: 50, // Espaçamento direito
+      bottom: 20 // Espaçamento inferior
+    }
+  },
+
+  plugins: { // Adicione esta parte
+    legend: {
+      labels: {
+        color: 'white', // Defina a cor das letras dos rótulos para branco
       }
     }
-  };
-
+  }
+};
   // Criação do gráfico de pizza
   var ctx = document.getElementById('myChart').getContext('2d');
   var myChart = new Chart(ctx, {

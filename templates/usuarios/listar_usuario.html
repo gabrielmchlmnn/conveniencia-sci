@@ -14,12 +14,12 @@
   {% include 'navbar.html' %}
 
     <div class="container">
-        <h1>Usuários</h1><br><br><br>
+        <h1 style="z-index: 11;margin-top: 3%;left:43%">USUÁRIOS</h1><br><br><br>
 
       <div class="search-form">
           <form action="{% url 'FiltrarUser' %}" method="get">
               <div class="search-container">
-                  <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input" required>
+                  <input type="text" name="search" placeholder="Digite o nome, email ou username:" id="barra_de_pesquisa" class="search-input" required>
                   <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
               </div>
           </form>
@@ -33,10 +33,10 @@
           <thead class="thead-light">
             <tr>
               <th scope="col">ID</th>
-              <th scope="col">Nome</th>
-              <th scope="col">Email</th>
-              <th scope="col">Username</th>
-              <th scope="col">Editar</th>
+              <th scope="col">NOME</th>
+              <th scope="col">EMAIL</th>
+              <th scope="col">USERNAME</th>
+              <th scope="col">EDITAR</th>
             </tr>
           </thead>
           <tbody>
@@ -55,8 +55,8 @@
       </div>
         
         <br><br>
-        <button onclick="exibirModalAdicionar()">Adicionar usuário +</button>
-      
+        <button class="adicionar" style="font-size: 20px;height:5%" onclick="exibirModalAdicionar()"><i class="fas fa-user-plus fa-lg" ></i> Cadastrar</button>
+        {% if usuarios.paginator.num_pages > 1%}
         <nav aria-label="Page navigation" class="paginator">
           <ul class="pagination-justify-content-center">
             {% if usuarios.has_previous %}
@@ -79,6 +79,7 @@
             {% endif %}
           </ul>
         </nav>
+      {%endif%}
     </div>
 
     <div id="modal-adicionar" class="modal">
@@ -86,8 +87,8 @@
         <span class="fechar" onclick="fecharModalAdicionar()">&times;</span>
         <form method="post" action="{% url 'CadastrarUser'%}">
           {% csrf_token %}
-          <h1 style="color:black">Cadastro </h1><br>
-
+          <h1 style="color:black;margin-top: -2%;left:45%">Cadastro </h1><br>
+          <br><br><br>
           <label for="nome">Nome:</label><br><br>
           <input type="text" name="nome" placeholder="Digite o nome completo:" id="nome" value="{{nome}}" required><br><br>
 
@@ -109,7 +110,7 @@
             <input type="password" placeholder="Digite a senha novamente:" class="form-control" name="confirmacao"
               id="confirmacao" value="{{confirmacao}}" style="flex:1;padding-right: 4%" required>
             <i class="toggle-password fas fa-eye" style="position: absolute; left:70%; margin-top: 0.8%;" id="mostrar-confirmacao" onclick="togglePasswordVisibility('confirmacao')"></i>
-          </div><br><br><br>
+          </div><br><br><br><br>
           {% if messages %}
             <script>
               window.onload = function() {
@@ -117,7 +118,7 @@
               };
           </script>
             {% for message in messages %}
-                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4><br>
+                <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %} style="margin-top: -3%;">{{message}}</h4><br>
             {% endfor %}
           {%endif%}
           <button type="submit">Cadastrar usuário</button><br><br>

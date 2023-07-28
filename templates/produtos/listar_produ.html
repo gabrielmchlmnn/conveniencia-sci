@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'produtos/css/listar_produ.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <title>Listar produtos</title>
 </head>
 <body>
@@ -13,13 +15,13 @@
   {% include 'navbar.html' %}
 
     <div class="container">
-        <h1>Produtos</h1><br><br><br>
+        <h1 style="margin-top: 3%;left:43%;z-index: 11;">PRODUTOS</h1><br><br><br>
 
 
         <div class="search-form">
           <form action="{% url 'FiltrarProdu' %}" method="get">
               <div class="search-container">
-                  <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input" required>
+                  <input type="text" name="search" placeholder="Digite um nome, código de barras, ou situação:" id="barra_de_pesquisa" class="search-input" required>
                   <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
               </div>
           </form>
@@ -40,12 +42,12 @@
           </colgroup>
           <thead class="thead-light">
             <tr>
-              <th scope="col">Nome</th>
-              <th scope="col">Código de barras</th>
-              <th scope="col">Preço</th>
-              <th scope="col">Tipo</th>
-              <th scope="col">Situação</th>
-              <th scope="col">Editar</th>
+              <th scope="col">NOME</th>
+              <th scope="col">CÓDIGO DE BARRAS</th>
+              <th scope="col">PREÇO</th>
+              <th scope="col">TIPO</th>
+              <th scope="col">SITUAÇÃO</th>
+              <th scope="col">EDITAR</th>
             </tr>
           </thead>
         </table>
@@ -60,20 +62,20 @@
               <col style="width: 26%">
             </colgroup>
           <tbody>
-              {% for produto in produto %}
+              {% for produtos in produto %}
             <tr>
-              {% if produto.nome|length > 29%}
-              <td>{{produto.nome|slice:":30"}}...</td>
+              {% if produtos.nome|length > 29%}
+              <td>{{produtos.nome|slice:":30"}}...</td>
               {%else%}
-              <td>{{produto.nome}}</td>
+              <td style="text-align: left;padding-left: 1%;">{{produtos.nome}}</td>
               {%endif%}
-              <td>{{ produto.cod_barras|slice:":3" }}-{{ produto.cod_barras|slice:"3:9" }}-{{ produto.cod_barras|slice:"9:" }}</td>
-              <td>R$ {{produto.preco}}</td>
-              <td>{{produto.tipo}}</td>
+              <td style="text-align: right; padding-right: 1%;">{{ produtos.cod_barras}}</td>
+              <td style="text-align: right; padding-right: 1%;">R$ {{produtos.preco}}</td>
+              <td style="text-align: left; padding-left: 1%;">{{produtos.tipo}}</td>
               <td><span
-                class="situation-dot {% if produto.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
-              </span> {{produto.situacao}}</td>
-              <td><a href="{% url 'EditarProdu' id=produto.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
+                class="situation-dot {% if produtos.situacao == 'Ativo' %}active{% else %}inactive{% endif %}">
+              </span> {{produtos.situacao}}</td>
+              <td style="text-align: center;"><a href="{% url 'EditarProdu' id=produtos.id%}"><img src="https://thumbs2.imgbox.com/ce/70/GXNBIaJY_t.png"/></a></td>
             </tr>
             {%endfor%}
 
@@ -82,7 +84,7 @@
         </div>
       </div>
         <br><br>
-          <button type="button" onclick="exibirModalAdicionar()">Adicionar Produto +</button>
+          <button class="adicionar" type="button" style="font-size: 20px;height:5%" onclick="exibirModalAdicionar()"><i class="fas fa-pizza-slice fa-1x"></i>  Adicionar </button>
 
           <nav aria-label="Page navigation" class="paginator">
             <ul class="pagination-justify-content-center">
@@ -114,16 +116,16 @@
         
         <form method="post" action="{% url 'AdicionarProdu' %}">
           {% csrf_token %}
-          <h1 style="color:black">Adicionar</h1>
-          <br><br>
+          <h1 style="color:black;top:8%;left:45%">Adicionar</h1>
+          <br><br><br><br><br><br>
 
 
-          <label for="tipo">Tipo:</label><br><br>
+          <label for="tipo" >Tipo:</label><br><br>
           <select id="tipo" name="tipo" required>
             <option value="" disabled selected>--Selecione um tipo--</option>
-                <option value="Alimento" >Alimento</option>
-                <option value="Ingresso">Ingresso</option>
-                <option value="Roupa">Roupa</option>
+                <option value="Alimento" {% if tipo == "Alimento"%} selected {%endif%}>Alimento</option>
+                <option value="Ingresso" {% if tipo == "Ingresso"%} selected {%endif%}>Ingresso</option>
+                <option value="Roupa" {% if tipo == "Roupa"%} selected {%endif%}>Roupa</option>
           </select><br><br>
 
 
@@ -139,14 +141,14 @@
                   };
               </script>
               {% for message in messages %}
-              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %} style="margin-top: -4%;">{{message}}</h4>
               {% endfor %}
           {%endif%}
           <br>
           <label for="preco">Preço:</label><br><br>
           <input type="text"  placeholder="Preço:" name="preco" id="preco" onkeypress="validarEntrada(event)" value="{{preco}}" required><br><br><br>
 
-          <br>
+          <br><br><br>
 
 
           <button type="submit">Adicionar produto</button>   

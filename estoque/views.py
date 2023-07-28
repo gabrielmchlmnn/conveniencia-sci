@@ -33,7 +33,7 @@ def ListarEstoque(request):
     estoque = Estoque.objects.all().order_by('quantidade')
     lista_estoque = []
     for i in estoque:
-        if i.produto.situacao == True:
+        if i.produto.situacao == "Ativo":
             lista_estoque.append({'produto':i.produto,'quantidade':i.quantidade})
 
     paginator = Paginator(lista_estoque, 15)  
@@ -57,11 +57,11 @@ def FiltrarEstoque(request):
         request.session['procura_estoque'] = search_term
     else:
         busca = request.GET.get('search')
-        if busca is not None or busca == '':
+        if busca is not None:
             search_term = busca
         else:
             search_term = procura
-    produtos_filtrados = Estoque.objects.filter(produto__nome__icontains=search_term).filter(produto__situacao=True)
+    produtos_filtrados = Estoque.objects.filter(produto__nome__icontains=search_term).filter(produto__situacao="Ativo")
 
     paginator = Paginator(produtos_filtrados, 15) 
     page_number = request.GET.get('page')
@@ -133,42 +133,50 @@ def FiltrarMovimentacoes(request):
     tipo = request.GET.get('botao_tipo')
 
     filtro = request.session.get('filtro_movimentacoes')
-    
-    if filtro is not None:
-        if data_inicio and data_final:
-            request.session['filtro_movimentacoes'] = {'data_inicio':data_inicio,'data_final':data_final}
-            movimentacoes_filtradas = Movimentacao_estoque.objects.filter(data__range=(data_inicio,data_final)).order_by('-data')
-        elif usuario:
-            request.session['filtro_movimentacoes'] = usuario
-            movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=usuario).order_by('-data')
-        elif tipo:
-            request.session['filtro_movimentacoes'] = tipo
-            movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo=tipo).order_by('-data')
+    try:
+        if filtro is not None:
+                if data_inicio and data_final:
+                    if data_final > data_inicio:
+                        request.session['filtro_movimentacoes'] = {'data_inicio':data_inicio,'data_final':data_final}
+                        movimentacoes_filtradas = Movimentacao_estoque.objects.filter(data__range=(data_inicio,data_final)).order_by('-data')
+                    else:
+                        raise Exception('A data de inicial não pode ser menor do que a data final!')
+                elif usuario:
+                    request.session['filtro_movimentacoes'] = usuario
+                    movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=usuario).order_by('-data')
+                elif tipo:
+                    request.session['filtro_movimentacoes'] = tipo
+                    movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo=tipo).order_by('-data')
 
+                else:
+                    if type(filtro) == dict:
+                        movimentacoes_filtradas = Movimentacao_estoque.objects.filter(data__range=(filtro['data_inicio'],filtro['data_final'])).order_by('-data')
+                
+                    elif filtro == "Entrada" or filtro == "Saída":
+                        movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo__icontains=(filtro)).order_by('-data')
+                    
+                    else:
+                        movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=(filtro)).order_by('-data')
         else:
-            if type(filtro) == dict:
-                movimentacoes_filtradas = Movimentacao_estoque.objects.filter(data__range=(filtro['data_inicio'],filtro['data_final'])).order_by('-data')
-        
-            elif filtro == "Entrada" or filtro == "Saída":
-                movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo__icontains=(filtro)).order_by('-data')
-            
-            else:
-                movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=(filtro)).order_by('-data')
-    else:
-            
-        if data_inicio and data_final:
-            request.session['filtro_movimentacoes'] = {'data_inicio':data_inicio,'data_final':data_final}
-            movimentacoes_filtradas = Movimentacao_estoque.objects.filter(data__range=(data_inicio,data_final)).order_by('-data')
+                
+            if data_inicio and data_final:
+                if data_final > data_inicio:
+                    request.session['filtro_movimentacoes'] = {'data_inicio':data_inicio,'data_final':data_final}
+                    movimentacoes_filtradas = Movimentacao_estoque.objects.filter(data__range=(data_inicio,data_final)).order_by('-data')
+                else:
+                    raise Exception('A data de inicial não pode ser menor do que a data final!')
 
-        if usuario:
-            request.session['filtro_movimentacoes'] = usuario
-            movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=(usuario)).order_by('-data')
-        
-        if tipo:
-            request.session['filtro_movimentacoes'] = tipo
-            movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo__icontains=(tipo)).order_by('-data')
-        
-        
+            if usuario:
+                request.session['filtro_movimentacoes'] = usuario
+                movimentacoes_filtradas = Movimentacao_estoque.objects.filter(usuario__username__icontains=(usuario)).order_by('-data')
+            
+            if tipo:
+                request.session['filtro_movimentacoes'] = tipo
+                movimentacoes_filtradas = Movimentacao_estoque.objects.filter(tipo__icontains=(tipo)).order_by('-data')
+    except Exception as erro:
+        messages.error(request,f'{erro}')
+        return redirect('ListarMovimentacoes')
+
 
     paginator = Paginator(movimentacoes_filtradas, 15) 
     page_number = request.GET.get('page')

@@ -8,19 +8,20 @@
     <link rel="stylesheet" href="{%static 'colab/css/mostrar_colab.css'%}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Listar colaboradores</title>
+
 </head>
 <body>
 
   {% include 'navbar.html' %}
 
     <div class="container">
-        <h1>Colaboradores</h1><br><br><br>
+        <h1 style="z-index: 1;margin-top: 3%;">COLABORADORES</h1><br><br><br>
 
 
         <div class="search-form">
           <form action="{% url 'FiltrarColab' %}" method="get">
               <div class="search-container">
-                  <input type="text" name="search" placeholder="Pesquisar" class="search-input" id="barra_de_pesquisa" required>
+                  <input type="text" name="search" placeholder="Digite um nome, CPF,email ou situação:" class="search-input" id="barra_de_pesquisa" required>
                   <input type="submit" value="Pesquisar" class="search-button" id="botao_pesquisa">
               </div>
           </form>
@@ -33,11 +34,11 @@
         <table class="table table-hover">
           <thead class="thead-light">
             <tr>
-              <th scope="col">Nome</th>
-              <th scope="col">Login</th>
-              <th scope="col">Email</th>
-              <th scope="col">Situação</th>
-              <th scope="col">Ações</th>
+              <th scope="col">NOME</th>
+              <th scope="col">LOGIN</th>
+              <th scope="col">EMAIL</th>
+              <th scope="col">SITUAÇÃO</th>
+              <th scope="col">AÇÕES</th>
             </tr>
           </thead>
         </table>
@@ -72,7 +73,9 @@
         </div>
       </div>  
       <br><br>
-      <button onclick="exibirModalAdicionar()">Adicionar Colaborador +</button>
+      <button class="adicionar" onclick="exibirModalAdicionar()" style="font-size: 20px;height:5%"> <i class="fas fa-user-plus fa-lg" ></i> Cadastrar</button>
+      {% if colaboradores.paginator.num_pages > 1%}
+
       <nav aria-label="Page navigation" class="paginator">
         <ul class="pagination-justify-content-center">
           {% if colaboradores.has_previous %}
@@ -95,6 +98,7 @@
           {% endif %}
         </ul>
       </nav>
+      {%endif%}
     </div>
 
     <div id="modal-adicionar" class="modal">
@@ -103,9 +107,9 @@
         
         <form method="post" action="{% url 'AdicionarColab' %}">
           {% csrf_token %}
-          <h1 style="color: #2c2c2c;">Cadastrar</h1><br>
-
-          <label for="nome">Nome completo:</label><br><br>
+          <h1 style="color: #2c2c2c;top:5.1%;left:44.5%">Cadastrar</h1>
+          <br><br><br>
+          <label for="nome" style="margin-top: 5%;">Nome completo:</label><br><br>
           <input type="text" placeholder="Nome:" name="nome" id="nome" value="{{nome}}" required><br><br>
 
           <label for="cpf">CPF:</label><br><br>
@@ -153,8 +157,8 @@
   <div class="modal-dialog" role="document">
       <div class="modal-content" id="modal-content-dados">
           <div class="modal-header">
-              <h1 class="modal-title" style="color:#2c2c2c">Dados</h1>
-              <span class="fechar" style="position: relative;margin: -5% 0;" onclick="fecharModal_visu()">&times;</span>
+              <h1 class="modal-title" style="color:#2c2c2c;top:3%;left:46.9%">Dados</h1>
+              <span class="fechar" style="position: relative;margin: -2% 0;" onclick="fecharModal_visu()">&times;</span>
           </div>
           <br><br>
           <div class="modal-body">

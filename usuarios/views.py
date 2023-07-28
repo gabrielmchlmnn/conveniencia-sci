@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import check_password
 from django.urls import reverse
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 
                                                     
@@ -173,7 +174,7 @@ def FiltrarUsuario(request):
             else:
                 search_term = filtro_usuarios
         
-        usuarios_filtrados = User.objects.filter(username__icontains=search_term)
+        usuarios_filtrados = User.objects.filter(Q(username__icontains=search_term)|Q(first_name__icontains=search_term)|Q(email__icontains=search_term))
 
         paginator = Paginator(usuarios_filtrados, 9)  
 
@@ -192,6 +193,7 @@ def RedefinirSenhaUser(request,id):
         if nova_senha == confirmacao:
             usuario.set_password(confirmacao)
             usuario.save()
+            limpar_cache_sessao(request)
             return redirect('ListarUser')
         else:
             messages.error(request,'As novas senhas não coincidem!')

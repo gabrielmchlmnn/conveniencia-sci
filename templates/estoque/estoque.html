@@ -14,19 +14,19 @@
   {% include 'navbar.html' %}
 
     <div class="container">
-        <h1>Estoque</h1><br><br><br>
+        <h1 style="z-index: 11;margin-top: 3%;left:43%">ESTOQUE</h1><br><br><br>
 
         
 
         <div class="search-form">
           <form action="{% url 'FiltrarEstoque' %}" method="get">
               <div class="search-container">
-                  <input type="text" name="search" placeholder="Pesquisar" id="barra_de_pesquisa" class="search-input">
+                  <input type="text" name="search" placeholder="Digite o nome:" id="barra_de_pesquisa" class="search-input" required>
                   <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa">
               </div>
           </form>
           {% if filtro %}
-            <a href="{% url 'VoltarEstoque'%}"><input type="submit" value="Desfazer filtro" class="search-button2"></a>
+            <a href="{% url 'VoltarEstoque'%}"><input type="submit" value="Desfazer filtro"  class="search-button2"></a>
           {%endif%}
       </div>
       <br><br>
@@ -34,8 +34,8 @@
         <table class="table table-hover">
           <thead class="thead-light">
             <tr>
-              <th scope="col">Nome</th>
-              <th scope="col">Quantidade</th>
+              <th scope="col">NOME</th>
+              <th scope="col">QUANTIDADE</th>
             </tr>
           </thead>
         </table>
@@ -44,7 +44,7 @@
           <tbody>
               {% for produto in estoque %}
             <tr>
-              <td>{{produto.produto.nome}}</td>
+              <td style="text-align: left;">{{produto.produto.nome}}</td>
               <td>{{produto.quantidade}}</td>
             </tr>
             {%endfor%}
@@ -53,6 +53,8 @@
         </table>
         </div>
       </div>
+      {% if estoque.paginator.num_pages > 1%}
+
       <nav aria-label="Page navigation" class="paginator">
         <ul class="pagination-justify-content-center">
           {% if estoque.has_previous %}
@@ -75,9 +77,14 @@
           {% endif %}
         </ul>
       </nav>
+    {%endif%}
       <br><br><br>
-      <button class="adicionar-entrada" type="button" onclick="exibirModalEntrada()" data-value="{{ produto.produto }}">Adicionar+<br>entrada</button>  
-      <button class="adicionar-baixa" type="button" onclick="exibirModalBaixa()" data-value="{{ produto.produto }}">Adicionar+<br>baixa</button>
+      <button class="adicionar-entrada" style="display: grid;" type="button" onclick="exibirModalEntrada()" data-value="{{ produto.produto }}">
+        <span style="display: flex; justify-content: center; align-items: center; height: 25%;">+</span>
+      </button>  
+      <button class="adicionar-baixa" style="display: grid;" type="button" onclick="exibirModalBaixa()" data-value="{{ produto.produto }}">        
+        <span style="display: flex; justify-content: center; align-items: center; height: 25%;">-</span>
+      </button>
         <br><br>
     </div>
     <div id="modalEntrada" class="modal">
@@ -86,8 +93,8 @@
         
         <form id="meuFormulario" action="{% url 'AdicionarEntrada' %}" method="post">
           {% csrf_token %}
-          <h1 style="color:black">Entrada</h1>
-          <br><br>
+          <h1 style="color:black;top:22%;left:46%">Entrada</h1>
+          <br><br><br><br>
           <label for="produto">Produto:</label><br>
           <select name="produto" id="produto" required>
                       <option disabled selected >--Selecione um produto--</option>
@@ -112,7 +119,7 @@
                   {% endfor %}
               {%endif%}
           <br><br><br><br>
-          <button type="submit">Atualizar</button>   
+          <button class="atualizar" type="submit">Atualizar</button>   
       </form>
 
 
@@ -126,8 +133,8 @@
         
         <form id="meuFormulario2" action="{% url 'BaixarEstoque'%}" method="post" >
           {% csrf_token %}
-          <h1 style="color:black">Baixa</h1>
-          <br><br>
+          <h1 style="color:black; top:22%;left:47%">Baixa</h1>
+          <br><br><br><br>
           <label for="produto">Produto:</label><br>
           <select name="produto" id="produto" required >
                       <option disabled selected >--Selecione um produto--</option>
@@ -137,8 +144,8 @@
           </select><br><br>
 
           <label for="quantidade">Digite a quantidade:</label><br><br>
-          <input type="number" min="1" placeholder="Quantidade:" name="quantidade" id="quantidade" value="{{quantidade}}" required><br><br><br>
-
+          <input type="number" min="1" placeholder="Quantidade:" name="quantidade" id="quantidade" value="{{quantidade}}" required><br>
+          <br><br>
           {% if messages %}
           {% for message in messages %}
               {% if message.message == 'Selecione um produto!'%}
@@ -149,7 +156,7 @@
                   };
               </script>
               {%elif message.message == 'A quantidade da baixa é maior do que a atual no estoque!'%}
-              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %}>{{message}}</h4>
+              <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %} style="margin-top: -13%;">{{message}}</h4>
               <script>
                   window.onload = function() {
                   exibirModalBaixa();
@@ -158,8 +165,8 @@
               {%endif%}
           {% endfor %}
       {%endif%}
-          <br><br><br><br>
-          <button type="submit">Atualizar</button>   
+          <br><br><br>
+          <button class="atualizar" type="submit">Atualizar</button>   
       </form>
 
 

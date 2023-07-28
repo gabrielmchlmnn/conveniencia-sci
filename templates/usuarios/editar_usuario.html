@@ -12,12 +12,11 @@
 <body>
   {% include 'navbar.html' %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <a href="{% url 'VoltarUsuarios'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 17%; left: 6%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+  <a href="{% url 'VoltarUsuarios'%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 11%; left: 6%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
     <div class="container">
         <form method="post" action="{% url 'EditarUser' id=id %}">
             {% csrf_token %}
-            <h1>EDITAR <br>  
-                {{username}} </h1><br><br>
+            <h1>EDITAR  DADOS <i class="fas fa-pencil-alt"></i><br>  </h1><br><br><br><br>
 
             <label for="nome">Nome:</label><br>
             <input type="text" name="nome" placeholder="Digite o nome do usuário:" id="nome" value="{{nome}}" required><br><br>

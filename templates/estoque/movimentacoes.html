@@ -15,15 +15,15 @@
   {% include 'navbar.html' %}
 
     <div class="container">
-        <h1>Movimentações</h1><br><br><br>
+        <h1 style="margin-top:3%;z-index: 11;">MOVIMENTAÇÕES</h1><br><br><br>
 
   
         <br>
-        <div class="search-form">
+        <div class="search-form" style="margin-top:2%;">
           <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
-              <div class="search-container">
-                  <h2 style="position: relative;color:white;left:-45%">Filtrar por:</h2><br>
-                  <select name="filtro" id="filtro" style="position: relative;left:-43%;top:-39%" required>
+              <div class="search-container-principal">
+                  <h2  class="label-filtro">Filtrar por:</h2><br>
+                  <select name="filtro" id="filtro" required>
                     <option disabled selected >--Selecione um filtro--</option>
                       <option value="data" onclick="exibirModalData()">Data</option>
                       <option value="data" onclick="exibirModalUsuario()">Usuário</option>
@@ -38,53 +38,40 @@
       <br><br>
       <div class="tabela-scroll">
         <table class="table table-hover">
-          <colgroup>
-            <col style="width: 20.9%">
-            <col style="width: 19.5%">
-            <col style="width: 20.7%">
-            <col style="width: 20.5%">
-            <col style="width: 20%">
-            <col style="width: 19%">
-          </colgroup>
+
           <thead class="thead-light">
             <tr>
-              <th scope="col">Produto</th>
-              <th scope="col">Quantidade</th>
-              <th scope="col">Data</th>
-              <th scope="col">Tipo</th>
-              <th scope="col">Usuario</th>
+              <th scope="col">PRODUTO</th>
+              <th scope="col">QUANTIDADE</th>
+              <th scope="col">DATA</th>
+              <th scope="col">TIPO</th>
+              <th scope="col">USUÁRIO</th>
             </tr>
           </thead>
         </table>
         <div class="tabela-corpo">
           <table class="table table-hover">
-            <colgroup>
-              <col style="width: 20.9%">
-              <col style="width: 19.5%">
-              <col style="width: 20.7%">
-              <col style="width: 20.5%">
-              <col style="width: 20%">
-              <col style="width: 19%">
-            </colgroup>
+
           <tbody>
               {% for item in movimentacoes %}
             <tr>
               {% if item.produto.nome|length > 35%}
-              <td>{{item.produto.nome|slice:":36"}}...</td>
+              <td style="padding-right: 2%;text-align: left;">{{item.produto.nome|slice:":36"}}...</td>
               {%else%}
-              <td>{{item.produto.nome}}</td>
+              <td style="padding-right: 2%;text-align: left;">{{item.produto.nome}}</td>
               {%endif%}
-              <td>{{item.quantidade}}</td>
+              <td style="text-align: center;">{{item.quantidade}}</td>
               <td>{{item.data}}</td>    
               <td>{{item.tipo}}</td>
-              <td>{{item.usuario.username}}</td>
+              <td style="text-align: left;padding-left: 1%;">{{item.usuario.username}}</td>
             </tr>
             {%endfor%}
 
           </tbody>
         </table>
         </div>
-        <nav aria-label="Page navigation" class="paginator">
+        {% if movimentacoes.paginator.num_pages > 1%}
+        <nav aria-label="Page navigation" class="paginator" style="top:93.1%">
           <ul class="pagination-justify-content-center">
             {% if movimentacoes.has_previous %}
               <a class="page-link" href="?page=1">Primeira</a>
@@ -106,6 +93,7 @@
             {% endif %}
           </ul>
         </nav>
+        {%endif%}
       </div>
 
         <div id="modal-data" class="modal">
@@ -121,13 +109,22 @@
                       <label for="data_inicio">Data de início:</label><br>
                       <input type="date" placeholder="Digite uma data:" name="data_inicio" required><br><br><br><br><br>
                       <label for="data_final">Data final:</label><br>
-                      <input type="date" name="data_final" required><br><br><br>
+                      <input type="date" name="data_final" required><br><br><br><br><br>
                       <input type="submit" value="Filtrar" class="search-button" id="botao_pesquisa" style="position: relative;left:0%;font-size: large;">
                       <br><br>
                     </div>
                 </form> 
+                {% if messages %}
+                {% for message in messages %}
+                    <h4{% if message.tags %} class="error-message" id ="error-mensagem" {% endif %} style="margin: -14%; left:44%">{{message}}</h4>
+                    <script>
+                        window.onload = function() {
+                          exibirModalData();
+                        };
+                    </script>
+                {% endfor %}
+            {%endif%}
               </div>   
-                    <br><br>
           </div>
         </div>
 
@@ -138,7 +135,7 @@
               <form action="{% url 'FiltrarMovimentacoes' %}" method="get">
                 <div class="search-container">
                   <br><br>
-                  <label for="usuario">Selecione o usuário:</label><br><br>
+                  <label for="usuario" style="font-size: 30px;">Selecione o usuário:</label><br><br>
                   <select id="filtro" name="usuario" required>
                     <option value="" disabled selected>--Selecione um usuario--</option>
                         {% for usuario in usuarios%}
@@ -149,7 +146,7 @@
 
                   <br><br><br><br>
                   <button type="submit"class="search-button" id="botao_pesquisa" 
-                  style="position: relative;left:0;font-size: large;color:#f9f9f9">Filtrar</button>
+                  style="position: relative;left:0;font-size: large;color:#f9f9f9; height:50px">Filtrar</button>
                   <br><br>
                 </div>
               </form>
@@ -205,6 +202,14 @@
           var modal = document.getElementById('modal-tipo');
           modal.style.display = 'none';
         }
+        document.addEventListener('DOMContentLoaded', function() {
+        var erro = document.getElementById('error-mensagem');
+        erro.style.display = 'block';
+
+        setTimeout(function() {
+            erro.style.display = 'none';
+        }, 3000);
+        });
     </script>
 </body>
 </html>

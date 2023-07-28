@@ -10,6 +10,8 @@
     <title>Login</title>
 </head>
 <body>
+    <img class=logo src="https://media.discordapp.net/attachments/1107706902273609869/1133874918833008710/Logo_SCI.png"/>
+
     <div class="container">
         <form method="post" action="{% url 'Login' %}">
             {% csrf_token %}
@@ -21,8 +23,8 @@
     
             <label for="password">Senha:</label><br><br>
 
-                <input type="password" placeholder="Digite sua senha:" class="form-control" name="senha" id="senha" value="{{senha}}" style="flex:1;padding-right: 4%;width: 88%;" required>
-                <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;margin-top:1.2%;left: 87.5%; color:black" onclick="togglePasswordVisibility('senha')"></i>
+                <input type="password" placeholder="Digite sua senha:" class="form-control" name="senha" id="senha" value="{{senha}}" style="flex:1;padding-right: 4%;width: 48%;" required>
+                <i class="toggle-password fas fa-eye" id="mostrar-senha" style="position: absolute;margin-top:1.2%;left: 70.5%; color:black" onclick="togglePasswordVisibility('senha')"></i>
 
             {% if messages %}
                 {% for message in messages %}

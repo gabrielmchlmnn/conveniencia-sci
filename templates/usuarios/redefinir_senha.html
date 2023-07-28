@@ -19,7 +19,7 @@
 
         <form method="POST" action="{% url 'RedefinirSenhaUser' id=id %}">
             {% csrf_token %}
-            <h1>Redefinir <br>  Senha</h1><br><br>
+            <h1>REDEFINIR SENHA</h1><br><br>
 
             <label for="senha_nova">Senha nova:</label><br>
             <input type="password" name="senha_nova" placeholder="Digite a nova senha:" id="senha_nova" required><br>

@@ -1,31 +1,40 @@
 body {
-    background:-webkit-linear-gradient(rgb(201, 201, 255),white);
-    margin: 0;
+  background-color: #648dff;
+      margin: 0;
     font-family: Arial, Helvetica, sans-serif;
   }
 
   html, body {
   height: 100%;
 }
-  table,th,td{
-      margin: 0 auto;
-      border-radius: 10px;
-  }
+table,
+th,
+td {
+  margin: 0 auto;
+  border-radius: 5px;
+  border-bottom: 1px solid black;
+}
+
+th {
+  background-color: #007bff; /* Cor de fundo dos cabeçalhos das colunas */
+  color: #ffffff; /* Cor do texto nos cabeçalhos das colunas */
+  border-radius: 10px;
+}
   td,th{
       padding: 15px;
-      background-color: rgb(240, 248, 255);
       text-align: center;
       color:black;
-      border-radius: 5px;
+      border-radius: 1px;
       height: 20px;
       width: 10%;
+      background-color: #f2f2f2;
+      border-radius: 5px;
   }
 
   
   th{
-      background-color: rgba(0, 0, 139, 0.521);
+      background-color: rgb(43, 43, 133);
       color:aliceblue;
-      border-radius: 10px;
 
   }
   .linha{
@@ -41,8 +50,8 @@ body {
   .estoque{
     position: relative;
     right:10%;
-    top:80%;
-    width: 40%;
+    top:50%;
+    width: 45%;
     height: 40%;
     border:30px;
     z-index: 1;
@@ -52,42 +61,73 @@ body {
     background-color: -webkit-linear-gradient(rgb(201, 201, 255),white);
     align-items: center;
     position: absolute;
-    right: 10%;
+    left:-800%;
     top:30%;
-    width: 600%;
+    width: 700%;
     z-index: -1;
     border-radius: 10px;
     overflow: auto;
     height: 400px;
-    transform: translate(-5%,-15%);
+    transform: translate(-7%,-50%);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
+  }
 .estoque-content td,th{
     width: 80%;
 }
 .graf-pizza{
   transform: translate(0%,-20%);
-  color:black;
+  color:white;
   padding: 0;
 
 }
-.tabela-compradores{
-  transform: translate(-400%,-10%);
-  height: 30px;
-  overflow: auto;
-  width: 40%;
 
+.compradores{
+  width: 190%;
+  background-color: #007bffbe ;
+  position: absolute;
+  left: -230%;
+  top:60%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: auto;
+  height: 90%;
+}
+.tabela-compradores table{
+  width: 80%;
+}
+.tabela-compradores-content td{
+  border-bottom: 1px solid black;
 }
 .tabela-compradores td,th{
-    width: 50%;
+  border-radius: 5px;
+  width: 90%;
+}
+.tabela-compradores-content th:last-child, td:last-child {
+  width: 40%;
 }
 
+
+.arrecadado-ultima-ref{
+  position: absolute;
+  left:-350%;
+  width: 90%;
+  height: 20%;
+  text-align: center;
+  top:-30%
+}
+.arrecadado-content{
+  background-color: #f2f2f2;
+  border:3px solid blue;
+  border-radius: 10px;
+}
+
+
 .situacao-amarelo{
-  background-color: yellow;
+  background-color: rgb(255, 255, 89);
 
 }
 .situacao-vermelho{
-  background-color: red;
+  background-color: rgb(255, 56, 56);
 }
 .situacao-laranja{
   background-color: orange;
@@ -97,7 +137,8 @@ body {
     width: 100%;
     overflow: hidden;
     background-color: #00000069;
-    position:static;
+    display: flex;
+    align-items: center;
   }
   
   .topnav a {
@@ -109,7 +150,7 @@ body {
     font-size: 17px;
     height: 20px;
     font-weight: bold; 
-
+    font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
   }
   
   .topnav a:hover {
@@ -123,13 +164,37 @@ body {
     color: white;
     height: 45px;
   }
-  .topnav a.logout:hover {
-    background-color: red;
-    color: white;
-  }
+
+    .topnav a {
+      /* Restante do seu código CSS */
+      color: #ffffff; /* Cor do texto nos links não selecionados */
+    }
+    
+    .topnav a:hover {
+      background-color: #ffffcc; /* Cor de fundo ao passar o mouse sobre os links não selecionados */
+      color: #000000; /* Cor do texto ao passar o mouse sobre os links não selecionados */
+    }
+    
+    .topnav a.active {
+      background-color: #007bff; /* Cor de fundo do link selecionado */
+      color: #ffffff; /* Cor do texto no link selecionado */
+    }
+    
+    .topnav a.logout:hover {
+      background-color: #ff3333; /* Cor de fundo ao passar o mouse sobre o link de logout */
+      color: #ffffff; /* Cor do texto ao passar o mouse sobre o link de logout */
+    }
   .topnav img{
     height: 35px;
     margin-right: 28px;
 
   }
-
+    .logo{
+      position: absolute;
+      left:-290%;
+      opacity: 0.4;
+      transform: scale(1.5);
+      /* Opcional: Adicionando uma transição suave ao zoom */
+      transition: transform 0.5s ease;
+      z-index: -1;
+    }

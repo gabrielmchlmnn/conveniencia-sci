@@ -16,12 +16,12 @@
   {% include 'navbar.html' %}
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <a href="{% url 'EditarColab' id=id%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 24%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
+        <a href="{% url 'EditarColab' id=id%}"><i class="fas fa-arrow-left fa-2x" style="position: absolute; top: 22%; left: 21%; color: white;z-index: 2;cursor: pointer;"></i> </a> 
     <div class="container">
 
         <form method="POST" action="{% url 'RedefinirSenha' id=id %}">
             {% csrf_token %}
-            <h1>-Redefinir- <br>  Senha</h1><br><br>
+            <h1>REDEFINIR SENHA</h1><br><br>
 
             <label for="senha_antiga">Senha antiga:</label><br>
             <input type="password" placeholder="Digite a senha:" name="senha_antiga" id="senha_antiga" style="padding-right: 4%;"required>

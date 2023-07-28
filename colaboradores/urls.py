@@ -8,7 +8,7 @@ urlpatterns = [
    path('logout/',Logout,name='Logout'),
    path('home/adicionar-colaborador/',AdicionarColab,name='AdicionarColab'),
    path('home/',include('produtos.urls')),
-   path('home/mostrar-colaboradores/',MostrarColab,name='MostrarColab'),
+   path('home/listar-colaboradores/',MostrarColab,name='MostrarColab'),
    path('home/',include('usuarios.urls')),
    path('home/editar-colaborador/<int:id>/',EditarColab,name='EditarColab'),
    path('home/filtrar-colaboradores',FiltrarColab,name="FiltrarColab"),

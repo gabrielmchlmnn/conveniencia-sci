@@ -15,6 +15,8 @@
     font-size: 17px;
     height: 48px;
     font-weight: bold; 
+    font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+
 
   }
   
@@ -29,10 +31,21 @@
     color: white;
     height: 45px;
   }
-  .topnav a.logout:hover {
-    background-color: red;
-    color: white;
-  }
+    
+    .topnav a:hover {
+      background-color: #ffffcc; /* Cor de fundo ao passar o mouse sobre os links não selecionados */
+      color: #000000; /* Cor do texto ao passar o mouse sobre os links não selecionados */
+    }
+    
+    .topnav a.active {
+      background-color: #007bff; /* Cor de fundo do link selecionado */
+      color: #ffffff; /* Cor do texto no link selecionado */
+    }
+    
+    .topnav a.logout:hover {
+      background-color: #ff3333; /* Cor de fundo ao passar o mouse sobre o link de logout */
+      color: #ffffff; /* Cor do texto ao passar o mouse sobre o link de logout */
+    }
   .topnav img{
     height: 35px;
     margin-right: 28px;
@@ -43,16 +56,17 @@
   </style>
     <nav class="topnav">
       <a href="{% url 'Home' %}"><img src="https://www.scivale.com.br/wp-content/uploads/2017/12/logo-sci.png" alt="logo-sci"></a>
-      <a href="{%url 'ComecarCompra'%}">Realizar compra</a>
+      <a href="{%url 'ComecarCompra'%}" style="margin-left: 18%;">Realizar Compra</a>
       <a href="{% url 'MostrarColab' %}">Colaboradores</a>
       <a href="{% url 'ListarProdu' %}">Produtos</a>
-      <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+      {% if user.is_superuser %}
+      <a href="{% url 'ListarUser'%}">Usuários</a>
+{% endif %}
       <a href="{% url 'ListarEstoque' %}">Estoque</a>
       <a href="{% url 'ListarMovimentacoes'%}">Movimentações</a>
-      {% if user.is_superuser %}
-              <a href="{% url 'ListarUser'%}">Usuários</a>
-      {% endif %}
-      <a class="logout" href="{%url 'Logout' %}">Sair -></a>
+      <a href="{% url 'GerarRelatorio' %}">Relatórios</a>
+
+      <a class="logout" href="{%url 'Logout' %}" style="margin-left: 21.19%;">Sair -></a>
   
   </nav>
 
