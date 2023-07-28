@@ -136,7 +136,7 @@
                 <div class="search-container">
                   <br><br>
                   <label for="usuario" style="font-size: 30px;">Selecione o usuário:</label><br><br>
-                  <select id="filtro" name="usuario" required>
+                  <select id="filtro" name="usuario" style="margin-left:0%" required>
                     <option value="" disabled selected>--Selecione um usuario--</option>
                         {% for usuario in usuarios%}
                         <option value="{{usuario.username}}" >{{usuario.username}}</option>

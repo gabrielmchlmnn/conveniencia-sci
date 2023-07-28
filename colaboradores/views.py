@@ -79,6 +79,7 @@ def Home(request):
        'total_arrecadado':f"{float(total_arrecadado_ultima_ref):,.2f}".replace(',', '|').replace('.', ',').replace('|', '.'),
        'produtos_mais_vendidos':produtos_mais_vendidos
     }
+
     return render(request,'home/home.html',context=context)
 
 

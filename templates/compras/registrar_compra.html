@@ -69,6 +69,8 @@
                         </div>
 
                         <h4 class="total" style="position: relative;margin-top:4.8%">Total: R$ {{totalCarrinho}}</h4>
+                        
+                        <a href="{% url 'FinalizarComCod'%}"><button class="finalizar-modal" sytyle="top:78%"  type="button">Registrar compra com QR Code</button></a>
                         <button class="finalizar" onclick="exibir_modal_finalizar()" style="margin: 0 auto;">Finalizar Compra</button>
 
                         <a href="{% url 'ComecarCompra' %}"><button class="esvaziar" type="button">Esvaziar carrinho</button></a> <br><br>

@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import AdicionarItem,RegistrarCompra,DeletarItem,ComecarCompra,ConferirGastos,GerarRelatorio,Carrinho
+from .views import AdicionarItem,RegistrarCompra,DeletarItem,ComecarCompra,ConferirGastos,GerarRelatorio,Carrinho,FinalizarCompraComLeitor
 
 
 
@@ -11,4 +11,5 @@ urlpatterns = [
     path('conferir-gastos/',ConferirGastos,name="ConferirGastos"),
     path('home/gerar-relatorios/',GerarRelatorio,name='GerarRelatorio'),
     path('carrinho/',Carrinho,name='Carrinho'),
+    path('finalizar-compra/cod-barras/',FinalizarCompraComLeitor,name='FinalizarComCod')
 ]   

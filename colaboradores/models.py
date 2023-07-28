@@ -11,7 +11,7 @@ class Colaboradore(models.Model):
     senha = models.CharField(max_length=30)
     situacao = models.CharField(default="Ativo",max_length=7)
     email = models.EmailField(default='michelmanngabriel@gmail.com')
-    
+    cod_barras_colab = models.CharField(max_length=10,default='1009463')
 
     def __str__(self) -> str:
         return self.nome

@@ -206,25 +206,21 @@ def ComecarCompra(request):
 def Ligar_camera():
     cap = cv2.VideoCapture(0)
 
-    # Verificar se a câmera foi aberta corretamente
-    if not cap.isOpened():
-        raise Exception("Falha ao acessar a câmera. Verifique se ela está disponível.")
 
     try:
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                continue
+        camera = True
+        while camera:
+            success, frame = cap.read()   
 
-            # Mostrar a imagem ao vivo no navegador (opcional, apenas para depuração)
-            cv2.imshow("Camera", frame)
 
             # Tente decodificar o código de barras da imagem
             barcodes = decode(frame)
             for barcode in barcodes:
-                barcode_data = barcode.data.decode("utf-8")
-                print("Código de barras encontrado:", barcode_data)
-
+                if success:
+                    barcode_data = barcode.data.decode("utf-8")
+                    print(barcode_data)
+                    camera = False
+                    return barcode_data
             # Pressione a tecla 'q' para sair do loop e encerrar a captura
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
@@ -233,6 +229,94 @@ def Ligar_camera():
         # Libere os recursos da câmera
         cap.release()
         cv2.destroyAllWindows()
+
+def FinalizarCompraComLeitor(request):
+    cod = Ligar_camera()
+    if cod:
+        print(cod)
+        try:
+            colab = Colaboradore.objects.filter(cod_barras_colab=cod).first()
+            print(colab)
+
+            lista_ingressos = []
+            lista_roupas = []
+            if colab.situacao == "Ativo":
+                carrinho = request.session.get('carrinho')
+                ingresso = False
+                roupa = False
+                soma = 0
+                for i in carrinho:
+                    soma += i['preco'] 
+                lista_ingressos = []
+                lista_roupas = []
+                print('2')
+                nova_compra = Compra.objects.create(colaborador=Colaboradore.objects.get(login=colab.login),total=soma)
+                nova_compra.save()
+
+                carrinho_quantidades = {}
+                lista_ids = []
+                for produto in carrinho:
+                    produto_id = produto['id']
+                    lista_ids.append(produto_id)
+                    if produto_id in carrinho_quantidades:
+                        carrinho_quantidades[produto_id] += 1
+                    else:
+                        carrinho_quantidades[produto_id] = 1
+                itens_da_compra = []
+                cont = 0
+                for produto_id, quantidade in carrinho_quantidades.items():
+                    produto = Produtos.objects.get(id=int(produto_id))
+                    if produto.tipo == 'Ingresso':
+                        ingresso = True
+                        lista_ingressos.append({'nome':produto.nome,'preco':produto.preco,'quantidade':quantidade,'total':quantidade*produto.preco})
+                    elif produto.tipo == 'Roupa':
+                        roupa = True
+                        lista_roupas.append({'nome':produto.nome,'preco':produto.preco,'quantidade':quantidade,'total':quantidade*produto.preco})
+                    else:
+                        DescontarEstoque(int(produto_id),quantidade)
+                    item_compra = ItemCompra(compra=nova_compra, produto_id=produto_id, quantidade=quantidade,preco_unitario=produto.preco,total=quantidade*produto.preco)
+                    item_compra.save()
+                    cont +=1
+                    itens_da_compra.append({'nome':produto.nome,'preco':float(produto.preco),'quantidade':quantidade,'total':quantidade*produto.preco,'cod_barras':produto.cod_barras})
+
+                print(3)
+                print(4)
+                data = datetime.now()
+
+
+                ultimo_26 = datetime(data.year, data.month, 26)
+                hoje = datetime.now()
+                dois_meses_atras = hoje.replace(day=26, month=hoje.month-2)
+                dia_25_mes_passado = hoje.replace(day=25, month=hoje.month-1)
+
+                if hoje.day > 25:
+                    dois_meses_atras = hoje.replace(day=26, month=hoje.month-1)
+                    dia_25_mes_passado = hoje.replace(day=25)
+
+                if dois_meses_atras.month == 12:
+                    dois_meses_atras = dois_meses_atras.replace(year=dois_meses_atras.year-1)
+
+                gastos = Compra.objects.filter(data__range=(dois_meses_atras,dia_25_mes_passado)).filter(colaborador_id=colab.id).values_list('total',flat=True)
+                ultima_referencia = sum(gastos)
+                gastos = Compra.objects.exclude(data__lte=ultimo_26).filter(colaborador_id=colab.id).values_list('total',flat=True)
+                mensal = sum(gastos)
+                context = {
+                    'aviso':'aviso','colaborador':colab.nome,'ultima_ref':f"{float(ultima_referencia):,.2f}".replace(',', '|').replace('.', ',').replace('|', '.'),'mensal':f"{float(mensal):,.2f}".replace(',', '|').replace('.', ',').replace('|', '.'),'total':soma,'itens':carrinho
+                    }
+                limpar_cache_sessao(request)
+                return render(request,'compras/registrar_compra.html',context=context)
+                    
+            else:
+                print('5')
+                raise Exception('Login inválido!!')
+        except Exception as erro:
+            print(erro)
+            messages.error(request,f'{erro}')
+            return redirect('Carrinho')
+
+
+    return RegistrarCompra(request)
+
 
 def ConferirGastos(request):
     usuario = request.POST.get('login')
@@ -279,27 +363,7 @@ def ConferirGastos(request):
 
 
 
-def ativar_camera(request):
-    # Inicializar a câmera (use o índice correto para selecionar a câmera apropriada)
-    cap = cv2.VideoCapture(0)
 
-    # Verificar se a câmera foi aberta corretamente
-    if not cap.isOpened():
-        print('erro')
-        raise Exception("Falha ao acessar a câmera. Verifique se ela está disponível.")
-
-    # Loop para capturar uma imagem da câmera
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            continue
-
-        # Mostrar a imagem ao vivo no navegador (opcional, apenas para depuração)
-        cv2.imshow("Camera", frame)
-        
-        # Pressione a tecla 'q' para sair do loop e capturar a imagem
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
 
 @login_required(login_url='Login')
 def GerarRelatorio(request):
